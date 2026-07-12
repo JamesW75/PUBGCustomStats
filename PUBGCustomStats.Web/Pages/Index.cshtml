@@ -1,0 +1,97 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "PUBG Customs - Season Home";
+}
+
+@foreach (var season in Model.Seasons)
+{
+    <table class="table table-hover" data-toggle="table"
+           data-sortable="true">
+        <tr>
+            <th>Player</th>
+            <th class="text-end" data-sortable="true">Matches</th>
+            <th class="text-end" data-sortable="true">Wins</th>
+            <th class="text-end">Kills <span class="d-none d-sm-inline">(Headshots)</span></th>
+            <th class="text-end d-none d-sm-table-cell">Assists</th>
+            <th class="text-end d-none d-sm-table-cell">DBNOs</th>
+            <th class="text-end">Damage</th>
+            <th class="text-end d-none d-sm-table-cell">Heals</th>
+            <th class="text-end d-none d-sm-table-cell">Boosts</th>
+            <th class="text-end d-none d-sm-table-cell">Revives</th>
+            <th class="text-end d-none d-sm-table-cell">Play Zoned</th>
+            <th class="text-end d-none d-sm-table-cell">Suicides</th>
+            <th class="text-end">Score</th>
+        </tr>
+        @foreach (var row in Model.Table.Values.OrderByDescending(s => s.Score).ThenByDescending(w => w.Wins).ThenByDescending(d => d.DamageDealt))
+        {
+            <tr>
+                <td><a href="/Player/@row.PlayerGuid">@row.PlayerName</a></td>
+                <td class="text-end">@row.MatchesPlayed</td>
+                <td class="text-end">@row.Wins</td>
+                <td class="text-end">@row.Kills <span class="d-none d-sm-inline">(@row.HeadshotKills)</span></td>
+                <td class="text-end d-none d-sm-table-cell">@row.Assists</td>
+                <td class="text-end d-none d-sm-table-cell">@row.DBNOs</td>
+                <td class="text-end">@row.DamageDealt.ToString("N2")</td>
+                <td class="text-end d-none d-sm-table-cell">@row.Heals</td>
+                <td class="text-end d-none d-sm-table-cell">@row.Boosts</td>
+                <td class="text-end d-none d-sm-table-cell">@row.Revives</td>
+                <td class="text-end d-none d-sm-table-cell">@row.DeathByZone</td>
+                <td class="text-end d-none d-sm-table-cell">@row.DeathBySuicide</td>
+                <td class="text-end">@row.Score</td>
+            </tr>
+        }
+    </table>
+    <p>Scoring: 1 point for participation. 10 points for a win, 9 for second place and so on to 1 point for 10th place. 10 points for most damage, 9 points for second most damage, down to 1 point for 10th most damage. No damage points awarded, if no damage dealt.</p>
+    foreach (var session in season.Sessions.OrderByDescending(s => s.StartDate))
+    {
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>
+                    @session.StartDate<small class="text-muted"> @session.Name
+                        [<a href="/session?sessionGuid=@session.SessionGuid">Detail</a>]
+                    </small>
+
+                </h2>
+            </div>
+            <div class="card-body">
+
+                <table class="table table-bordered ">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>Map</th>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Winner</th>
+                        </tr>
+                    </thead>
+                    @foreach (var match in session.Matches.OrderBy(m => m.MatchStartTime))
+                    {
+                        var rowClass = "";
+
+                        if (match.DoNotCount)
+                        {
+                            rowClass = "italic-row";
+                        }
+                        <tr class="@rowClass">
+                            <td class="text-nowrap">
+                                <span class="d-none d-sm-inline">@match.MatchStartTime?.ToLocalTime().ToShortDateString()</span>
+                                @match.MatchStartTime?.ToLocalTime().ToLongTimeString()
+                            </td>
+                            <td><div class=""><a href="/match?matchGuid=@match.MatchGuid">@match.MatchName</a></div></td>
+                            <td class="">@match.Map</td>
+                            <td class="">@match.GameMode</td>
+                            <td>@match.MatchLength?.ToString("mm:ss")</td>
+                            <td>@match.Winner</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+    }
+
+}

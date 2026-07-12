@@ -1,0 +1,380 @@
+﻿@page
+@model PUBGCustomStats.Web.Pages.ChartsModel
+@{
+    ViewData["Title"] = "Charts";
+}
+
+
+
+
+<div>
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Knock Knock</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">I get knocked down... </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Knocks</th></tr>
+                            @foreach (var player in Model.KnockKnock.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Who's there?</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">...but I get up again.</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Revives</th></tr>
+                            @foreach (var player in Model.Whoshere.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Electric Blue</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Spicy Zone.</h6>
+                    <p class="card-text">
+                        <table>
+                            <tr><th>Player</th><th>Zapped</th></tr>
+                            @foreach (var player in Model.ElectricBlue.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+                        </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">RUOK?</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Pull the pin.</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Suicides</th></tr>
+                            @foreach (var player in Model.RUOK.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+                        </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">It's not the size...</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Longest Kill</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Distance</th></tr>
+                            @foreach (var player in Model.LongestKill.Values.OrderByDescending(p => p.StatGameMax).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatGameMax.ToString("N2")m</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">...but how you use it.</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Shortest Longest Kill</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Distance</th></tr>
+                            @foreach (var player in Model.LongestKill.Values.Where(k => k.StatGameMin > 0).OrderBy(p => p.StatGameMin).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatGameMin.ToString("N2")m</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Team Kills</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Team Kills </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>TKs</th></tr>
+                            @foreach (var player in Model.TeamKills.Values.Where(k => k.StatTotal > 0).OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Dude, where's my car?</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Vehicles Destroyed</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Vehicles</th></tr>
+                            @foreach (var player in Model.VehicleDestroys.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Participation Award</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Most Games</h6>
+                    <p class="card-text">
+
+
+                        <table>
+                            <tr><th>Player</th><th>Games</th></tr>
+                            @foreach (var player in Model.Games.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+            </div>
+        <div class="col-md-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Maps</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Maps played</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Map</th><th>Games</th></tr>
+                            @foreach (var map in Model.Maps.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@map.PlayerName</td>
+                                    <td class="text-end">@map.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row visually-hidden">
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Road Kills</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Road Kills </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.RoadKills.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Swim Distance</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Swim Distance </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.SwimDistance.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal.ToString("N2")</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Max Match Distance</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Max Ride Distance </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.RideDistance.Values.OrderByDescending(p => p.StatGameMax).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatGameMax.ToString("N2")</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Ride Distance</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">TotalRideDistance </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.RideDistance.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal.ToString("N2")</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row visually-hidden">
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Walk Distance</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Walk Distance </h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.WalkDistance.Values.OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal.ToString("N2")</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Weapons Acquired</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Weapons Acquired</h6>
+                    <p class="card-text">
+
+                        <table>
+                            <tr><th>Player</th><th>Count</th></tr>
+                            @foreach (var player in Model.WeaponsAcquired.Values.Where(k => k.StatTotal > 0).OrderByDescending(p => p.StatTotal).Take(5))
+                            {
+                                <tr>
+                                    <td>@player.PlayerName</td>
+                                    <td class="text-end">@player.StatTotal</td>
+                                </tr>
+                            }
+
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

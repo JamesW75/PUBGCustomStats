@@ -1,0 +1,228 @@
+﻿@page
+@model SessionModel
+@{
+    ViewData["Title"] = "Session " + Model.StartDate;
+}
+
+@if (!string.IsNullOrEmpty(Model.Name))
+{
+    <h1>@Model.Name</h1>
+}
+<table class="table table-hover ">
+    <thead class="thead-light">
+        <tr>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Map</th>
+            <th>Type</th>
+            <th>View</th>
+            <th>Duration</th>
+            <th>Winner(s)</th>
+        </tr>
+    </thead>
+
+    @foreach (var match in Model.Matches.OrderBy(m => m.MatchStartTime))
+    {
+        if (!match.DoNotCount)
+        {
+            <tr>
+                <td>
+                    <span class="d-none d-sm-inline">@match.MatchStartTime?.ToLocalTime().ToShortDateString()</span>
+                    @match.MatchStartTime?.ToLocalTime().ToLongTimeString()
+                </td>
+                <td>
+                    <div class="">
+                        <a href="/match?matchGuid=@match.MatchGuid">@match.MatchName</a>
+                    </div>
+                </td>
+                <td>@match.Map</td>
+                <td>@match.GameMode</td>
+                <td>@match.Perspective</td>
+                <td>@match.MatchLength?.ToString("mm:ss")</td>
+                <td>@match.Winner</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td class="text-muted fst-italic">
+                        <span class="d-none d-sm-inline">@match.MatchStartTime?.ToLocalTime().ToShortDateString()</span>
+                        @match.MatchStartTime?.ToLocalTime().ToLongTimeString()
+                </td>
+                <td class="text-muted fst-italic"><a href="/match?matchGuid=@match.MatchGuid">@match.MatchName</a></td>
+                <td class="text-muted fst-italic">@match.Map</td>
+                <td class="text-muted fst-italic">@match.GameMode</td>
+                <td class="text-muted fst-italic">@match.Perspective</td>
+                <td class="text-muted fst-italic">@match.MatchLength?.ToString("mm:ss")</td>
+                <td class="text-muted fst-italic">@match.Winner</td>
+            </tr>
+        }
+    }
+</table>
+@if (Model.Table.Any())
+{
+    @if (Model.Matches.Any(m => m.DoNotCount))
+    {
+        <p>Team Death Match, Hot Drop, Intense Battle Royal, and second run of the same game don't count towards overall stats.</p>
+    }
+    <table class="table table-hover" data-toggle="table"
+           data-sortable="true">
+        <tr>
+            <th>Player</th>
+            <th class="text-end" data-sortable="true">Matches</th>
+            <th class="text-end" data-sortable="true">Wins</th>
+            <th class="text-end">Kills (Headshots)</th>
+            <th class="text-end">Assists</th>
+            <th class="text-end">DBNOs</th>
+            <th class="text-end">Damage</th>
+            <th class="text-end">Heals</th>
+            <th class="text-end">Boosts</th>
+            <th class="text-end">Revives</th>
+            <th class="text-end">Play Zoned</th>
+            <th class="text-end">Suicides</th>
+            <th class="text-end">Score</th>
+        </tr>
+        @foreach (var row in Model.Table.Values.OrderByDescending(s => s.Score))
+        {
+            <tr>
+                <td><a href="/Player/@row.PlayerGuid">@row.PlayerName</a></td>
+                <td class="text-end">@row.MatchesPlayed</td>
+                <td class="text-end">@row.Wins</td>
+                <td class="text-end">@row.Kills (@row.HeadshotKills)</td>
+                <td class="text-end">@row.Assists</td>
+                <td class="text-end">@row.DBNOs</td>
+                <td class="text-end">@row.DamageDealt.ToString("N2")</td>
+                <td class="text-end">@row.Heals</td>
+                <td class="text-end">@row.Boosts</td>
+                <td class="text-end">@row.Revives</td>
+                <td class="text-end">@row.DeathByZone</td>
+                <td class="text-end">@row.DeathBySuicide</td>
+                <td class="text-end">@row.Score</td>
+            </tr>
+        }
+    </table>
+
+    <p>Scoring: 1 point for participation. 10 points for a win, 9 for second place and so on to 1 point for 10th place. 10 points for most damage, 9 points for second most damage, down to 1 point for 10th most damage. No damage points awarded, if no damage dealt.</p>
+
+} else
+{
+    <p>Note: No matches from this session counted for overall totals.</p>
+}
+@foreach (var match in Model.Matches.OrderBy(m => m.MatchStartTime))
+{
+    var rowClass = "";
+
+    if (match.DoNotCount)
+    {
+        rowClass = "italic-row";
+    }
+
+    if (!string.IsNullOrEmpty(match.MatchName))
+    {
+        <h1>@match.MatchName (@match.Map, @match.GameMode) <small class="text-muted">     [<a href="/match?matchGuid=@match.MatchGuid">Match Log</a>]</small></h1>
+    }
+    else
+    {
+        <h1>Untitled Match #@match.MatchNumber (@match.Map, @match.GameMode) <small class="text-muted">     [<a href="/match?matchGuid=@match.MatchGuid">Match Log</a>]</small></h1>
+    }
+    <table class="table table-hover" data-toggle="table"
+           data-sortable="true">
+        <tr class="@rowClass">
+            <th>Player</th>
+            <th class="text-end" data-sortable="true">Position</th>
+            <th class="text-end">Kills (Headshots)</th>
+            <th class="text-end">Assists</th>
+            <th class="text-end">DBNOs</th>
+            <th class="text-end">Damage (Place)</th>
+            <th class="text-end">Heals</th>
+            <th class="text-end">Boosts</th>
+            <th class="text-end">Revives</th>
+            <th class="text-end">Death Type</th>
+            <th class="text-end">Score</th>
+        </tr>
+        @foreach (var row in match.PlayerStats.OrderBy(r => r.Rank))
+        {
+            <tr class="@rowClass">
+
+                <td><a href="/Player/@row.PlayerGuid">@row.PlayerName</a></td>
+                <td class="text-end">
+                    @if (row.Rank == 1)
+                    {
+                        <span title="First Place 🥇">🥇</span>
+                    }
+                    else if (row.Rank == 2)
+                    {
+                        <span title="Second Place 🥈">🥈</span>
+                    }
+                    else if (row.Rank == 3)
+                    {
+                        <span title="Third Place 🥉">🥉</span>
+                    }
+                    else
+                    {
+                        @row.Rank <text>&nbsp;</text>
+                    }
+                </td>
+
+                <td class="text-end">@row.Kills (@row.HeadshotKills)</td>
+                <td class="text-end">@row.Assists</td>
+                <td class="text-end">@row.DBNOs</td>
+                <td class="text-end">
+                    @row.DamageDealt.GetValueOrDefault(0).ToString("N2") @if (row.DamagePlace.HasValue) {
+                    <text>(</text>@if (row.DamagePlaceEqual.GetValueOrDefault()) {
+                    <text>=</text>
+                }
+
+                @row.DamagePlace
+
+                <text>)</text>
+            }
+                        else
+            {
+                <text> (-) </text>
+            }
+        </td>
+        <td class="text-end">@row.Heals</td>
+        <td class="text-end">@row.Boosts</td>
+        <td class="text-end">@row.Revives</td>
+        <td class="text-end">
+            @row.DeathType
+            @switch (row.DeathType)
+            {
+                case "alive":
+                    <text>🟢</text>
+                    break;
+
+                case "byzone":
+                    <text>🔵</text>
+                    break;
+
+                case "byplayer":
+                    <text>☠️</text>
+                    break;
+
+                case "suicide":
+                    <text>💀</text>
+                    break;
+
+                case "logout":
+                    <text>🚪</text>
+                    break;
+            }
+        </td>
+        @if (!match.DoNotCount)
+        {
+            <td class="text-end">@row.Score</td>
+        }
+        else
+        {
+            <td class="text-end">
+                N/A
+            </td>
+        }
+    </tr>
+}
+</table>
+
+}
+

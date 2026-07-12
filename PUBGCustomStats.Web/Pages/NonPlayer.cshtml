@@ -1,0 +1,163 @@
+﻿@page "{name}"
+@model PUBGCustomStats.Web.Pages.NonPlayerModel
+@{
+    ViewData["Title"] = Model.PlayerName;
+}
+
+
+
+<table class="table table-hover ">
+    <thead class="thead-light">
+        <tr>
+            <th rowspan="2"><h1>Kills</h1></th>
+            <th colspan="2" class="text-center">Main Custom Matches</th>
+            <th colspan="2" class="text-center">Other Matches</th>
+        </tr>
+        <tr>
+            <th class="text-end">Kill Count</th>
+            <th class="text-end">Knock Count</th>
+            <th class="text-end"><i>Kill Count</i></th>
+            <th class="text-end"><i>Knock Count</i></th>
+        </tr>
+    </thead>
+
+    @if (Model.PlayerKills == null)
+    {
+        <tr>
+            <td colspan="5">No Data</td>
+
+        </tr>
+    }
+    else
+    {
+        foreach (var playerKilled in Model.PlayerKills)
+        {
+            <tr>
+                <td>
+                    @switch (playerKilled.PlayerName)
+                    {
+                        case "BOT":
+                            <span title="Bot">&#129302;</span>
+                            break;
+                        case "Blue Zone":
+                            <span title="Blue Zone">&#128309;</span>
+                            break;
+                        case "Red Zone":
+                            <span title="Red Zone">&#128308;</span>
+                            break;
+                        case "Black Zone":
+                            <span title="Black Zone">&#128995;</span>
+                            break;
+                        case "Bear":
+                            <span title="Bear">&#128059;</span>
+                            break;
+                        case "Drowning":
+                            <span title="Drowning">&#128705;</span>
+                            break;
+                        case "Jerry Can":
+                            <span title="Jerry Can">&#9981;</span>
+
+                            break;
+                        case "Helicopter Hit":
+                            <span title="Helicopter Hit">&#128641;</span>
+                            break;
+                        case "Unknown":
+                            <span title="Unknown">&#10067;</span>
+                            break;
+                        case "Suicide":
+                            <span title="Suicide">&#128128;</span>
+                            break;
+                        case "Bleed":
+                            <span title="Bled Out">&#129656;</span>
+                            break;
+                    }
+                    @playerKilled.PlayerName
+                </td>
+                <td class="text-end">@playerKilled.KillCount</td>
+                <td class="text-end">@playerKilled.KnockCount </td>
+                <td class="text-end"><i>@playerKilled.KillCountOther</i></td>
+                <td class="text-end"><i>@playerKilled.KnockCountOther</i></td>
+
+            </tr>
+        }
+    }
+</table>
+
+@if (Model.DisplayKilledBy)
+{
+
+<table class="table table-hover ">
+    <thead class="thead-light">
+        <tr>
+            <th rowspan="2"><h1>Killed By</h1></th>
+            <th colspan="2" class="text-center">Main Custom Matches</th>
+            <th colspan="2" class="text-center">Other Matches</th>
+        </tr>
+        <tr>
+            <th class="text-end">Kill Count</th>
+            <th class="text-end">Knock Count</th>
+            <th class="text-end"><i>Kill Count</i></th>
+            <th class="text-end"><i>Knock Count</i></th>
+        </tr>
+    </thead>
+    @if (Model.PlayerKilledBy == null)
+    {
+        <tr>
+            <td colspan="5">No Data</td>
+        </tr>
+    }
+    else
+    {
+        foreach (var playerKilled in Model.PlayerKilledBy)
+        {
+            <tr>
+                <td>
+                    @switch (playerKilled.PlayerName)
+                    {
+                        case "BOT":
+                            <span title="Bot">&#129302;</span>
+                            break;
+                        case "Blue Zone":
+                            <span title="Blue Zone">&#128309;</span>
+                            break;
+                        case "Red Zone":
+                            <span title="Red Zone">&#128308;</span>
+                            break;
+                        case "Black Zone":
+                            <span title="Black Zone">&#128995;</span>
+                            break;
+                        case "Bear":
+                            <span title="Bear">&#128059;</span>
+                            break;
+                        case "Drowning":
+                            <span title="Drowning">&#128705;</span>
+                            break;
+                        case "Jerry Can":
+                            <span title="Jerry Can">&#9981;</span>
+
+                            break;
+                        case "Helicopter Hit":
+                            <span title="Helicopter Hit">&#128641;</span>
+                            break;
+                        case "Unknown":
+                            <span title="Unknown">&#10067;</span>
+                            break;
+                        case "Suicide":
+                            <span title="Suicide">&#128128;</span>
+                            break;
+                        case "Bleed":
+                            <span title="Bled Out">&#129656;</span>
+                            break;
+                    }
+                    @playerKilled.PlayerName
+                </td>
+                <td class="text-end">@playerKilled.KillCount</td>
+                <td class="text-end">@playerKilled.KnockCount </td>
+                <td class="text-end"><i>@playerKilled.KillCountOther</i></td>
+                <td class="text-end"><i>@playerKilled.KnockCountOther</i></td>
+            </tr>
+        }
+    }
+</table>    
+}
+

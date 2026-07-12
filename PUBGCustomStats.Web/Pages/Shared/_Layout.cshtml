@@ -1,0 +1,100 @@
+﻿@using PUBGCustomStats.Data
+@inject PUBGCustomStatsContext DbContext
+
+@{
+    var sessions = DbContext.Sessions
+        .Where(s => s.Season.IsCurrentSeason)
+        .OrderByDescending(s => s.StartDateTime)
+        .ToList();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PUBGCustomStats.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <div class="text-center">
+            <h1 class="display-4">@ViewData["Title"]</h1>
+        </div>
+
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        </nav>
+
+    </header>
+
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="home"></span> <span class="ms-1 d-none d-sm-inline">Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a href="#" class="nav-link align-middle px-0 d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span data-feather="calendar"></span> <span class="ms-1 d-none d-sm-inline">Sessions</span>
+                        </a>
+                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                                    @foreach (var session in sessions)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/session?sessionGuid=@session.SessionGuid">
+                                                @session.StartDateTime.GetValueOrDefault(DateTime.MaxValue).ToString("yyyy-MM-dd")
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                        </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Clans" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="users"></span> <span class="ms-1 d-none d-sm-inline">Clans</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Charts" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="bar-chart-2"></span> <span class="ms-1 d-none d-sm-inline">Charts</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/NonPlayers" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="user-x"></span> <span class="ms-1 d-none d-sm-inline">Non-Players</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col py-3">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - PUBGCustomStats.Web - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace()
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

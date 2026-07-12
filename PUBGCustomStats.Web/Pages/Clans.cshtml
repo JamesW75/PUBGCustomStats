@@ -1,0 +1,113 @@
+﻿@page
+@model PUBGCustomStats.Web.Pages.ClanModel
+@{
+    ViewData["Title"] = "Clans";
+}
+
+
+
+
+<table class="table table-hover" data-toggle="table"
+       data-sortable="true">
+    <tr>
+        <th>Clan</th>
+        <th class="text-end">Matches</th>
+        <th class="text-end">Wins</th>
+        <th class="text-end">Kills</th>
+        <th class="text-end">Assists</th>
+        <th class="text-end">DBNOs</th>
+        <th class="text-end">Damage</th>
+        <th class="text-end">Heals</th>
+        <th class="text-end">Boosts</th>
+        <th class="text-end">Revives</th>
+        <th class="text-end">Play Zoned</th>
+        <th class="text-end">Suicides</th>
+        <th class="text-end">Score</th>
+    </tr>
+
+    @foreach (var clan in Model.Clans.OrderByDescending(c => c.Stats.Score))
+    {
+        if (clan.Stats.Score > 0)
+        {
+            <tr>
+                <td>[@clan.Tag] @clan.Name</td>
+                <td class="text-end">@clan.Stats.MatchesPlayed</td>
+                <td class="text-end">@clan.Stats.Wins</td>
+                <td class="text-end">@clan.Stats.Kills (@clan.Stats.HeadshotKills)</td>
+                <td class="text-end">@clan.Stats.Assists</td>
+                <td class="text-end">@clan.Stats.DBNOs</td>
+                <td class="text-end">@clan.Stats.DamageDealt.ToString("N2")</td>
+                <td class="text-end">@clan.Stats.Heals</td>
+                <td class="text-end">@clan.Stats.Boosts</td>
+                <td class="text-end">@clan.Stats.Revives</td>
+                <td class="text-end">@clan.Stats.DeathByZone</td>
+                <td class="text-end">@clan.Stats.DeathBySuicide</td>
+                <td class="text-end">@clan.Stats.Score.ToString("N0")</td>
+            </tr>
+        }
+    }
+
+</table>
+
+@foreach (var clan in Model.Clans.OrderBy(c => c.Tag))
+{
+    if (clan.Stats.Score > 0 && clan.PlayerTable.Count > 1)
+    {
+        <h2>[@clan.Tag] @clan.Name</h2>
+
+        <table class="table table-hover" data-toggle="table"
+               data-sortable="true">
+            <tr>
+                <th>Player</th>
+                <th class="text-end">Matches</th>
+                <th class="text-end">Wins</th>
+                <th class="text-end">Kills</th>
+                <th class="text-end">Assists</th>
+                <th class="text-end">DBNOs</th>
+                <th class="text-end">Damage</th>
+                <th class="text-end">Heals</th>
+                <th class="text-end">Boosts</th>
+                <th class="text-end">Revives</th>
+                <th class="text-end">Play Zoned</th>
+                <th class="text-end">Suicides</th>
+                <th class="text-end">Score</th>
+            </tr>
+            @foreach (var player in clan.PlayerTable.Values.OrderByDescending(p => p.Score))
+            {
+                <tr>
+                    <td>@player.PlayerName</td>
+                    <td class="text-end">@player.MatchesPlayed.ToString("N0")</td>
+                    <td class="text-end">@player.Wins</td>
+                    <td class="text-end">@player.Kills (@player.HeadshotKills)</td>
+                    <td class="text-end">@player.Assists</td>
+                    <td class="text-end">@player.DBNOs</td>
+                    <td class="text-end">@player.DamageDealt.ToString("N2")</td>
+                    <td class="text-end">@player.Heals.ToString("N0")</td>
+                    <td class="text-end">@player.Boosts.ToString("N0")</td>
+                    <td class="text-end">@player.Revives.ToString("N0")</td>
+                    <td class="text-end">@player.DeathByZone</td>
+                    <td class="text-end">@player.DeathBySuicide</td>
+                    <td class="text-end">@player.Score.ToString("N0")</td>
+                </tr>
+            }
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td class="text-end">@clan.Stats.MatchesPlayed.ToString("N0")</td>
+                    <td class="text-end">@clan.Stats.Wins</td>
+                    <td class="text-end">@clan.Stats.Kills (@clan.Stats.HeadshotKills)</td>
+                    <td class="text-end">@clan.Stats.Assists</td>
+                    <td class="text-end">@clan.Stats.DBNOs</td>
+                    <td class="text-end">@clan.Stats.DamageDealt.ToString("N2")</td>
+                    <td class="text-end">@clan.Stats.Heals.ToString("N0")</td>
+                    <td class="text-end">@clan.Stats.Boosts.ToString("N0")</td>
+                    <td class="text-end">@clan.Stats.Revives.ToString("N0")</td>
+                    <td class="text-end">@clan.Stats.DeathByZone</td>
+                    <td class="text-end">@clan.Stats.DeathBySuicide</td>
+                    <td class="text-end">@clan.Stats.Score.ToString("N0")</td>
+                </tr>
+            </tfoot>
+        </table>
+
+    }
+}
