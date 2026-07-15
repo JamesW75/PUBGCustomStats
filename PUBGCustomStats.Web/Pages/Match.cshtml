@@ -171,7 +171,7 @@
                         {
                             var playerList = "";
                             foreach (var player in evt.MatchTimelinePlayers)
-                            {
+                            {                                
                                 if (!string.IsNullOrEmpty(playerList))
                                 {
                                     playerList += ", ";
@@ -182,11 +182,18 @@
                                 }
                                 else
                                 {
-                                    playerList += player.PlayerAccountId;
+                                    if (player.PlayerIsNPC.GetValueOrDefault())
+                                    {
+                                        playerList += GetNPCName(player.PlayerAccountId);
+                                    }
+                                    else
+                                    {
+                                        playerList += player.PlayerAccountId;
+                                    }
                                 }
                             }
 
-                            descripion += ". Assist from " + playerList + ".";
+                            descripion += ". Assist from " + playerList;
                         }
 
                         if (evt.IndividualRanking != null && evt.IndividualRanking > 0)
@@ -455,7 +462,7 @@
                         break;
 
                     case "LogCarePackageSpawn":
-                        descripion = "📦 Care Package Dropped";
+                        descripion = "📦 Care Package Dropping";
                         break;
 
                     case "LogCarePackageLand":
@@ -679,6 +686,8 @@ else
                 return "Blue Zone";
             case "Damage_DropStructHit":
                 return "Drop Structure";
+            case "Damage_CarePackageDropHit":
+                return "Care Package Drop";
             case "Damage_Drown":
                 return "Drowning";
             case "Damage_Explosion_C4":
@@ -787,7 +796,8 @@ else
         {
             case "Damage_DropStructHit":
                 return "Structure Drop";
-
+            case "Damage_CarePackageDropHit":
+                return "Care Package Drop";
             case "Damage_Explosion_GasPump":
                 return "Gas Pump Explosion";
             case "Damage_Explosion_Mortar":
@@ -843,6 +853,7 @@ else
             case "LMG6":
                 return "LMG6";
             case "TslGameModeBase_BattleRoyale_CustomBP_C":
+            case "TslGameModeBase_BattleRoyaleBP_C":
                 return "Blue Zone";
             case "WeapGrenade_C":
                 return "Grenade";
