@@ -583,7 +583,15 @@
                                 descripion = "🎰 " + evt.Player.PlayerName + " used Vending Machine. Returned " + GetWeaponDescription(evt.Weapon);
                                 break;
                             case "FuelPuddle":
-                                descripion = "⛽ " + evt.Player.PlayerName + " " + evt.DamageReason + " " + evt.DamageCategory;
+                                switch (evt.DamageReason)
+                                {
+                                    case "Ignite":
+                                        descripion = "⛽ " + evt.Player.PlayerName + " ignited Fuel Puddle";
+                                        break;
+                                    default:
+                                        descripion = "⛽ " + evt.Player.PlayerName + " " + evt.DamageReason + " Fuel Puddle";
+                                        break;
+                                }
 
                                 break;
                             default:
