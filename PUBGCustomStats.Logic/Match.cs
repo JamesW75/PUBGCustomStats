@@ -169,10 +169,13 @@ namespace PUBGCustomStats.Logic
                     match.GameMode = "Solo";
                     break;
                 case "normal-duo":
+                case "normal-duo-fpp":
+                case "duo":
                     match.GameMode = "Duo";
                     break;
                 case "normal-squad":
                 case "normal-squad-fpp":
+                case "squad":
                     match.GameMode = "Squad";
                     break;
                 case "tdm":
@@ -187,6 +190,7 @@ namespace PUBGCustomStats.Logic
             switch (matchData.data.attributes.gameMode)
             {
                 case "normal-solo-fpp":
+                case "normal-duo-fpp":
                 case "normal-squad-fpp":
                     match.Perspective = "FPP";
                     break;

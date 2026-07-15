@@ -288,7 +288,7 @@ namespace PUBGCustomStats.Integration.JsonObject
         public int byRanking { get; set; }
         public int byKills { get; set; }
         public int byDamageDealt { get; set; }
-        public int boostAmount { get; set; }
+        public float boostAmount { get; set; }
         public int byModeScore { get; set; }
     }
 

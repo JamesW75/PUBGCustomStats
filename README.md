@@ -6,13 +6,13 @@ It is not affiliated with PUBG corp or any of its subsidiaries. This is a person
 
 
 Season, Session, and Match Structure
-================================
+------------------------------------
 Matches are grouped into sessions, and sessions are grouped into seasons. This allows you to track your stats over time, and compare your performance across different seasons and sessions.
 Our group plays a session of 4 games on friday nights through the year. Points are awarded for each match, and contribute to points for the night (session) and the season.
 
 Scoring
 -------
-to encourge battles over camping, points are awarded for both placement and damage dealt.
+To encourge battles over camping, points are awarded for both placement and damage dealt. Winning the match doesn't necessarily get the most points.
 Points are awarded as follows:
 * 1 Point for participation
 * 10 points for a win, 9 for 2nd place, 8 for 3rd place, and so on down to 1 point for 10th place.
@@ -31,21 +31,23 @@ Installation
 
 1. Clone the repository:
    ```bash
-   git clone
+   git clone <url>
    ```
-   2. Navigate to the project directory:
+ 2. Navigate to the project directory:
    ```bash
    cd PUBGCustomStats
    ```
-   3. Restore the dependencies:
+ 3. Build the solution:
    ```bash
-   dotnet restore
+   dotnet build
    ```
 	
 Configuration
 -------------
+0. Change to the folder, where the console application was built.
+```cd PUBGCustomStats/bin/Debug/net10.0```
 
-	1. Create the database
+1. Create the database. (Command may need ./ at the start, depening on your PATH setup)
 ```PUBGCustomStats --setup```
 
 2. Enter your API key. The application will save your API key for future use.
@@ -62,10 +64,24 @@ Configuration
 
 your database should now be filled with the match stats. You can view your stats by running PUBGCustomStats.Web and visiting the web page at http://localhost:5000.
 
+Viewing
+-------
+
+1. Change to the Web project directory
+```cd PUBGCustomStats.Web```
+
+2. Run the project, which will open the site using Kestral, the web server included with .NET.
+```dotnet run```
+
+3. Open the website in a browser. The output from above command will give a URL which Kestral is listening on. Eg. http://localhost:5209
+
 Publishing
 ----------
+Web site has a reference to the library package ASPNetStatic, and can produce static HTML pages from your data. 
 
-Web page has a reference to the library package ASPNetStatic, and can produce static HTML pages from your data. To publish the web page, run the following command:
-```bash 
-dotnet publish PUBGCustomStats.Web -c Release -o ./publish
-```
+No automated way exists is publish at the moment, but uncomment the following line in `Program.cs` in the web project
+
+```//app.GenerateStaticContent(@"c:\PUBGCustoms\");```
+
+Replace the path as needed. Compile and run the web project again.
+
