@@ -85,7 +85,7 @@ Viewing
 2. Run the project, which will open the site using Kestral, the web server included with .NET.
 ```dotnet run```
 
-3. Open the website in a browser. The output from above command will give a URL which Kestral is listening on. Eg. http://localhost:5209
+3. Open the website in a browser. The output from above command will give a URL which Kestral is listening on. Eg. http://localhost:5209 or https://localhost:7093/ Change `launchSettings.json` as needed.
 
 Publishing
 ----------

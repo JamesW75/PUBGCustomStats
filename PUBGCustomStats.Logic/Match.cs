@@ -101,6 +101,31 @@ namespace PUBGCustomStats.Logic
                 DbContext.SaveChanges();
             }
         }
+
+        public void DeleteMatch(Guid matchGuid)
+        {
+            var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
+            if (match != null)
+            {
+                // Delete related MatchPlayerStats
+                var playerStats = DbContext.MatchPlayerStats.Where(mps => mps.MatchGuid == matchGuid);
+                DbContext.MatchPlayerStats.RemoveRange(playerStats);
+                // Delete related MatchTimeline and MatchTimelinePlayers
+                var timelines = DbContext.MatchTimeline.Where(mt => mt.MatchGuid == matchGuid).Include("MatchTimelinePlayers");
+                foreach (var timeline in timelines)
+                {
+                    if (timeline.MatchTimelinePlayers != null && timeline.MatchTimelinePlayers.Count > 0)
+                    {
+                        DbContext.MatchTimelinePlayer.RemoveRange(timeline.MatchTimelinePlayers);
+                    }
+                }
+                DbContext.MatchTimeline.RemoveRange(timelines);
+                // Delete the match itself
+                DbContext.Matches.Remove(match);
+                DbContext.SaveChanges();
+            }
+        }
+
         public void ParseMatch(Guid matchGuid, Guid currentSeason, Integration.JsonObject.Match? matchData)
         {
             var match = new Data.Models.Match();

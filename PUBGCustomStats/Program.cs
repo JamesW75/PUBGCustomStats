@@ -21,6 +21,7 @@ using System.Diagnostics.Eventing.Reader;
  * addmatch         Add a match to the current session
  * editmatch        Edit a match.
  * listmatches      List all matches in the current session
+ * deletematch      Delete a match from the current session
  */
 
 // Process command line arguments
@@ -255,6 +256,19 @@ if (args.Length > 0)
                 Console.WriteLine($"Match edited: {editMatchId} set to {newMatchName}");
                 break;
 
+                case "--deletematch":
+                // Delete a match from the current session
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No match ID provided. Use --help for usage information.");
+                    return;
+                }
+                var deleteMatchId = args[1];
+                var deleteMatch = new Match(dbContextOptions, integrationService);
+                deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId));
+                Console.WriteLine($"Match deleted: {deleteMatchId}");
+                break;
+
             case "--listmatches":
                 // List all matches in the current session
                 var listMatches = new Match(dbContextOptions, integrationService);
@@ -302,6 +316,7 @@ void DisplayHelp()
     Console.WriteLine("  --listsessions                        List all sessions in the current season");
     Console.WriteLine("  --listseasons                         List all seasons in the database");
     Console.WriteLine("  --listmatches                         List all matches in the current session");
+    Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");
