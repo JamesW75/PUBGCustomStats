@@ -35,7 +35,7 @@ namespace PUBGCustomStats.Logic
             DbContext.SaveChanges();
         }
 
-        public string GetAPIKey()
+        public string? GetAPIKey()
         {
             return DbContext.Config.FirstOrDefault(c => c.Key == "APIKey")?.Value;
         }

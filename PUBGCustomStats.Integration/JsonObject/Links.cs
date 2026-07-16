@@ -8,8 +8,8 @@ namespace PUBGCustomStats.Integration.JsonObject
 {
     public class Links
     {
-        public string self { get; set; }
-        public string schema { get; set; }
+        public string? self { get; set; }
+        public string? schema { get; set; }
     }
 
 

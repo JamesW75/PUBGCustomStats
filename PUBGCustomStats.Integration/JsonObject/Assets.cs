@@ -8,6 +8,6 @@ namespace PUBGCustomStats.Integration.JsonObject
 {
     public class Assets
     {
-        public object[] data { get; set; }
+        public object[]? data { get; set; }
     }
 }

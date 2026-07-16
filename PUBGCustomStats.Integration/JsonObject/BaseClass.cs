@@ -8,6 +8,6 @@ namespace PUBGCustomStats.Integration.JsonObject
 {
     public class JsonBaseClass
     {
-        public string RawData { get; set; }
+        public string? RawData { get; set; }
     }
 }

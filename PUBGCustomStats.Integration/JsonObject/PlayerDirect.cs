@@ -8,9 +8,9 @@ namespace PUBGCustomStats.Integration.JsonObject
 {
     public class PlayerDirect : JsonBaseClass
     {
-        public PlayerDatum data { get; set; }
-        public Links links { get; set; }
-        public Meta meta { get; set; }
+        public PlayerDatum? data { get; set; }
+        public Links? links { get; set; }
+        public Meta? meta { get; set; }
     }
 
 }

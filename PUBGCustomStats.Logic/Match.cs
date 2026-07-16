@@ -39,7 +39,7 @@ namespace PUBGCustomStats.Logic
         {
             // Call the API to get match data
             // Save to the storage folder
-            Integration.JsonObject.Match matchData;
+            Integration.JsonObject.Match? matchData;
 
             if (!File.Exists(Path.Combine(_baseStoragePath, matchGuid.ToString() + ".json")))
             {
@@ -101,11 +101,11 @@ namespace PUBGCustomStats.Logic
             match.MatchGuid = matchGuid;
             match.SessionGuid = currentSeason;
 
-            match.MatchLength = new TimeOnly(TimeSpan.FromSeconds(matchData.data.attributes.duration).Ticks);
-            match.StartTime = matchData.data.attributes.createdAt;
+            match.MatchLength = new TimeOnly(TimeSpan.FromSeconds(matchData?.data?.attributes?.duration ?? 0).Ticks);
+            match.StartTime = matchData?.data?.attributes?.createdAt;
             //match.Winner = matchData.data.attributes.winner;
 
-            switch (matchData.data.attributes.mapName)
+            switch (matchData?.data?.attributes?.mapName)
             {
                 case "Desert_Main":
                     match.Map = "Sanhok";
@@ -154,14 +154,14 @@ namespace PUBGCustomStats.Logic
                     break;
 
                 default:
-                    match.Map = matchData.data.attributes.mapName;
+                    match.Map = matchData?.data?.attributes?.mapName;
                     break;
             }
 
 
-            match.MatchType = matchData.data.attributes.matchType;
+            match.MatchType = matchData?.data?.attributes?.matchType;
 
-            switch (matchData.data.attributes.gameMode)
+            switch (matchData?.data?.attributes?.gameMode)
             {
                 case "normal-solo":
                 case "normal-solo-fpp":
@@ -182,12 +182,12 @@ namespace PUBGCustomStats.Logic
                     match.GameMode = "TDM";
                     break;
                 default:
-                    match.GameMode = matchData.data.attributes.gameMode;
+                    match.GameMode = matchData?.data?.attributes?.gameMode;
                     break;
             }
 
             match.Perspective = "TPP";
-            switch (matchData.data.attributes.gameMode)
+            switch (matchData?.data?.attributes?.gameMode)
             {
                 case "normal-solo-fpp":
                 case "normal-duo-fpp":
@@ -197,28 +197,28 @@ namespace PUBGCustomStats.Logic
             }
 
             // Find the players in the match
-            var players = matchData.included
+            var players = matchData?.included?
             .Where(i => i.type == "participant")
             .ToList();
 
             // Find the teams in the match
-            var teams = matchData.included
+            var teams = matchData?.included?
                 .Where(i => i.type == "roster")
                 .ToList();
 
             // Find the assets in the match
-            var assets = matchData.included
+            var assets = matchData?.included?
                 .Where(i => i.type == "asset")
                 .ToList();
 
-            var telemetry = assets.FirstOrDefault(a => a.attributes.name == "telemetry");
+            var telemetry = assets?.FirstOrDefault(a => a.attributes?.name == "telemetry");
             if (telemetry != null)
             {
-                match.TelemetryUrl = telemetry.attributes.URL;
+                match.TelemetryUrl = telemetry.attributes?.URL;
             }
 
             // Find the winner team
-            var winnerTeam = teams.FirstOrDefault(t => t.attributes.won == "true");
+            var winnerTeam = teams?.FirstOrDefault(t => t.attributes?.won == "true");
             var winningParticipants = new List<string>();
 
             if (winnerTeam != null)
@@ -915,7 +915,7 @@ namespace PUBGCustomStats.Logic
                                 matchTimeline.DamageCategory = telemetryEvent.objectType;
                                 matchTimeline.DamageReason = telemetryEvent.objectTypeStatus;
 
-                                matchTimeline.PlayerAccountId = telemetryEvent.character.accountId;
+                                matchTimeline.PlayerAccountId = telemetryEvent.character?.accountId;
                                 if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
                                 {
                                     matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
@@ -924,7 +924,7 @@ namespace PUBGCustomStats.Logic
                                 {
                                     matchTimeline.PlayerIsNPC = true;
                                 }
-                                if (telemetryEvent.character.zone != null && telemetryEvent.character.zone.Length > 0)
+                                if (telemetryEvent.character?.zone != null && telemetryEvent.character.zone.Length > 0)
                                 {
                                     matchTimeline.Zone = ArrayToCsv(telemetryEvent.character.zone);
                                 }
@@ -989,7 +989,7 @@ namespace PUBGCustomStats.Logic
 
 
                         Console.WriteLine(telemetryEvent.attackType);
-                        matchTimeline.Weapon = telemetryEvent.weapon.itemId;
+                        matchTimeline.Weapon = telemetryEvent.weapon?.itemId;
                         eventProcessed = true;
                         break;
 
@@ -1026,14 +1026,14 @@ namespace PUBGCustomStats.Logic
                                 }
                             }
                         }
-                        matchTimeline.PlayerAccountId = telemetryEvent.victim.accountId;
+                        matchTimeline.PlayerAccountId = telemetryEvent.victim?.accountId;
                         if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
                         {
                             matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
                         }
                         else
                         {
-                            if (telemetryEvent.victim.name == "Guard" || telemetryEvent.victim.name == "Commander")
+                            if (telemetryEvent.victim?.name == "Guard" || telemetryEvent.victim?.name == "Commander")
                             {
                                 // Guard are a type of AI, so prepend Guard
                                 matchTimeline.PlayerAccountId = telemetryEvent.victim.name + "." + matchTimeline.PlayerAccountId;
@@ -1049,7 +1049,7 @@ namespace PUBGCustomStats.Logic
                         matchTimeline.Weapon = telemetryEvent.damageCauserName;
                         //}
 
-                        if (telemetryEvent.victim.zone != null && telemetryEvent.victim.zone.Length > 0)
+                        if (telemetryEvent.victim?.zone != null && telemetryEvent.victim.zone.Length > 0)
                         {
                             matchTimeline.Zone = ArrayToCsv(telemetryEvent.victim.zone);
                         }
