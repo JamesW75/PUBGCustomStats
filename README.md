@@ -33,36 +33,48 @@ Installation
    ```bash
    git clone <url>
    ```
- 2. Navigate to the project directory:
+2. Navigate to the project directory:
    ```bash
    cd PUBGCustomStats
    ```
- 3. Build the solution:
+3. Build the solution:
    ```bash
    dotnet build
    ```
 	
 Configuration
 -------------
-0. Change to the folder, where the console application was built.
-```cd PUBGCustomStats/bin/Debug/net10.0```
+1. Change to the folder, where the console application was built.
+```bash
+cd PUBGCustomStats/bin/Debug/net10.0
+```
 
-1. Create the database. (Command may need ./ at the start, depening on your PATH setup)
-```PUBGCustomStats --setup```
+2. Create the database. (Command may need ./ at the start, depening on your PATH setup)
+```bash
+PUBGCustomStats --setup
+```
 
-2. Enter your API key. The application will save your API key for future use.
-```PUBGCustomStats --apikey <apikey>```
+3. Enter your API key. The application will save your API key for future use.
+```bash
+PUBGCustomStats --apikey <apikey>
+```
 
-3. Create a season, and give it a name. This will be used to group your stats together. Seasons can have multiple sessions, and sessions can have multiple matches.
-```PUBGCustomStats --createseason <name>```
+4. Create a season, and give it a name. This will be used to group your stats together. Seasons can have multiple sessions, and sessions can have multiple matches.
+```bash
+PUBGCustomStats --createseason <name>
+```
 
-4. Create a session, with a name and start time. Sessions can have multiple matches.
-```PUBGCustomStats --createsession "<session name>" "<yyyy-MM-dd HH:mm>"```
+5. Create a session, with a name and start time. Sessions can have multiple matches.
+```bash
+PUBGCustomStats --createsession "<session name>" "<yyyy-MM-dd HH:mm>"
+```
 
-5. Add matches to the session. Repeat this step for each match you want to add. the first time you run this command, it will take longer, as player and clan details are downloaded for the first time. Subsequent matches will add faster, as these details are in the database.
-```PUBGCustomStats --addmatch <match guid>```
+6. Add matches to the session. Repeat this step for each match you want to add. the first time you run this command, it will take longer, as player and clan details are downloaded for the first time. Subsequent matches will add faster, as these details are in the database.
+```bash
+PUBGCustomStats --addmatch <match guid>
+```
 
-your database should now be filled with the match stats. You can view your stats by running PUBGCustomStats.Web and visiting the web page at http://localhost:5000.
+Your database should now be filled with the match stats. You can view your stats by running PUBGCustomStats.Web and visiting the web page (next step).
 
 Viewing
 -------
@@ -81,7 +93,9 @@ Web site has a reference to the library package ASPNetStatic, and can produce st
 
 No automated way exists is publish at the moment, but uncomment the following line in `Program.cs` in the web project
 
-```//app.GenerateStaticContent(@"c:\PUBGCustoms\");```
+```c#
+//app.GenerateStaticContent(@"c:\PUBGCustoms\");
+```
 
 Replace the path as needed. Compile and run the web project again.
 
