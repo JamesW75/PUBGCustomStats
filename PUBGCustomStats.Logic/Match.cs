@@ -92,6 +92,15 @@ namespace PUBGCustomStats.Logic
             return DbContext.Matches.Where(m => m.SessionGuid == sessionGuid).ToList();
         }
 
+        public void EditMatch(Guid matchGuid, string newMatchName)
+        {
+            var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
+            if (match != null)
+            {
+                match.MatchName = newMatchName;
+                DbContext.SaveChanges();
+            }
+        }
         public void ParseMatch(Guid matchGuid, Guid currentSeason, Integration.JsonObject.Match? matchData)
         {
             var match = new Data.Models.Match();

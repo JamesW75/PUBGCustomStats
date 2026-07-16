@@ -249,10 +249,10 @@ if (args.Length > 0)
                     return;
                 }
                 var editMatchId = args[1];
-                var newMatchId = args[2];
-                //var match = new Match(dbContextOptions, integrationService);
-                //match.EditMatch(Guid.Parse(editMatchId), Guid.Parse(newMatchId));
-                //Console.WriteLine($"Match edited: {editMatchId} to {newMatchId}");
+                var newMatchName = args[2];
+                var editMatch = new Match(dbContextOptions, integrationService);
+                editMatch.EditMatch(Guid.Parse(editMatchId), newMatchName);
+                Console.WriteLine($"Match edited: {editMatchId} set to {newMatchName}");
                 break;
 
             case "--listmatches":
@@ -291,15 +291,19 @@ void DisplayHelp()
     Console.WriteLine("Usage: PUBGCustomStats [command] <parameter>");
     Console.WriteLine("Options:");
 
-    Console.WriteLine("  --setup                             Initialise the database and create the tables");
-    Console.WriteLine("  --apikey <key>                      Set the PUBG API key");
-    Console.WriteLine("  --createseason <name>               Create a new season in the database");
-    Console.WriteLine("  --createsession <name> <datetime>   Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
-    Console.WriteLine("  --editseason <name>                 Edit the current season");
-    Console.WriteLine("  --addmatch <matchId>                Add a match to the current session");
-    //Console.WriteLine("  --editmatch <matchId> <newMatchId>  Edit a match"); 
-    Console.WriteLine("  --listsessions                      List all sessions in the current season");
-    Console.WriteLine("  --listseasons                       List all seasons in the database");
-    Console.WriteLine("  --listmatches                       List all matches in the current session");
+    Console.WriteLine("  --setup                               Initialise the database and create the tables");
+    Console.WriteLine("  --apikey <key>                        Set the PUBG API key");
+    Console.WriteLine("  --createseason <name>                 Create a new season in the database");
+    Console.WriteLine("  --createsession <name> <datetime>     Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
+    Console.WriteLine("  --editseason <name>                   Edit the current season");
+    Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
+    Console.WriteLine("  --addmatch <matchId>                  Add a match to the current session");
+    Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name"); 
+    Console.WriteLine("  --listsessions                        List all sessions in the current season");
+    Console.WriteLine("  --listseasons                         List all seasons in the database");
+    Console.WriteLine("  --listmatches                         List all matches in the current session");
+    Console.WriteLine("  --help                                Display this help message");
+    Console.WriteLine();
+    Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");
 
 }
