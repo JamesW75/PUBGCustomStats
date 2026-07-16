@@ -13,6 +13,6 @@ namespace PUBGCustomStats.Data.Models
         public DateTime? StartDateTime { get; set; } // Start date of the session
         public List<Match> Matches { get; set; } = new List<Match>(); // List of matches in the session
         public Guid SeasonGuid { get; set; } // Foreign key to the season this session belongs to
-        public virtual Season Season { get; set; } // Navigation property to the season
+        public virtual Season? Season { get; set; } // Navigation property to the season
     }
 }

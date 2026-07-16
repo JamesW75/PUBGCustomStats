@@ -10,7 +10,7 @@ namespace PUBGCustomStats.Data.Models
     {
         public Guid MatchTimelineGuid { get; set; }
         public Guid MatchGuid { get; set; } // Foreign key to Match
-        public string EventType { get; set; } // Type of event (e.g., "PlayerKilled", "ItemPickedUp")
+        public string? EventType { get; set; } // Type of event (e.g., "PlayerKilled", "ItemPickedUp")
         public DateTime EventTimestamp { get; set; } // Timestamp of the event
         public Guid? PlayerGuid { get; set; } // PlayerGuid of the victim (if applicable)
         public string? PlayerAccountId { get; set; } // Account ID of the victim (if applicable)

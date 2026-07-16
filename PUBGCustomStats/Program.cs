@@ -36,6 +36,11 @@ if (args.Length > 0)
 
     var connectionString = configurationBuilder.Build().GetConnectionString("PUBGCustomStatsContext");
 
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        Console.WriteLine("Error: Connection string is not set in appsettings.json.");
+        return;
+    }
     connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
 
@@ -68,10 +73,31 @@ if (args.Length > 0)
         }
 
     }
+    else if (args[0].ToLower() == "--apikey")
+    {
+        // Set the API key
+        if (args.Length < 2)
+        {
+            Console.WriteLine("Error: No API key provided. Use --help for usage information.");
+            return;
+        }
+
+        var config = new Config(dbContextOptions);
+
+        config.SetAPIKey(args[1]);
+
+        Console.WriteLine($"API key set to: {args[1]}");
+    }
     else
     {
         // Check if the API key is set, if not prompt the user to set it
         var apiKey = new Config(dbContextOptions).GetAPIKey();
+
+        if (apiKey == null || string.IsNullOrEmpty(apiKey))
+        {
+            Console.WriteLine("Error: API key is not set. Please set the API key using the --apikey option.");
+            return;
+        }
         var integrationService = new IntegrationService(apiKey);
 
         // Objecs from he logic class
@@ -82,21 +108,6 @@ if (args.Length > 0)
 
         switch (args[0].ToLower())
         {
-
-            case "--apikey":
-                // Set the API key
-                if (args.Length < 2)
-                {
-                    Console.WriteLine("Error: No API key provided. Use --help for usage information.");
-                    return;
-                }
-
-                var config = new Config(dbContextOptions);
-
-                config.SetAPIKey(args[1]);
-
-                Console.WriteLine($"API key set to: {args[1]}");
-                break;
 
             case "--createseason":
 
@@ -166,6 +177,11 @@ if (args.Length > 0)
                 break;
 
             case "--listsessions":
+                if (currentSeason == null)
+                {
+                    Console.WriteLine("Error: No current season found. Please create a season first using --createseason.");
+                    return;
+                }
                 var sessions = session.ListSessions(currentSeason.Value);
                 Console.WriteLine("Current sessions:");
                 Console.WriteLine($"   Session Guid                         | Start Date Time  | Session Name");
@@ -249,7 +265,7 @@ if (args.Length > 0)
                 Console.WriteLine($"   =====================================|==================|==================");
                 foreach (var m in matches)
                 {
-                    Console.WriteLine($" - {m.MatchGuid} | {m.StartTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")} | {m.MatchName}");
+                    Console.WriteLine($" - {m.MatchGuid} | {m.StartTime.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-dd HH:mm")} | {m.MatchName}");
                 }
                 break;
 

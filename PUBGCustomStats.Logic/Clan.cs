@@ -25,8 +25,12 @@ namespace PUBGCustomStats.Logic
 
         }
 
-        public Guid? LookupClan(string pubgClanId)
+        public Guid? LookupClan(string? pubgClanId)
         {
+            if (string.IsNullOrEmpty(pubgClanId))
+            {
+                throw new ArgumentException("Clan ID cannot be null or empty", nameof(pubgClanId));
+            }
             Console.WriteLine($"Looking up clan: {pubgClanId}");
             // Ensure the database is created
             DbContext.Database.EnsureCreated();

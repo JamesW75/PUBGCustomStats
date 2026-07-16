@@ -4,30 +4,6 @@
       "commandName": "WSL2",
       "distributionName": ""
     },
-    "player JimTheHawk xbox": {
-      "commandName": "Project",
-      "commandLineArgs": "--player JimTheHawk xbox"
-    },
-    "player Account (Dutch)": {
-      "commandName": "Project",
-      "commandLineArgs": "--player account.4126e88f62dc407baff774aee28b19cd"
-    },
-    "Match custom #4": {
-      "commandName": "Project",
-      "commandLineArgs": "--match all"
-    },
-    "Parse custom #4": {
-      "commandName": "Project",
-      "commandLineArgs": "--parsematch all"
-    },
-    "Plaer - All": {
-      "commandName": "Project",
-      "commandLineArgs": "--player all"
-    },
-    "--parse telemetry": {
-      "commandName": "Project",
-      "commandLineArgs": "--parsetelemetry 3a96a8cd-0261-44bc-b6b6-59a3d5bd8ffe"
-    },
     "--setup": {
       "commandName": "Project",
       "commandLineArgs": "--setup"

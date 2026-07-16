@@ -57,6 +57,10 @@ namespace PUBGCustomStats.Web.Pages
 
             foreach (var stat in _context.MatchPlayerStats)
             {
+                if (stat.PUBGPlayerId == null || stat.PlayerName == null)
+                {
+                    continue; // Skip if PUBGPlayerId or PlayerName is null
+                }
                 if (!stat.PUBGPlayerId.StartsWith("ai."))
                 {
                     // add plaer or match stats to the respective collections
@@ -179,6 +183,10 @@ namespace PUBGCustomStats.Web.Pages
 
             foreach (var match in _context.Matches)
             {
+                if (match.Map == null)
+                {
+                    continue; // Skip if Map is null
+                }
                 if (!Maps.ContainsKey(match.Map))
                 {
                     Maps[match.Map] = new PlayerStat(match.Map);

@@ -97,7 +97,7 @@ namespace PUBGCustomStats.Integration
 
         public Clan? GetClan(string pubgClanId)
         {
-            System.Threading.Thread.Sleep(10000); // Wait for 10 seconds before making the request
+            System.Threading.Thread.Sleep(10000); // Wait for 10 seconds before making the request... there's a rate limit
 
             var url = $"https://api.pubg.com/shards/xbox/clans/{pubgClanId}";
             using (var client = new HttpClient())
