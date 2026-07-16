@@ -58,6 +58,8 @@ if (args.Length > 0)
             Console.WriteLine("Database already exists.");
         }
 
+        Console.WriteLine($"Database location: {connectionString}");
+
         // Check if the API key is set, if not prompt the user to set it
         var apiKey = new Config(dbContextOptions).GetAPIKey();
         if (apiKey == null || string.IsNullOrEmpty(apiKey))
