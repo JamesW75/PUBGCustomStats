@@ -152,7 +152,10 @@ namespace PUBGCustomStats.Web.Pages
                     return;
 
                 default:
-                    return; // Unknonw, nothing to do
+                    // Unknown, go to error page
+                    Response.Redirect("/StatusCode?statusCode=404");
+                    return;
+
             }
 
             var matchTimelinesAsPlayer = new Dictionary<string, PlayerStats>();

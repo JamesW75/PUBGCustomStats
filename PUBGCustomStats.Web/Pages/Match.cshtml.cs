@@ -50,6 +50,12 @@ namespace PUBGCustomStats.Web.Pages
                     .OrderBy(mt => mt.EventTimestamp)
                     .ToList();
             }
+            else
+            {
+                // Match not found, redirect to error page
+                Response.Redirect("/StatusCode?statusCode=404");
+
+            }
         }
     }
 }

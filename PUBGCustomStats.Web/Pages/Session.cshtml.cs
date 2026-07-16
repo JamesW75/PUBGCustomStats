@@ -67,7 +67,7 @@ namespace PUBGCustomStats.Web.Pages
             public int? TeamId { get; set; }
             public string PUBGPlayerId { get; set; }
             public TimeOnly? TimeSurvived { get; set; }
-            public int ? DBNOs { get; set; }
+            public int? DBNOs { get; set; }
             public int? Heals { get; set; }
             public int? Boosts { get; set; }
             public int? KillPlace { get; set; }
@@ -82,12 +82,9 @@ namespace PUBGCustomStats.Web.Pages
 
         private readonly PUBGCustomStatsContext _context;
 
-        public void OnGet(string? sessionGuid)
+        public void OnGet(Guid? sessionGuid)
         {
-            if (!string.IsNullOrEmpty(sessionGuid))
-            {
-                SessionGuid = Guid.Parse(sessionGuid);
-            }
+            SessionGuid = sessionGuid;
 
             PopulateModel();
         }
@@ -96,7 +93,7 @@ namespace PUBGCustomStats.Web.Pages
         {
             _context = context;
         }
-        
+
         private void PopulateModel()
         {
             // https://localhost:7093/session?sessionGuid=feecbfda-331b-44c1-ac85-125f418b2048
@@ -106,7 +103,7 @@ namespace PUBGCustomStats.Web.Pages
 
             // Load session from the database
 
-            
+
             var session = _context.Sessions
                 .Where(s => s.SessionGuid == SessionGuid) // Assuming you have a foreign key relationship
                 .FirstOrDefault();
@@ -120,7 +117,7 @@ namespace PUBGCustomStats.Web.Pages
                 // Load matches for each session
                 var matches = _context.Matches
                     .Where(m => m.SessionGuid == session.SessionGuid); // Assuming you have a foreign key relationship
-                    
+
                 // Map matches to the session model
                 foreach (var match in matches)
                 {
@@ -142,41 +139,41 @@ namespace PUBGCustomStats.Web.Pages
                         Matches.Add(matchModel);
 
                         // Calculate stats for each match
-                        
-                            var matchPlayerStats = _context.MatchPlayerStats
-                                .Where(mps => mps.MatchGuid == match.MatchGuid)
-                                .ToList();
 
-                            matchModel.PlayerStats = new List<MatchPlayerStat>();
+                        var matchPlayerStats = _context.MatchPlayerStats
+                            .Where(mps => mps.MatchGuid == match.MatchGuid)
+                            .ToList();
 
-                            foreach (var stat in matchPlayerStats)
+                        matchModel.PlayerStats = new List<MatchPlayerStat>();
+
+                        foreach (var stat in matchPlayerStats)
+                        {
+                            // Exclude bots
+                            if (!stat.PUBGPlayerId.StartsWith("ai."))
                             {
-                                // Exclude bots
-                                if (!stat.PUBGPlayerId.StartsWith("ai."))
+                                matchModel.PlayerStats.Add(new MatchPlayerStat
                                 {
-                                    matchModel.PlayerStats.Add(new MatchPlayerStat
-                                    {
-                                        PlayerName = stat.PlayerName,
-                                        PlayerGuid = stat.PlayerGuid.Value,
-                                        Platform = stat.Platform,
-                                        Rank = stat.Rank,
-                                        Kills = stat.Kills,
-                                        Assists = stat.Assists,
-                                        DamageDealt = stat.DamageDealt,
-                                        HeadshotKills = stat.HeadshotKills,
-                                        Revives = stat.Revives,
-                                        TeamId = stat.TeamId,
-                                        PUBGPlayerId = stat.PUBGPlayerId,
-                                        TimeSurvived = stat.TimeSurvived,
-                                        DBNOs = stat.DBNOs,
-                                        Heals = stat.Heals,
-                                        Boosts = stat.Boosts,
-                                        KillPlace = stat.KillPlace,
-                                        DeathType = stat.DeathType,
-                                        DamagePlace = stat.DamagePlace,
-                                        DamagePlaceEqual = stat.DamagePlaceEqual,
-                                        Score = stat.Score.GetValueOrDefault(0)
-                                    });
+                                    PlayerName = stat.PlayerName,
+                                    PlayerGuid = stat.PlayerGuid.Value,
+                                    Platform = stat.Platform,
+                                    Rank = stat.Rank,
+                                    Kills = stat.Kills,
+                                    Assists = stat.Assists,
+                                    DamageDealt = stat.DamageDealt,
+                                    HeadshotKills = stat.HeadshotKills,
+                                    Revives = stat.Revives,
+                                    TeamId = stat.TeamId,
+                                    PUBGPlayerId = stat.PUBGPlayerId,
+                                    TimeSurvived = stat.TimeSurvived,
+                                    DBNOs = stat.DBNOs,
+                                    Heals = stat.Heals,
+                                    Boosts = stat.Boosts,
+                                    KillPlace = stat.KillPlace,
+                                    DeathType = stat.DeathType,
+                                    DamagePlace = stat.DamagePlace,
+                                    DamagePlaceEqual = stat.DamagePlaceEqual,
+                                    Score = stat.Score.GetValueOrDefault(0)
+                                });
 
                                 if (!match.DoNotCount.GetValueOrDefault(false))
                                 {
@@ -230,6 +227,12 @@ namespace PUBGCustomStats.Web.Pages
                         }
                     }
                 }
+            }
+            else
+            {
+                // redirect to not found
+
+                Response.Redirect("/StatusCode?statusCode=404");
             }
         }
     }
