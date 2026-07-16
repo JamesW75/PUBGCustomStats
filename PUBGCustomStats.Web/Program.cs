@@ -87,6 +87,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Handle non-success status codes (e.g., 404) by re-executing to a status page
+app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

@@ -2,37 +2,37 @@
 @using Microsoft.AspNetCore.Components
 @model PUBGCustomStats.Web.Pages.MatchModel
 @{
-    ViewData["Title"] = Model.Match.MatchNameOrDefault();
+    ViewData["Title"] = Model.Match?.MatchNameOrDefault();
 }
 
 
 <h4>Match Timeline</h4>
 
-@if (!string.IsNullOrEmpty(Model.Match.MatchDescription))
+@if (!string.IsNullOrEmpty(Model.Match?.MatchDescription))
 {
     <p>
         @Html.Raw(FormatDescription(Model.Match.MatchDescription))
     </p>
 }
 
-<p>Mode: @Model.Match.GameMode</p>
+<p>Mode: @Model.Match?.GameMode</p>
 
 
-<p>Map: @Model.Match.Map</p>
+<p>Map: @Model.Match?.Map</p>
 
-@if (Model.Match.NoFireUntilPhase.HasValue)
+@if (Model.Match?.NoFireUntilPhase.HasValue == true)
 {
     <p>
-        No Firing until Phase: @Model.Match.NoFireUntilPhase
+        No Firing until Phase: @Model.Match?.NoFireUntilPhase
     </p>
 }
-@if (!string.IsNullOrEmpty(Model.Match.Weather))
+@if (!string.IsNullOrEmpty(Model.Match?.Weather))
 {
     <p>
         Weather: @FixWeather(Model.Match.Weather)
     </p>
 }
-@if (!string.IsNullOrEmpty(Model.Match.Perspective))
+@if (!string.IsNullOrEmpty(Model.Match?.Perspective))
 {
     <p>
         Perspective: @Model.Match.Perspective
