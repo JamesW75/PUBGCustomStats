@@ -35,7 +35,7 @@ namespace PUBGCustomStats.Logic
             DbContext = new PUBGCustomStatsContext(options);
         }
 
-        public void AddMatch(Guid matchGuid, Guid currentSeason)
+        public void AddMatch(Guid matchGuid, Guid currentSeason, string? matchName = null)
         {
             // Call the API to get match data
             // Save to the storage folder
@@ -61,7 +61,7 @@ namespace PUBGCustomStats.Logic
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
             if (match == null)
             {
-                ParseMatch(matchGuid, currentSeason, matchData);
+                ParseMatch(matchGuid, currentSeason, matchData, matchName);
             }
 
             // Match should be parsed now (and give us telemetr url)
@@ -126,12 +126,16 @@ namespace PUBGCustomStats.Logic
             }
         }
 
-        public void ParseMatch(Guid matchGuid, Guid currentSeason, Integration.JsonObject.Match? matchData)
+        public void ParseMatch(Guid matchGuid, Guid currentSeason, Integration.JsonObject.Match? matchData, string? matchName = null)
         {
             var match = new Data.Models.Match();
 
             DbContext.Matches.Add(match);
 
+            if (!string.IsNullOrEmpty(matchName))
+            {
+                match.MatchName = matchName;
+            }
             match.MatchGuid = matchGuid;
             match.SessionGuid = currentSeason;
 

@@ -237,8 +237,15 @@ if (args.Length > 0)
                 var matchId = args[1];
                 var match = new Match(dbContextOptions, integrationService);
 
+                // Match name is optional, so we check if it was provided
+                string? matchName = null;
+                if (args.Length >= 3)
+                {
+                    matchName = args[2];
+                }
+
                 var currentSessionGuid = session.GetCurrentSession();
-                match.AddMatch(Guid.Parse(matchId), currentSessionGuid);
+                match.AddMatch(Guid.Parse(matchId), currentSessionGuid, matchName);
                 Console.WriteLine($"Match added: {matchId}");
                 break;
 
@@ -311,7 +318,7 @@ void DisplayHelp()
     Console.WriteLine("  --createsession <name> <datetime>     Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
     Console.WriteLine("  --editseason <name>                   Edit the current season");
     Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
-    Console.WriteLine("  --addmatch <matchId>                  Add a match to the current session");
+    Console.WriteLine("  --addmatch <matchId> [matchName]      Add a match to the current session. Match name is optional.");
     Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name"); 
     Console.WriteLine("  --listsessions                        List all sessions in the current season");
     Console.WriteLine("  --listseasons                         List all seasons in the database");
