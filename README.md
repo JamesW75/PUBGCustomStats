@@ -25,7 +25,7 @@ Prerequisites
 * .NET 10.0 SDK or later
 * An API key from the PUBG Developer Portal (https://developer.pubg.com/)
 * Guids for the matches you want to track. You can get these by looking at your match history on sites like pubglookup.com or chickendinner.gg.
-
+** Or you can use the Xbox gamer tag as a parameter to add recen matches
 Installation
 ------------
 
@@ -72,6 +72,10 @@ PUBGCustomStats --createsession "<session name>" "<yyyy-MM-dd HH:mm>"
 6. Add matches to the session. Repeat this step for each match you want to add. the first time you run this command, it will take longer, as player and clan details are downloaded for the first time. Subsequent matches will add faster, as these details are in the database.
 ```bash
 PUBGCustomStats --addmatch <match guid>
+```
+6a. Alternatively, use the interactive prompt, which shows the recent matches for a player, and asks wheher or not to add the mach. 
+```bash
+PUBGCustomStats --getmatches <gamerTag>
 ```
 
 Your database should now be filled with the match stats. You can view your stats by running PUBGCustomStats.Web and visiting the web page (next step).

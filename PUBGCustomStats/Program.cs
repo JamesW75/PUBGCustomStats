@@ -19,9 +19,11 @@ using System.Diagnostics.Eventing.Reader;
  * createsession    Create a new session for the current season  
  * editseason       Edit the current season
  * addmatch         Add a match to the current session
- * editmatch        Edit a match.
+ * editmatch        Edit a match
+ * movematch        Move a match to a different session 
  * listmatches      List all matches in the current session
  * deletematch      Delete a match from the current session
+ * getmatches       Get recent matches for a player
  */
 
 // Process command line arguments
@@ -256,7 +258,7 @@ if (args.Length > 0)
                 Console.WriteLine($"Match edited: {editMatchId} set to {newMatchName}");
                 break;
 
-                case "--deletematch":
+            case "--deletematch":
                 // Delete a match from the current session
                 if (args.Length < 2)
                 {
@@ -269,6 +271,19 @@ if (args.Length > 0)
                 Console.WriteLine($"Match deleted: {deleteMatchId}");
                 break;
 
+            case "--movematch":
+                // Edit a match
+                if (args.Length < 3)
+                {
+                    Console.WriteLine("Error: No match ID or new match ID provided. Use --help for usage information.");
+                    return;
+                }
+                var moveMatchId = args[1];
+                var newSessionId = args[2];
+                var moveMatch = new Match(dbContextOptions, integrationService);
+                moveMatch.MoveMatch(Guid.Parse(moveMatchId), Guid.Parse(newSessionId));
+                Console.WriteLine($"Moved match {moveMatchId} to session {newSessionId}");
+                break;
             case "--listmatches":
                 // List all matches in the current session
                 var listMatches = new Match(dbContextOptions, integrationService);
@@ -280,6 +295,58 @@ if (args.Length > 0)
                 foreach (var m in matches)
                 {
                     Console.WriteLine($" - {m.MatchGuid} | {m.StartTime.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-dd HH:mm")} | {m.MatchName}");
+                }
+                break;
+
+            case "--getmatches":
+                // Get recent matches for a player
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No player ID provided. Use --help for usage information.");
+                    return;
+                }
+                var playerId = args[1];
+                var player = new Player(dbContextOptions, integrationService);
+                var recentMatches = player.GetRecentMatches(playerId);
+                var currentSessionGuidforMatches = session.GetCurrentSession();
+                var matchGet = new Match(dbContextOptions, integrationService);
+                var allMatches = matchGet.ListMatches().Select(m => m.MatchGuid);
+
+                Console.WriteLine($"Found {recentMatches.Count()} recent matches for player");
+                Console.WriteLine($"Skipping any matches already in the database");
+                foreach (var matchGuid in recentMatches)
+                {
+                    //Console.WriteLine($" - Match ID: {matchGuid}");
+                    // Lookup each match guid, show times and ask to add yes/No/Quit
+                    if (!allMatches.Contains(matchGuid))
+                    {
+                        var recentMatch = integrationService.GetMatch(matchGuid);
+                        if (recentMatch != null)
+                        {
+                            var isCustom = recentMatch?.data?.attributes?.isCustomMatch;
+                            var custom = isCustom.GetValueOrDefault() ? "Custom" : "Normal";
+
+                            Console.WriteLine();
+                            Console.WriteLine($"{recentMatch?.data?.id} {custom} {Match.GetGameMode(recentMatch?.data?.attributes?.gameMode)} on {Match.GetMapName(recentMatch?.data?.attributes?.mapName)} at {recentMatch?.data?.attributes?.createdAt.ToLocalTime()} ");
+                            Console.Write("Do you wish to add this match (Yes/No/Quit) ? ");
+                            var key = Console.ReadKey();
+                            Console.WriteLine();
+                            
+                            switch (key.Key)
+                            {
+                                case ConsoleKey.Y:
+                                    matchGet.AddMatch(matchGuid, currentSessionGuidforMatches);
+                                    break;
+                                case ConsoleKey.N:
+                                    continue;
+                                case ConsoleKey.Q:
+                                    return;
+                                default:
+                                    Console.WriteLine("Unknown response, skipping");
+                                    break;
+                            }
+                        }
+                    }
                 }
                 break;
 
@@ -312,7 +379,7 @@ void DisplayHelp()
     Console.WriteLine("  --editseason <name>                   Edit the current season");
     Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
     Console.WriteLine("  --addmatch <matchId>                  Add a match to the current session");
-    Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name"); 
+    Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name");
     Console.WriteLine("  --listsessions                        List all sessions in the current season");
     Console.WriteLine("  --listseasons                         List all seasons in the database");
     Console.WriteLine("  --listmatches                         List all matches in the current session");

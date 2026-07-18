@@ -91,7 +91,10 @@ namespace PUBGCustomStats.Logic
         {
             return DbContext.Matches.Where(m => m.SessionGuid == sessionGuid).ToList();
         }
-
+        public List<Data.Models.Match> ListMatches()
+        {
+            return DbContext.Matches.ToList();
+        }
         public void EditMatch(Guid matchGuid, string newMatchName)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
@@ -102,6 +105,16 @@ namespace PUBGCustomStats.Logic
             }
         }
 
+        public void MoveMatch(Guid matchGuid, Guid newSessionId)
+        {
+            var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
+            if (match != null)
+            {
+                match.SessionGuid = newSessionId;
+                DbContext.SaveChanges();
+            }
+        }
+        
         public void DeleteMatch(Guid matchGuid)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
@@ -139,87 +152,11 @@ namespace PUBGCustomStats.Logic
             match.StartTime = matchData?.data?.attributes?.createdAt;
             //match.Winner = matchData.data.attributes.winner;
 
-            switch (matchData?.data?.attributes?.mapName)
-            {
-                case "Desert_Main":
-                    match.Map = "Sanhok";
-                    break;
-                case "Erangel_Main":
-                case "Baltic_Main":
-                    match.Map = "Erangel";
-                    break;
-                case "Vikendi_Main":
-                case "DihorOtok_Main":
-                    match.Map = "Vikendi";
-                    break;
-                case "Savage_Main":
-                    match.Map = "Sanhok";
-                    break;
-                case "Taego_Main":
-                case "Tiger_Main":
-                    match.Map = "Taego";
-                    break;
-                case "Karakin_Main":
-                case "Summerland_Main":
-                    match.Map = "Karakin";
-                    break;
-                case "Paramo_Main":
-                case "Chimera_Main":
-                    match.Map = "Paramo";
-                    break;
-                case "Deston_Main":
-                case "Kiki_Main":
-                    match.Map = "Deston";
-                    break;
-                case "Arenas_Main":
-                    match.Map = "Arenas";
-                    break;
-                case "Training_Main":
-                    match.Map = "Training";
-                    break;
-                case "Custom_Main":
-                    match.Map = "Custom";
-                    break;
-                case "Neon_Main":
-                    match.Map = "Rondo";
-                    break;
-                case "Heaven_Main":
-                    match.Map = "Haven";
-                    break;
-
-                default:
-                    match.Map = matchData?.data?.attributes?.mapName;
-                    break;
-            }
-
+            match.Map = GetMapName(matchData?.data?.attributes?.mapName);
 
             match.MatchType = matchData?.data?.attributes?.matchType;
-
-            switch (matchData?.data?.attributes?.gameMode)
-            {
-                case "normal-solo":
-                case "normal-solo-fpp":
-                case "solo":
-                    match.GameMode = "Solo";
-                    break;
-                case "normal-duo":
-                case "normal-duo-fpp":
-                case "duo":
-                    match.GameMode = "Duo";
-                    break;
-                case "normal-squad":
-                case "normal-squad-fpp":
-                case "squad":
-                    match.GameMode = "Squad";
-                    break;
-                case "tdm":
-                    match.GameMode = "TDM";
-                    break;
-                default:
-                    match.GameMode = matchData?.data?.attributes?.gameMode;
-                    break;
-            }
-
+            match.GameMode = GetGameMode(matchData?.data?.attributes?.gameMode);
+            
             match.Perspective = "TPP";
             switch (matchData?.data?.attributes?.gameMode)
             {
@@ -394,6 +331,74 @@ namespace PUBGCustomStats.Logic
             // Update the match with the parsed data
             DbContext.SaveChanges();
 
+        }
+
+        public static string GetMapName(string? mapNameRaw)
+        {
+            switch (mapNameRaw)
+            {
+                case "Desert_Main":
+                    return "Sanhok";
+                case "Erangel_Main":
+                case "Baltic_Main":
+                    return "Erangel";
+                case "Vikendi_Main":
+                case "DihorOtok_Main":
+                    return "Vikendi";
+                case "Savage_Main":
+                    return "Sanhok";
+                case "Taego_Main":
+                case "Tiger_Main":
+                    return "Taego";
+                case "Karakin_Main":
+                case "Summerland_Main":
+                    return "Karakin";
+                case "Paramo_Main":
+                case "Chimera_Main":
+                    return "Paramo";
+                case "Deston_Main":
+                case "Kiki_Main":
+                    return "Deston";
+                case "Arenas_Main":
+                    return "Arenas";
+                case "Training_Main":
+                    return "Training";
+                case "Custom_Main":
+                    return "Custom";
+                case "Neon_Main":
+                    return "Rondo";
+                case "Heaven_Main":
+                    return "Haven";
+                case null:
+                    return "Unknown";
+                default:
+                    return mapNameRaw;
+            }
+        }
+
+        public static string GetGameMode(string? gameModeRaw)
+        {
+            switch (gameModeRaw)
+            {
+                case "normal-solo":
+                case "normal-solo-fpp":
+                case "solo":
+                    return "Solo";
+                case "normal-duo":
+                case "normal-duo-fpp":
+                case "duo":
+                    return "Duo";
+                case "normal-squad":
+                case "normal-squad-fpp":
+                case "squad":
+                    return "Squad";
+                case "tdm":
+                    return "TDM";
+                case null:
+                    return "Unknown";
+                default:
+                    return gameModeRaw;
+            }
         }
 
         public void ParseTelemetry(Guid matchGuid, string telemetryRawData)

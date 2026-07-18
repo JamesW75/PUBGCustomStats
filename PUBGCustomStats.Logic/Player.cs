@@ -81,5 +81,36 @@ namespace PUBGCustomStats.Logic
             return player?.PlayerGuid;
         }
 
+        public IEnumerable<Guid> GetRecentMatches(string pubgPlayerId)
+        {
+            var result = new List<Guid>();
+            // Implementation for getting recent matches
+            var playerData = integrationService.GetPlayer(pubgPlayerId, "xbox");
+            if (playerData != null)
+            {
+                if (playerData.data != null)
+                {
+                    foreach (var player in playerData.data)
+                    {
+                        //if (player != null && player.relationships != null && player.relationships.matches != null && player.relationships.matches.data != null )
+                        if (player?.relationships?.matches?.data != null)
+                        {
+                            foreach (var match in player.relationships.matches.data)
+                            {
+                                if (match.type == "match")
+                                {
+                                    if (Guid.TryParse(match.id, out var matchId))
+                                    {
+                                        result.Add(matchId);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
     }
 }

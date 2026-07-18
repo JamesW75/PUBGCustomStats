@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.7.11925.98 stable
+VisualStudioVersion = 18.7.11925.98
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PUBGCustomStats", "PUBGCustomStats\PUBGCustomStats.csproj", "{3EFF0452-96CD-4C66-A893-53A4E3199AB1}"
 EndProject
@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. UI", "4. UI", "{6B016589-C48A-4F22-B423-A0149A90275B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,9 +57,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{3EFF0452-96CD-4C66-A893-53A4E3199AB1} = {6B016589-C48A-4F22-B423-A0149A90275B}
 		{40CB4FFA-9F0B-4528-8C05-D26EFC276992} = {11B1F6D0-51EB-4496-AFED-A678EFF5D9E3}
 		{6F2D4F5B-1C9A-4C4E-9BF8-ACDBDBE7978F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5D770AE5-032F-4F3D-AFEF-FDEE521B0D8C} = {AC42BAC3-FB11-452D-91D8-1999F6259B30}
+		{8B7EAABF-FEE8-4686-BC2C-368EDE285796} = {6B016589-C48A-4F22-B423-A0149A90275B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9B7B771-8A07-4127-A348-92A9BBF87CF6}
