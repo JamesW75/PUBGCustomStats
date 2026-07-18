@@ -665,25 +665,25 @@ else
 
 
 @functions {
-    public string GetNPCName(string playerAccounId)
+    public string GetNPCName(string playerAccountId)
     {
-        if (playerAccounId.StartsWith("Guard.ai"))
+        if (playerAccountId.StartsWith("Guard.ai"))
         {
             return "GUARD";
         }
-        if (playerAccounId.StartsWith("Commander.ai"))
+        if (playerAccountId.StartsWith("Commander.ai"))
         {
             return "Commander";
         }
-        if (playerAccounId.StartsWith("ai"))
+        if (playerAccountId.StartsWith("ai"))
         {
             return "BOT";
         }
-        if (playerAccounId.StartsWith("Monster.Bear"))
+        if (playerAccountId.StartsWith("Monster.Bear"))
         {
             return "BEAR";
         }
-        return playerAccounId;
+        return playerAccountId;
     }
 
     public string GetDamageDescription(string damageCategory, string damageReason)
