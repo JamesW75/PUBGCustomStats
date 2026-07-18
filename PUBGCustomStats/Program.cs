@@ -391,6 +391,7 @@ void DisplayHelp()
     Console.WriteLine("  --listseasons                         List all seasons in the database");
     Console.WriteLine("  --listmatches                         List all matches in the current session");
     Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
+    Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");
