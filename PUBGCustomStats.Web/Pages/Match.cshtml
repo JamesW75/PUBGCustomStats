@@ -171,7 +171,7 @@
                         {
                             var playerList = "";
                             foreach (var player in evt.MatchTimelinePlayers)
-                            {                                
+                            {
                                 if (!string.IsNullOrEmpty(playerList))
                                 {
                                     playerList += ", ";
@@ -995,6 +995,8 @@ else
             case "BP_PickupTruck_B_04_C":
             case "BP_PickupTruck_B_05_C": //Open op
                 return "Pickup Truck";
+            case "BP_PicoBus_C":
+                return "Pico Bus";
             case "BP_Pillar_Car_C": return "Pillar Security Car";
             case "BP_Panamera_ULT_C": return "Porche";
             case "BP_PonyCoupe_C": return "Pony Coupe";
@@ -1249,6 +1251,7 @@ else
             case "Item_Heal_MedKit_C":
                 return "Med Kit";
             default:
+                Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                 return weapon;
         }
     }
@@ -1499,45 +1502,45 @@ else
                 return "Bashara";
             case "hadiqanemo":
                 return "Hadiqane Mo";
-                /* copilot generated
-                *
+            /* copilot generated
+            *
         case "deadzone":
-                return "Dead Zone";
-            case "dockyard":
-                return "Dockyard";
-            case "fortmangul":
-                return "Fort Mangul";
-            case "gudvangen":
-                return "Gudvangen";
-            case "hamid":
-                return "Hamid";
-            case "jinn":
-                return "Jinn";
-            case "makarov":
-                return "Makarov";
+            return "Dead Zone";
+        case "dockyard":
+            return "Dockyard";
+        case "fortmangul":
+            return "Fort Mangul";
+        case "gudvangen":
+            return "Gudvangen";
+        case "hamid":
+            return "Hamid";
+        case "jinn":
+            return "Jinn";
+        case "makarov":
+            return "Makarov";
 
-            case "bahrain":
-                return "Bahrain";
-            case "jabal":
-                return "Jabal";
-            case "khandak":
-                return "Khandak";
-            case "mardin":
-                return "Mardin";
-            case "qalat":
-                return "Qalat";
-            case "sultans":
-                return "Sultans";
-            case "tarok":
-                return "Tarok";
-            case "temple":
-                return "Temple";
-            case "town":
-                return "Town";
-                */
+        case "bahrain":
+            return "Bahrain";
+        case "jabal":
+            return "Jabal";
+        case "khandak":
+            return "Khandak";
+        case "mardin":
+            return "Mardin";
+        case "qalat":
+            return "Qalat";
+        case "sultans":
+            return "Sultans";
+        case "tarok":
+            return "Tarok";
+        case "temple":
+            return "Temple";
+        case "town":
+            return "Town";
+            */
 
             // Paramo Zones
-        case "Lab":
+            case "Lab":
                 return "Lab";
             case "Level_A":
                 return "Level A";
@@ -1555,6 +1558,8 @@ else
                 return "Hungshan";
             case "jadenacity":
                 return "Jadena City";
+            case "jaotin":
+                return "Jao Tin";
             case "lohuaxing":
                 return "Lohuaxing";
             case "meyran":
@@ -1622,6 +1627,7 @@ else
             case null:
                 return "";
             default:
+                Console.WriteLine($"Unknown locaion: {zone}");
                 return zone;
         }
     }
