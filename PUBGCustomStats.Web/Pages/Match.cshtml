@@ -725,22 +725,22 @@ else
 
             case "Damage_Gun_Penetrate_BRDM":
             case "Damage_Gun":
-                return FormaDamageReason(damageReason);
+                return FormatDamageReason(damageReason);
             case "Damage_Instant_Fall":
                 return "Fall";
             case "Damage_Lava":
                 return "Lava";
 
             case "Damage_Melee":
-                return "Melee to " + SimplifDamageReason(damageReason);
+                return "Melee to " + SimplifyDamageReason(damageReason);
             case "Damage_MeleeThrow":
-                return "Melee Throw to " + SimplifDamageReason(damageReason);
+                return "Melee Throw to " + SimplifyDamageReason(damageReason);
             case "Damage_Molotov":
                 return "Molotov";
             case "Damage_Monster":
                 return "Monster";
             case "Damage_Punch":
-                return SimplifDamageReason(damageReason) + " Punch";
+                return SimplifyDamageReason(damageReason) + " Punch";
             case "Damage_VehicleCrashHit":
                 return "Vehicle Crash";
             case "Damage_VehicleHit":
@@ -758,7 +758,7 @@ else
         }
     }
 
-    public string FormaDamageReason(string damageReason)
+    public string FormatDamageReason(string damageReason)
     {
         switch (damageReason)
         {
@@ -777,7 +777,7 @@ else
         }
     }
 
-    public string SimplifDamageReason(string damageReason)
+    public string SimplifyDamageReason(string damageReason)
     {
         switch (damageReason)
         {
