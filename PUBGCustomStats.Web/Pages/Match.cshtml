@@ -665,8 +665,12 @@ else
 
 
 @functions {
-    public string GetNPCName(string playerAccountId)
+    public string GetNPCName(string? playerAccountId)
     {
+        if (playerAccountId == null)
+        {
+            return "Unknown";
+        }
         if (playerAccountId.StartsWith("Guard.ai"))
         {
             return "GUARD";
@@ -686,7 +690,7 @@ else
         return playerAccountId;
     }
 
-    public string GetDamageDescription(string damageCategory, string damageReason)
+    public string GetDamageDescription(string? damageCategory, string? damageReason)
     {
         switch (damageCategory)
         {
@@ -753,12 +757,14 @@ else
                 return "Bleeding out";
             case "Damage_BlueZoneGrenade":
                 return "BZ Grenade";
+            case null:
+                return "Unknown";
             default:
                 return damageCategory + " " + damageReason;
         }
     }
 
-    public string FormatDamageReason(string damageReason)
+    public string FormatDamageReason(string? damageReason)
     {
         switch (damageReason)
         {
@@ -772,12 +778,14 @@ else
                 return "Pelvis Shot";
             case "TorsoShot":
                 return "Torso Shot";
+            case null:
+                return "";
             default:
                 return damageReason;
         }
     }
 
-    public string SimplifyDamageReason(string damageReason)
+    public string SimplifyDamageReason(string? damageReason)
     {
         switch (damageReason)
         {
@@ -792,13 +800,14 @@ else
             case "TorsoShot":
                 return "Torso";
             case "None":
+            case null:
                 return "";
             default:
                 return damageReason;
         }
     }
 
-    public string GetWeaponDescription(string damageCategory, string damageReason)
+    public string GetWeaponDescription(string? damageCategory, string? damageReason)
     {
         switch (damageCategory)
         {
@@ -841,10 +850,13 @@ else
         }
     }
 
-    public string GetWeaponDescription(string weapon)
+    public string GetWeaponDescription(string? weapon)
     {
-        // Remove anhing afer _C
-        if (weapon != null && weapon.Contains("_C_"))
+        if (weapon == null){
+            return "";
+        }
+        // Remove anything after _C
+        if (weapon.Contains("_C_"))
         {
             weapon = weapon.Substring(0, weapon.IndexOf("_C_") + 2);
         }
