@@ -9,6 +9,13 @@ using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Process command-line parameters
+// Supported keys (case-insensitive):
+//  --output <path>
+var config = builder.Configuration;
+
+var outputPath = config["outputPath"];
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 
@@ -23,7 +30,7 @@ builder.Services.AddDbContext<PUBGCustomStatsContext>(options =>
 // Dynamically generate session PageResources from the database
 List<ResourceInfoBase> allResources = new List<ResourceInfoBase>();
 
-allResources.Add(new PageResource("/nonplayers") );
+allResources.Add(new PageResource("/nonplayers"));
 allResources.Add(new PageResource("/nonplayer/BlueZone") { OutFile = "nonplayer/bluezone.html" });
 allResources.Add(new PageResource("/nonplayer/RedZone") { OutFile = "nonplayer/redzone.html" });
 allResources.Add(new PageResource("/nonplayer/BlackZone") { OutFile = "nonplayer/blackzone.html" });
@@ -68,7 +75,13 @@ allResources.Add(new CssResource("/PUBGCustomStats.Web.styles.css"));
 allResources.Add(new JsResource("/lib/jquery/dist/jquery.min.js"));
 allResources.Add(new JsResource("/lib/bootstrap/dist/js/bootstrap.bundle.min.js"));
 allResources.Add(new JsResource("/js/site.js"));
-allResources.Add(new BinResource("/favicon.png"));
+allResources.Add(new BinResource("/favicon.ico"));
+allResources.Add(new BinResource("/favicon-96x96.png"));
+allResources.Add(new BinResource("/favicon.svg"));
+allResources.Add(new BinResource("/apple-touch-icon.png"));
+allResources.Add(new BinResource("/icon-192.png"));
+allResources.Add(new BinResource("/icon-512.png"));
+allResources.Add(new BinResource("/site.webmanifest"));
 
 builder.Services.AddSingleton<IStaticResourcesInfoProvider>(
   new StaticResourcesInfoProvider(allResources)
@@ -99,6 +112,16 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-//app.GenerateStaticContent(@"c:\PUBGCustoms\");
+if (outputPath != null)
+{
+    if (Path.Exists(outputPath))
+    {
+        app.GenerateStaticContent(outputPath);
+    }
+    else
+    {
+        Console.WriteLine($"Output path not found: {outputPath}");
+    }
+}
 
 app.Run();

@@ -27,7 +27,7 @@
     },
     "Generate": {
       "commandName": "Project",
-      "commandLineArgs": "--generate",
+      "commandLineArgs": "--outputPath c:\\PUBGCustoms",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

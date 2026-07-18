@@ -95,11 +95,10 @@ Publishing
 ----------
 Web site has a reference to the library package ASPNetStatic, and can produce static HTML pages from your data. 
 
-No automated way exists is publish at the moment, but uncomment the following line in `Program.cs` in the web project
+Pass the output paramater followed by a path, eg `--output c:\PUBGCusoms`.
 
-```c#
-//app.GenerateStaticContent(@"c:\PUBGCustoms\");
+```
+  --output <path>
 ```
 
-Replace the path as needed. Compile and run the web project again.
-
+This will generate static pages, which can be uploaded to a webhost. The stats from our games are hosted Infinity Free on the URL https://pubg.gamer.gd/  
