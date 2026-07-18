@@ -850,6 +850,7 @@ else
         }
 
         // Lookup weapon from: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/damageCauserName.json
+        // Lookup vehicle from: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/vehicle/vehicleId.json
         switch (weapon)
         {
             case "WeapAKM_C":
@@ -1017,6 +1018,8 @@ else
                 return "Snowmobile";
             case "BP_Spiketrap_C":
                 return "Spike Trap";
+            case "BP_Special_FbrBike_C":
+                return "Special FBR Bike";
             case "BP_TslGasPump_C":
                 return "Gas Pump";
             case "BP_TukTukTuk_A_01_C":
@@ -1502,45 +1505,45 @@ else
                 return "Bashara";
             case "hadiqanemo":
                 return "Hadiqane Mo";
-            /* copilot generated
-            *
+                /* copilot generated
+                *
         case "deadzone":
-            return "Dead Zone";
-        case "dockyard":
-            return "Dockyard";
-        case "fortmangul":
-            return "Fort Mangul";
-        case "gudvangen":
-            return "Gudvangen";
-        case "hamid":
-            return "Hamid";
-        case "jinn":
-            return "Jinn";
-        case "makarov":
-            return "Makarov";
+                return "Dead Zone";
+            case "dockyard":
+                return "Dockyard";
+            case "fortmangul":
+                return "Fort Mangul";
+            case "gudvangen":
+                return "Gudvangen";
+            case "hamid":
+                return "Hamid";
+            case "jinn":
+                return "Jinn";
+            case "makarov":
+                return "Makarov";
 
-        case "bahrain":
-            return "Bahrain";
-        case "jabal":
-            return "Jabal";
-        case "khandak":
-            return "Khandak";
-        case "mardin":
-            return "Mardin";
-        case "qalat":
-            return "Qalat";
-        case "sultans":
-            return "Sultans";
-        case "tarok":
-            return "Tarok";
-        case "temple":
-            return "Temple";
-        case "town":
-            return "Town";
-            */
+            case "bahrain":
+                return "Bahrain";
+            case "jabal":
+                return "Jabal";
+            case "khandak":
+                return "Khandak";
+            case "mardin":
+                return "Mardin";
+            case "qalat":
+                return "Qalat";
+            case "sultans":
+                return "Sultans";
+            case "tarok":
+                return "Tarok";
+            case "temple":
+                return "Temple";
+            case "town":
+                return "Town";
+                */
 
             // Paramo Zones
-            case "Lab":
+        case "Lab":
                 return "Lab";
             case "Level_A":
                 return "Level A";
@@ -1615,6 +1618,8 @@ else
                 return "Dino Land";
             case "naros":
                 return "Naros";
+            case "lumberyard":
+                return "Lumber Yard";
             case "trainstation":
                 return "Train Station";
             case "trika":

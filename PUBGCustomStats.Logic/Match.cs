@@ -339,6 +339,7 @@ namespace PUBGCustomStats.Logic
 
         public static string GetMapName(string? mapNameRaw)
         {
+            // Reference: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/mapName.json
             switch (mapNameRaw)
             {
                 case "Desert_Main":
