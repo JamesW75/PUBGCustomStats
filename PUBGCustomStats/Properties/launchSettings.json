@@ -7,6 +7,10 @@
     "--setup": {
       "commandName": "Project",
       "commandLineArgs": "--setup"
+    },
+    "--getmatches JimTheHawk": {
+      "commandName": "Project",
+      "commandLineArgs": "--getmatches JimTheHawk"
     }
   }
 }
