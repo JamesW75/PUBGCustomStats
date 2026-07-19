@@ -10,7 +10,7 @@ namespace PUBGCustomStats.Web.Pages
         public Dictionary<string, Stats> Table { get; set; } = new Dictionary<string, Stats>();
         public class Stats
         {
-            public string PlayerName { get; set; }
+            public string? PlayerName { get; set; }
             public Guid PlayerGuid { get; set; }
             public int MatchesPlayed { get; set; }
             public int Wins { get; set; }
@@ -35,9 +35,9 @@ namespace PUBGCustomStats.Web.Pages
 
         public class Season
         {
-            public string Name { get; set; }
-            public string StartDate { get; set; }
-            public string EndDate { get; set; }
+            public string? Name { get; set; }
+            public string? StartDate { get; set; }
+            public string? EndDate { get; set; }
 
             public List<Session> Sessions { get; set; } = new List<Session>();
         }
@@ -46,18 +46,18 @@ namespace PUBGCustomStats.Web.Pages
         {
             public Guid SessionGuid { get; set; }
             public string? Name { get; set; }
-            public string StartDate { get; set; }
+            public string? StartDate { get; set; }
             public List<Match> Matches { get; set; } = new List<Match>();
         }
 
         public class Match
         {
-            public string MatchGuid { get; set; }
+            public string? MatchGuid { get; set; }
             public TimeOnly? MatchLength { get; set; }
-            public string Map { get; set; }
-            public string GameMode { get; set; }
-            public string Winner { get; set; }
-            public string MatchName { get; set; }
+            public string? Map { get; set; }
+            public string? GameMode { get; set; }
+            public string? Winner { get; set; }
+            public string? MatchName { get; set; }
             public bool DoNotCount { get; set; } = false; // Default to false if not specified
             public DateTime? MatchStartTime { get; set; }
             public List<MatchPlayerStat> PlayerStats { get; set; } = new List<MatchPlayerStat>();
@@ -65,8 +65,8 @@ namespace PUBGCustomStats.Web.Pages
 
         public class MatchPlayerStat
         {
-            public string PlayerName { get; set; }
-            public string Platform { get; set; }
+            public string? PlayerName { get; set; }
+            public string? Platform { get; set; }
             public int? Rank { get; set; }
             public int? Kills { get; set; }
             public int? Assists { get; set; }
@@ -74,7 +74,7 @@ namespace PUBGCustomStats.Web.Pages
             public int? HeadshotKills { get; set; }
             public int? Revives { get; set; }
             public int? TeamId { get; set; }
-            public string PUBGPlayerId { get; set; }
+            public string? PUBGPlayerId { get; set; }
             public TimeOnly? TimeSurvived { get; set; }
             public int Score { get; set; }
         }
@@ -144,54 +144,57 @@ namespace PUBGCustomStats.Web.Pages
                                     .ToList();
                                 foreach (var stat in matchPlayerStats)
                                 {
-                                    // Exclude bots
-                                    if (!stat.PUBGPlayerId.StartsWith("ai."))
+                                    if (stat.PUBGPlayerId != null)
                                     {
-                                        if (!Table.ContainsKey(stat.PlayerName))
+                                        // Exclude bots
+                                        if (!stat.PUBGPlayerId.StartsWith("ai.") && stat.PlayerName != null) 
                                         {
-                                            Table[stat.PlayerName] = new Stats
+                                            if (!Table.ContainsKey(stat.PlayerName))
                                             {
-                                                PlayerName = stat.PlayerName,
-                                                PlayerGuid = stat.PlayerGuid.Value,
-                                                MatchesPlayed = 0,
-                                                Wins = 0,
-                                                Kills = 0,
-                                                Assists = 0,
-                                                DamageDealt = 0
-                                            };
-                                        }
-                                        var playerStats = Table[stat.PlayerName];
-                                        playerStats.MatchesPlayed++;
-                                        if (stat.Rank == 1)
-                                        {
-                                            playerStats.Wins++;
-                                        }
-                                        playerStats.Kills += stat.Kills ?? 0;
-                                        playerStats.Assists += stat.Assists ?? 0;
-                                        playerStats.DamageDealt += stat.DamageDealt ?? 0;
-                                        playerStats.HeadshotKills += stat.HeadshotKills ?? 0;
-                                        playerStats.Revives += stat.Revives ?? 0;
-                                        playerStats.DBNOs += stat.DBNOs ?? 0;
-                                        playerStats.Heals += stat.Heals ?? 0;
-                                        playerStats.Boosts += stat.Boosts ?? 0;
-                                        switch (stat.DeathType)
-                                        {
-                                            case "byplayer":
-                                                playerStats.DeathByPlayer++;
-                                                break;
-                                            case "byzone":
-                                                playerStats.DeathByZone++;
-                                                break;
-                                            case "bysuicide":
-                                            case "suicide":
-                                                playerStats.DeathBySuicide++;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                        //playerStats.TimeSurvived += stat.TimeSurvived ?? new TimeOnly(0);
+                                                Table[stat.PlayerName] = new Stats
+                                                {
+                                                    PlayerName = stat.PlayerName,
+                                                    PlayerGuid = stat.PlayerGuid.GetValueOrDefault(),
+                                                    MatchesPlayed = 0,
+                                                    Wins = 0,
+                                                    Kills = 0,
+                                                    Assists = 0,
+                                                    DamageDealt = 0
+                                                };
+                                            }
+                                            var playerStats = Table[stat.PlayerName];
+                                            playerStats.MatchesPlayed++;
+                                            if (stat.Rank == 1)
+                                            {
+                                                playerStats.Wins++;
+                                            }
+                                            playerStats.Kills += stat.Kills ?? 0;
+                                            playerStats.Assists += stat.Assists ?? 0;
+                                            playerStats.DamageDealt += stat.DamageDealt ?? 0;
+                                            playerStats.HeadshotKills += stat.HeadshotKills ?? 0;
+                                            playerStats.Revives += stat.Revives ?? 0;
+                                            playerStats.DBNOs += stat.DBNOs ?? 0;
+                                            playerStats.Heals += stat.Heals ?? 0;
+                                            playerStats.Boosts += stat.Boosts ?? 0;
+                                            switch (stat.DeathType)
+                                            {
+                                                case "byplayer":
+                                                    playerStats.DeathByPlayer++;
+                                                    break;
+                                                case "byzone":
+                                                    playerStats.DeathByZone++;
+                                                    break;
+                                                case "bysuicide":
+                                                case "suicide":
+                                                    playerStats.DeathBySuicide++;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            //playerStats.TimeSurvived += stat.TimeSurvived ?? new TimeOnly(0);
 
-                                        playerStats.Score += stat.Score.GetValueOrDefault(0);
+                                            playerStats.Score += stat.Score.GetValueOrDefault(0);
+                                        }
                                     }
                                 }
                             }

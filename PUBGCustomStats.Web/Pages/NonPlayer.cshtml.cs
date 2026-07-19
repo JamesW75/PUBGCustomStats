@@ -10,10 +10,10 @@ namespace PUBGCustomStats.Web.Pages
     public class NonPlayerModel : PageModel
     {
         private readonly PUBGCustomStatsContext _context;
-        public string PlayerName { get; set; }
+        public string? PlayerName { get; set; }
         public bool DisplayKilledBy { get; set; }
-        public List<PlayerStats> PlayerKills { get; set; }
-        public List<PlayerStats> PlayerKilledBy { get; set; }
+        public List<PlayerStats>? PlayerKills { get; set; }
+        public List<PlayerStats>? PlayerKilledBy { get; set; }
 
 
         public void OnGet(string name)
@@ -36,19 +36,19 @@ namespace PUBGCustomStats.Web.Pages
             _context.Database.EnsureCreatedAsync();
 
             // Load session from the database
-            List<MatchTimeline> matchTimelines = null; // As Victim
+            List<MatchTimeline> matchTimelines = new List<MatchTimeline>(); // As Victim
             List<MatchTimeline> matchTimelinesKiller;
 
             switch (PlayerName)
             {
                 case "BOT":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.SecondaryPlayerAccountId.StartsWith("ai") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.SecondaryPlayerAccountId != null && mt.SecondaryPlayerAccountId.StartsWith("ai") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.Player)
                     .ToList();
 
                     matchTimelines = _context.MatchTimeline
-                    .Where(mt => mt.PlayerAccountId.StartsWith("ai") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.PlayerAccountId != null && mt.PlayerAccountId.StartsWith("ai") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.SecondaryPlayer)
                     .ToList();
 
@@ -57,12 +57,12 @@ namespace PUBGCustomStats.Web.Pages
 
                 case "Guard":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.SecondaryPlayerAccountId.StartsWith("Guard") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.SecondaryPlayerAccountId != null && mt.SecondaryPlayerAccountId.StartsWith("Guard") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.Player)
                     .ToList();
 
                     matchTimelines = _context.MatchTimeline
-                    .Where(mt => mt.PlayerAccountId.StartsWith("Guard") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.PlayerAccountId != null && mt.PlayerAccountId.StartsWith("Guard") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.SecondaryPlayer)
                     .ToList();
 
@@ -71,12 +71,12 @@ namespace PUBGCustomStats.Web.Pages
 
                 case "Commander":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.SecondaryPlayerAccountId.StartsWith("Commander") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.SecondaryPlayerAccountId != null && mt.SecondaryPlayerAccountId.StartsWith("Commander") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.Player)
                     .ToList();
 
                     matchTimelines = _context.MatchTimeline
-                    .Where(mt => mt.PlayerAccountId.StartsWith("Commander") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.PlayerAccountId != null && mt.PlayerAccountId.StartsWith("Commander") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.SecondaryPlayer)
                     .ToList();
 
@@ -85,12 +85,12 @@ namespace PUBGCustomStats.Web.Pages
 
                 case "Bear":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.SecondaryPlayerAccountId.StartsWith("Monster.Bear") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.SecondaryPlayerAccountId != null && mt.SecondaryPlayerAccountId.StartsWith("Monster.Bear") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.Player)
                     .ToList();
 
                     matchTimelines = _context.MatchTimeline
-                    .Where(mt => mt.PlayerAccountId.StartsWith("Monster.Bear") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.PlayerAccountId != null && mt.PlayerAccountId.StartsWith("Monster.Bear") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
                     .Include(mt => mt.SecondaryPlayer)
                     .ToList();
                     DisplayKilledBy = true;
@@ -170,25 +170,28 @@ namespace PUBGCustomStats.Web.Pages
 
                     if (timeline.SecondaryPlayerIsNPC.GetValueOrDefault())
                     {
-                        if (timeline.SecondaryPlayerAccountId.StartsWith("ai"))
+                        if (timeline.SecondaryPlayerAccountId != null)
                         {
-                            playerId = "BOT";
-                            playerName = "BOT";
-                        }
-                        if (timeline.SecondaryPlayerAccountId.StartsWith("Guard"))
-                        {
-                            playerId = "GUARD";
-                            playerName = "GUARD";
-                        }
-                        if (timeline.SecondaryPlayerAccountId.StartsWith("Commander"))
-                        {
-                            playerId = "Commander";
-                            playerName = "Commander";
-                        }
-                        if (timeline.SecondaryPlayerAccountId.StartsWith("Monster.Bear"))
-                        {
-                            playerId = "Bear";
-                            playerName = "Bear";
+                            if (timeline.SecondaryPlayerAccountId.StartsWith("ai"))
+                            {
+                                playerId = "BOT";
+                                playerName = "BOT";
+                            }
+                            if (timeline.SecondaryPlayerAccountId.StartsWith("Guard"))
+                            {
+                                playerId = "GUARD";
+                                playerName = "GUARD";
+                            }
+                            if (timeline.SecondaryPlayerAccountId.StartsWith("Commander"))
+                            {
+                                playerId = "Commander";
+                                playerName = "Commander";
+                            }
+                            if (timeline.SecondaryPlayerAccountId.StartsWith("Monster.Bear"))
+                            {
+                                playerId = "Bear";
+                                playerName = "Bear";
+                            }
                         }
                     }
 
@@ -265,26 +268,29 @@ namespace PUBGCustomStats.Web.Pages
 
                     var match = _context.Matches.FirstOrDefault(m => m.MatchGuid == timeline.MatchGuid);
 
-                    if (timeline.EventType == "LogPlayerMakeGroggy")
+                    if (match != null)
                     {
-                        if (match.DoNotCount.GetValueOrDefault())
+                        if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
-                            matchTimelinesAsPlayer[playerId].KnockCountOther++;
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsPlayer[playerId].KnockCountOther++;
+                            }
+                            else
+                            {
+                                matchTimelinesAsPlayer[playerId].KnockCount++;
+                            }
                         }
-                        else
+                        else if (timeline.EventType == "LogPlayerKillV2")
                         {
-                            matchTimelinesAsPlayer[playerId].KnockCount++;
-                        }
-                    }
-                    else if (timeline.EventType == "LogPlayerKillV2")
-                    {
-                        if (match.DoNotCount.GetValueOrDefault())
-                        {
-                            matchTimelinesAsPlayer[playerId].KillCountOther++;
-                        }
-                        else
-                        {
-                            matchTimelinesAsPlayer[playerId].KillCount++;
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsPlayer[playerId].KillCountOther++;
+                            }
+                            else
+                            {
+                                matchTimelinesAsPlayer[playerId].KillCount++;
+                            }
                         }
                     }
                 }
@@ -333,29 +339,31 @@ namespace PUBGCustomStats.Web.Pages
                     }
 
                     var match = _context.Matches.FirstOrDefault(m => m.MatchGuid == timeline.MatchGuid);
-                    if (timeline.EventType == "LogPlayerMakeGroggy")
+                    if (match != null)
                     {
-                        if (match.DoNotCount.GetValueOrDefault())
+                        if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
-                            matchTimelinesAsKiller[playerId].KnockCountOther++;
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsKiller[playerId].KnockCountOther++;
 
+                            }
+                            else
+                            {
+                                matchTimelinesAsKiller[playerId].KnockCount++;
+                            }
                         }
-                        else
+                        else if (timeline.EventType == "LogPlayerKillV2")
                         {
-                            matchTimelinesAsKiller[playerId].KnockCount++;
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsKiller[playerId].KillCountOther++;
+                            }
+                            else
+                            {
+                                matchTimelinesAsKiller[playerId].KillCount++;
+                            }
                         }
-                    }
-                    else if (timeline.EventType == "LogPlayerKillV2")
-                    {
-                        if (match.DoNotCount.GetValueOrDefault())
-                        {
-                            matchTimelinesAsKiller[playerId].KillCountOther++;
-                        }
-                        else
-                        {
-                            matchTimelinesAsKiller[playerId].KillCount++;
-                        }
-
                     }
                 }
             }

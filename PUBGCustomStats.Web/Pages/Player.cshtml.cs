@@ -10,20 +10,20 @@ namespace PUBGCustomStats.Web.Pages
     {
         private readonly PUBGCustomStatsContext _context;
         public Guid? PlayerGuid { get; set; }
-        public string PlayerName { get; set; }
-        public List<Match> MatchList { get; set; }
+        public string? PlayerName { get; set; }
+        public List<Match>? MatchList { get; set; }
         //public PlayerStats? Stats { get; private set; }
-        public List<PlayerStats> PlayerKills { get; set; }
-        public List<PlayerStats> PlayerKilledBy { get; set; }
+        public List<PlayerStats>? PlayerKills { get; set; }
+        public List<PlayerStats>? PlayerKilledBy { get; set; }
 
         public class Match
         {
             public Guid MatchGuid { get; set; }
             public TimeOnly? MatchLength { get; set; }
-            public string Map { get; set; }
-            public string GameMode { get; set; }
-            public string Winner { get; set; }
-            public string MatchName { get; set; }
+            public string? Map { get; set; }
+            public string? GameMode { get; set; }
+            public string? Winner { get; set; }
+            public string? MatchName { get; set; }
             public bool DoNotCount { get; set; } = false; // Default to false if not specified
             public DateTime? MatchStartTime { get; set; }
             // public List<MatchPlayerStat> PlayerStats { get; set; } = new List<MatchPlayerStat>();
@@ -78,31 +78,33 @@ namespace PUBGCustomStats.Web.Pages
                 PlayerName = player.PlayerName;
 
                 MatchList = new List<Match>();
-                foreach (var matchPlayerStat in player.MatchPlayerStats)
+                if (player.MatchPlayerStats != null)
                 {
-                    var match = _context.Matches
-                        .Where(m => m.MatchGuid == matchPlayerStat.MatchGuid) // Assuming you have a foreign key relationship
-                        .FirstOrDefault();
-                    if (match != null)
+                    foreach (var matchPlayerStat in player.MatchPlayerStats)
                     {
-                        var matchModel = new Match
+                        var match = _context.Matches
+                            .Where(m => m.MatchGuid == matchPlayerStat.MatchGuid) // Assuming you have a foreign key relationship
+                            .FirstOrDefault();
+                        if (match != null)
                         {
-                            MatchGuid = match.MatchGuid,
-                            MatchLength = match.MatchLength,
-                            Map = match.Map,
-                            GameMode = match.GameMode,
-                            Winner = match.Winner,
-                            MatchName = match.MatchNameOrDefault(),
-                            DoNotCount = match.DoNotCount.GetValueOrDefault(),
-                            MatchStartTime = match.StartTime,
-                            Rank = matchPlayerStat.Rank,
-                            SessionGuid = match.SessionGuid,
-                            SeasonGuid = match.Session?.SeasonGuid
-                        };
-                        MatchList.Add(matchModel);
+                            var matchModel = new Match
+                            {
+                                MatchGuid = match.MatchGuid,
+                                MatchLength = match.MatchLength,
+                                Map = match.Map,
+                                GameMode = match.GameMode,
+                                Winner = match.Winner,
+                                MatchName = match.MatchNameOrDefault(),
+                                DoNotCount = match.DoNotCount.GetValueOrDefault(),
+                                MatchStartTime = match.StartTime,
+                                Rank = matchPlayerStat.Rank,
+                                SessionGuid = match.SessionGuid,
+                                SeasonGuid = match.Session?.SeasonGuid
+                            };
+                            MatchList.Add(matchModel);
+                        }
                     }
                 }
-
                 var matchTimelinesAsPlayer = new Dictionary<string, PlayerStats>();
                 var matchTimelinesAsKiller = new Dictionary<string, PlayerStats>();
 
@@ -111,7 +113,7 @@ namespace PUBGCustomStats.Web.Pages
                     var playerId = timeline.SecondaryPlayerAccountId ?? "Unknown";
                     var playerName = timeline.SecondaryPlayer?.PlayerName ?? "Unknown";
 
-                    if (timeline.SecondaryPlayerIsNPC.GetValueOrDefault())
+                    if (timeline.SecondaryPlayerIsNPC.GetValueOrDefault() && timeline.SecondaryPlayerAccountId != null)
                     {
                         if (timeline.SecondaryPlayerAccountId.StartsWith("ai"))
                         {
@@ -183,7 +185,7 @@ namespace PUBGCustomStats.Web.Pages
 
                                 case "Damage_Punch":
                                 case "Damage_Gun":
-                                    // Need o invesiage
+                                    // Need to invesiage
                                     break;
 
                                 case "Damage_VehicleHit":
@@ -198,15 +200,17 @@ namespace PUBGCustomStats.Web.Pages
                     }
 
                     if (!matchTimelinesAsPlayer.ContainsKey(playerId))
+                    {
+                        matchTimelinesAsPlayer.Add(playerId, new PlayerStats
                         {
-                            matchTimelinesAsPlayer.Add(playerId, new PlayerStats
-                            {
-                                PlayerName = playerName,
-                                KillCount = 0,
-                                KnockCount = 0
-                            });
-                        }
+                            PlayerName = playerName,
+                            KillCount = 0,
+                            KnockCount = 0
+                        });
+                    }
 
+                    if (timeline.Match != null)
+                    {
                         if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
                             if (timeline.Match.DoNotCount.GetValueOrDefault())
@@ -230,22 +234,23 @@ namespace PUBGCustomStats.Web.Pages
                             }
                         }
                     }
+                }
 
-                    foreach (var timeline in matchTimelinesKiller)
+                foreach (var timeline in matchTimelinesKiller)
+                {
+
+                    if (!string.IsNullOrEmpty(timeline.PlayerAccountId))
                     {
+                        var playerId = timeline.PlayerAccountId;
+                        var playerName = timeline.Player?.PlayerName ?? "Unknown";
 
-                        if (!string.IsNullOrEmpty(timeline.PlayerAccountId))
+                        if (timeline.PlayerIsNPC.GetValueOrDefault())
                         {
-                            var playerId = timeline.PlayerAccountId;
-                            var playerName = timeline.Player?.PlayerName ?? "Unknown";
-
-                            if (timeline.PlayerIsNPC.GetValueOrDefault())
+                            if (timeline.PlayerAccountId.StartsWith("ai"))
                             {
-                                if (timeline.PlayerAccountId.StartsWith("ai"))
-                                {
-                                    playerId = "BOT";
-                                    playerName = "BOT";
-                                }
+                                playerId = "BOT";
+                                playerName = "BOT";
+                            }
                             if (timeline.PlayerAccountId.StartsWith("Guard"))
                             {
                                 playerId = "GUARD";
@@ -257,23 +262,25 @@ namespace PUBGCustomStats.Web.Pages
                                 playerName = "Commander";
                             }
                             if (timeline.PlayerAccountId.StartsWith("Monster.Bear"))
-                                {
-                                    playerId = "Bear";
-                                    playerName = "Bear";
-                                }
-                            }
-
-                            if (!matchTimelinesAsKiller.ContainsKey(playerId))
                             {
-                                matchTimelinesAsKiller.Add(playerId, new PlayerStats
-                                {
-                                    PlayerName = playerName,
-                                    KillCount = 0,
-                                    KnockCount = 0
-                                });
+                                playerId = "Bear";
+                                playerName = "Bear";
                             }
+                        }
 
-                            if (timeline.EventType == "LogPlayerMakeGroggy")
+                        if (!matchTimelinesAsKiller.ContainsKey(playerId))
+                        {
+                            matchTimelinesAsKiller.Add(playerId, new PlayerStats
+                            {
+                                PlayerName = playerName,
+                                KillCount = 0,
+                                KnockCount = 0
+                            });
+                        }
+
+                        if (timeline.EventType == "LogPlayerMakeGroggy")
+                        {
+                            if (timeline.Match != null)
                             {
                                 if (timeline.Match.DoNotCount.GetValueOrDefault())
                                 {
@@ -282,11 +289,12 @@ namespace PUBGCustomStats.Web.Pages
                                 }
                                 else
                                 {
-
                                     matchTimelinesAsKiller[playerId].KnockCount++;
                                 }
-                            }
-                            else if (timeline.EventType == "LogPlayerKillV2")
+                            }                        }
+                        else if (timeline.EventType == "LogPlayerKillV2")
+                        {
+                            if (timeline.Match != null)
                             {
                                 if (timeline.Match.DoNotCount.GetValueOrDefault())
                                 {
@@ -296,15 +304,15 @@ namespace PUBGCustomStats.Web.Pages
                                 {
                                     matchTimelinesAsKiller[playerId].KillCount++;
                                 }
-
                             }
                         }
                     }
-
-                    PlayerKills = matchTimelinesAsKiller.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
-                    PlayerKilledBy = matchTimelinesAsPlayer.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
                 }
+
+                PlayerKills = matchTimelinesAsKiller.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
+                PlayerKilledBy = matchTimelinesAsPlayer.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
             }
+        }
 
 
 
