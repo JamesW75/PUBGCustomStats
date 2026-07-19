@@ -343,7 +343,7 @@ namespace PUBGCustomStats.Logic
             switch (mapNameRaw)
             {
                 case "Desert_Main":
-                    return "Sanhok";
+                    return "Miramar";
                 case "Erangel_Main":
                 case "Baltic_Main":
                     return "Erangel";
@@ -374,6 +374,8 @@ namespace PUBGCustomStats.Logic
                     return "Rondo";
                 case "Heaven_Main":
                     return "Haven";
+                case "Range_Main":
+                    return "Camp Jackal";
                 case null:
                     return "Unknown";
                 default:
