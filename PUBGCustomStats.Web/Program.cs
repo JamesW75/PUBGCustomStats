@@ -21,7 +21,10 @@ builder.Services.AddRazorPages();
 
 var connectionString = builder.Configuration.GetConnectionString("PUBGCustomStatsContext");
 
-connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+if (connectionString != null)
+{
+    connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+}
 
 // Add database context
 builder.Services.AddDbContext<PUBGCustomStatsContext>(options =>
