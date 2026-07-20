@@ -3,7 +3,7 @@
 
 @{
     var sessions = DbContext.Sessions
-        .Where(s => s.Season.IsCurrentSeason)
+        .Where(s => s.Season!= null && s.Season.IsCurrentSeason)
         .OrderByDescending(s => s.StartDateTime)
         .ToList();
 }

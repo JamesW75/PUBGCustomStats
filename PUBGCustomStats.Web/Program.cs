@@ -47,30 +47,10 @@ allResources.Add(new PageResource("/nonplayer/Guard") { OutFile = "nonplayer/gua
 allResources.Add(new PageResource("/nonplayer/Commander") { OutFile = "nonplayer/commander.html" });
 allResources.Add(new PageResource("/nonplayer/Lava") { OutFile = "nonplayer/lava.html" });
 
-using (var scope = builder.Services.BuildServiceProvider().CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<PUBGCustomStatsContext>();
-
-    allResources.AddRange(db.Players.Select(player =>
-        new PageResource($"/player/{player.PlayerGuid}") { OutFile = $"player/{player.PlayerName.Replace(' ', '-').ToLower()}.html" }
-    ));
-
-    allResources.AddRange(db.Sessions.Select(session =>
-        new PageResource($"/session?sessionGuid={session.SessionGuid}") { OutFile = $"session/{session.StartDateTime.Value.ToString("yyyy-MM-dd")}.html" }
-    ));
-
-    allResources.AddRange(db.Matches.Select(match =>
-        new PageResource($"/match?matchGuid={match.MatchGuid}") { OutFile = $"match/{match.StartTime.Value.ToLocalTime().ToString("yyyy-MM-dd-HHmm")}.html" }
-    ));
-
-}
-
 allResources.Add(new PageResource("/"));
 allResources.Add(new PageResource("/index"));
 allResources.Add(new PageResource("/charts"));
 allResources.Add(new PageResource("/clans"));
-
-
 
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));
@@ -86,9 +66,27 @@ allResources.Add(new BinResource("/icon-192.png"));
 allResources.Add(new BinResource("/icon-512.png"));
 allResources.Add(new BinResource("/site.webmanifest"));
 
-builder.Services.AddSingleton<IStaticResourcesInfoProvider>(
-  new StaticResourcesInfoProvider(allResources)
-  );
+builder.Services.AddSingleton<IStaticResourcesInfoProvider>(serviceProvider =>
+{
+    var resources = new List<ResourceInfoBase>(allResources);
+
+    using var scope = serviceProvider.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<PUBGCustomStatsContext>();
+
+    resources.AddRange(db.Players.Select(player =>
+        new PageResource($"/player/{player.PlayerGuid}") { OutFile = $"player/{(player.PlayerName ?? player.PlayerGuid.ToString()).Replace(' ', '-').ToLower()}.html" }
+    ));
+
+    resources.AddRange(db.Sessions.Select(session =>
+        new PageResource($"/session?sessionGuid={session.SessionGuid}") { OutFile = $"session/{(session.StartDateTime.HasValue ? session.StartDateTime.Value.ToString("yyyy-MM-dd") : session.SessionGuid.ToString())}.html" }
+    ));
+
+    resources.AddRange(db.Matches.Select(match =>
+        new PageResource($"/match?matchGuid={match.MatchGuid}") { OutFile = $"match/{(match.StartTime.HasValue ? match.StartTime.Value.ToLocalTime().ToString("yyyy-MM-dd-HHmm") : match.MatchGuid.ToString())}.html" }
+    ));
+
+    return new StaticResourcesInfoProvider(resources);
+});
 
 
 
