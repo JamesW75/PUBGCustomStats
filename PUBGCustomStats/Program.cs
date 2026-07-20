@@ -150,6 +150,7 @@ if (args.Length > 0)
 
                 session.CreateSession(sessionName, parsedSessionTime, currentSeason.Value);
                 Console.WriteLine($"Session created: {sessionName}");
+                Console.WriteLine($"Session GUID: {session.GetCurrentSession()}");
                 break;
 
             case "--editsession":
@@ -342,7 +343,9 @@ if (args.Length > 0)
                             switch (key.Key)
                             {
                                 case ConsoleKey.Y:
-                                    matchGet.AddMatch(matchGuid, currentSessionGuidforMatches);
+                                    Console.Write("Please enter a name for this match: ");
+                                    var enterMatchName = Console.ReadLine();
+                                    matchGet.AddMatch(matchGuid, currentSessionGuidforMatches, enterMatchName);
                                     break;
                                 case ConsoleKey.N:
                                     continue;
