@@ -20,6 +20,12 @@ Points are awarded as follows:
 
 In matches with bots, they can take a place in the match and damage rankings. However they are not shown on the match score table.
 
+Known Issues
+------------
+
+* #1 Incorrect data location on a Mac
+* #2 No PC support
+
 Prerequisites
 -------------
 * .NET 10.0 SDK or later
