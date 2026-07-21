@@ -14,7 +14,7 @@ namespace PUBGCustomStats.Logic
             DbContext = new PUBGCustomStatsContext(_dbContextOptions);
         }
 
-        public void CreateSession(string sessionName, DateTime sessionTime, Guid currentSeason)
+        public Guid CreateSession(string sessionName, DateTime sessionTime, Guid currentSeason)
         {
             var session = new Data.Models.Session
             {
@@ -24,6 +24,8 @@ namespace PUBGCustomStats.Logic
             };
             DbContext.Sessions.Add(session);
             DbContext.SaveChanges();
+
+            return session.SessionGuid;
         }
 
         public Guid GetCurrentSession()

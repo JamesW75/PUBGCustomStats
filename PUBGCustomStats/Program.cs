@@ -149,9 +149,9 @@ if (args.Length > 0)
                     return;
                 }
 
-                session.CreateSession(sessionName, parsedSessionTime, currentSeason.Value);
+                var createdSessionGuid = session.CreateSession(sessionName, parsedSessionTime, currentSeason.Value);
                 Console.WriteLine($"Session created: {sessionName}");
-                Console.WriteLine($"Session GUID: {session.GetCurrentSession()}");
+                Console.WriteLine($"Session GUID: {createdSessionGuid}");
                 break;
 
             case "--editsession":
