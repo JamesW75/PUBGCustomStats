@@ -23,8 +23,8 @@ In matches with bots, they can take a place in the match and damage rankings. Ho
 Known Issues
 ------------
 
-* #1 Incorrect data location on a Mac
-* #2 No PC support
+* https://github.com/JamesW75/PUBGCustomStats/issues/1 Incorrect data location on a Mac
+* https://github.com/JamesW75/PUBGCustomStats/issues/2 No PC support
 
 Prerequisites
 -------------
