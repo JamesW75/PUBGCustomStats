@@ -18,8 +18,8 @@ namespace PUBGCustomStats.Logic
         {
             _dbContextOptions = options;
             _integrationService = integrationService;
-            _baseStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PUBGCustomStats\\Matches";
-            _baseTelemetryStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PUBGCustomStats\\Telemetry";
+            _baseStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Matches");
+            _baseTelemetryStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Telemetry");
 
             if (!Directory.Exists(_baseStoragePath))
             {
