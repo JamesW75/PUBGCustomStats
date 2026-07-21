@@ -682,6 +682,23 @@
                         }
 
                         break;
+
+                    case "LogPlayerUseThrowable":
+
+                        switch (evt.Weapon)
+                        {
+                            case "Item_Weapon_PackageFlare_C":
+                                descripion = "🎆 "+ evt.Player?.PlayerName + " used Package Flare";
+                                break;
+                            case "Item_Weapon_CoverStructDropHandFlare_C":
+                                descripion = "🎆 "+ evt.Player?.PlayerName + " used Cover Flare";
+                                break;
+                            default:
+                                skip = true;
+                                break;
+                        }
+                        break;                    
+
                     default:
                         skip = true;
                         break;

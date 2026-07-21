@@ -1214,6 +1214,23 @@ namespace PUBGCustomStats.Logic
                             break;
 
                         case "LogPlayerUseThrowable":
+                            matchTimeline.PlayerAccountId = telemetryEvent.attacker?.accountId;
+
+                            if (!string.IsNullOrEmpty(matchTimeline.PlayerAccountId))
+                            {
+                                if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
+                                {
+                                    matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
+                                }
+                            }
+
+                            matchTimeline.Weapon = telemetryEvent.weapon?.itemId;
+                            matchTimeline.DamageCategory = telemetryEvent.weapon?.category;
+                            matchTimeline.DamageReason = telemetryEvent.weapon?.subCategory;
+
+                            eventProcessed = true;
+                            break;
+
                         case "LogMatchDefinition":
                         case "LogPlayerLogin":
                         case "LogPlayerCreate":
