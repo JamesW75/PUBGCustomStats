@@ -46,16 +46,17 @@ if (args.Length > 0)
     }
     connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
-
     //    optionsBuilder.UseSqlite("Data Source={AppDataPath}\\PUBGCustomStats\\PUBGCustomStats.db");
     optionsBuilder.UseSqlite(connectionString);
     var dbContextOptions = optionsBuilder.Options;
 
     if (args[0].ToLower() == "--setup")
     {
-        // Create the daabase and tables
+        // Create the database and tables
         var dbContext = new PUBGCustomStatsContext(dbContextOptions);
         Console.WriteLine("Creating database and tables...");
+
+        Console.WriteLine("Database location: " + connectionString);
 
         if (dbContext.Database.EnsureCreated())
         {

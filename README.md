@@ -25,7 +25,8 @@ Prerequisites
 * .NET 10.0 SDK or later
 * An API key from the PUBG Developer Portal (https://developer.pubg.com/)
 * Guids for the matches you want to track. You can get these by looking at your match history on sites like pubglookup.com or chickendinner.gg.
-** Or you can use the Xbox gamer tag as a parameter to add recen matches
+   * Or you can use the Xbox gamer tag as a parameter to add recen matches
+
 Installation
 ------------
 
