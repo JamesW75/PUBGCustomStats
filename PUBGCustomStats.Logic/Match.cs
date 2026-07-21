@@ -114,7 +114,7 @@ namespace PUBGCustomStats.Logic
                 DbContext.SaveChanges();
             }
         }
-        
+
         public void DeleteMatch(Guid matchGuid)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
@@ -160,7 +160,7 @@ namespace PUBGCustomStats.Logic
 
             match.MatchType = matchData?.data?.attributes?.matchType;
             match.GameMode = GetGameMode(matchData?.data?.attributes?.gameMode);
-            
+
             match.Perspective = "TPP";
             switch (matchData?.data?.attributes?.gameMode)
             {
@@ -865,7 +865,23 @@ namespace PUBGCustomStats.Logic
 
                         case "LogCarePackageSpawn":
                         case "LogCarePackageLand":
-                            // item package
+                            if (telemetryEvent.itemPackage != null)
+                            {
+                                matchTimeline.DamageCategory = telemetryEvent.itemPackage.itemPackageId;
+
+                                if (telemetryEvent.itemPackage.items != null)
+                                {
+
+                                    foreach (var item in telemetryEvent.itemPackage.items)
+                                    {
+                                        if (item.category == "Weapon")
+                                        {
+                                            matchTimeline.Weapon = item.itemId;
+                                        }
+                                    }
+                                }
+                            }
+
                             eventProcessed = true;
                             break;
 
@@ -1184,6 +1200,19 @@ namespace PUBGCustomStats.Logic
                             eventProcessed = true;
                             break;
 
+                        case "LogPlayerLogout":
+                            matchTimeline.PlayerAccountId = telemetryEvent.accountId;
+
+                            if (!string.IsNullOrEmpty(matchTimeline.PlayerAccountId))
+                            {
+                                if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
+                                {
+                                    matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
+                                }
+                            }
+                            eventProcessed = true;
+                            break;
+
                         case "LogPlayerUseThrowable":
                         case "LogMatchDefinition":
                         case "LogPlayerLogin":
@@ -1205,7 +1234,6 @@ namespace PUBGCustomStats.Logic
                         case "LogObjectDestroy":
                         case "LogItemPickupFromCarepackage":
                         case "LogItemPickupFromCustomPackage":
-                        case "LogPlayerLogout":
                         case "LogVehicleRide":
                         case "LogVehicleDamage":
                         case "LogHeal":

@@ -45,6 +45,7 @@
         @{
             var firstEvent = Model.MatchTimeline.First().EventTimestamp;
 
+            var matchEnded = false;
             foreach (var evt in Model.MatchTimeline.OrderBy(e => e.EventTimestamp))
             {
                 var timeStamp = (evt.EventTimestamp - firstEvent);
@@ -341,6 +342,8 @@
 
                             descripion += " Winner(s) " + playerList + ".";
                         }
+
+                        matchEnded = true;
                         break;
 
                     case "LogWheelDestroy":
@@ -464,11 +467,29 @@
                         break;
 
                     case "LogCarePackageSpawn":
-                        descripion = "📦 Care Package Dropping";
+                        descripion = "📦 ";
+                        if (evt.DamageCategory != null)
+                        {
+                            descripion += GetCarePackageDescription(evt.DamageCategory);
+                        }
+                        descripion += " Care Package Dropping";
+                        if (evt.Weapon != null)
+                        {
+                            descripion += ". Containing " + GetWeaponDescription(evt.Weapon);
+                        }
                         break;
 
                     case "LogCarePackageLand":
-                        descripion = "📦 Care Package Landed";
+                        descripion = "📦 ";
+                        if (evt.DamageCategory != null)
+                        {
+                            descripion += GetCarePackageDescription(evt.DamageCategory);
+                        }
+                        descripion += " Care Package Landed";
+                        if (evt.Weapon != null)
+                        {
+                            descripion += ". Containing " + GetWeaponDescription(evt.Weapon);
+                        }
                         break;
 
                     case "LogRedZoneEnded":
@@ -642,6 +663,25 @@
                             }
                         }
                         break;
+
+                    case "LogPlayerLogout":
+                        if (!matchEnded)
+                        {
+                            if (evt.Player != null)
+                            {
+                                descripion = "🚪 " + evt.Player?.PlayerName + " logged out.";
+                            } 
+                            else 
+                            {
+                                descripion = "🚪 Unknown Player logged out.";
+                            }    
+                        } 
+                        else 
+                        {
+                            skip = true;
+                        }
+
+                        break;
                     default:
                         skip = true;
                         break;
@@ -692,6 +732,25 @@ else
         return playerAccountId;
     }
 
+public string GetCarePackageDescription(string? itemId)
+{
+    switch (itemId)
+    {
+        case "Carepackage_SmallPackage_NoParachute_Bluechip_C":
+            return "Blue Chip";
+        case "Carapackage_RedBox_C":
+            return "Red Box";
+        case "Carapackage_SmallPackage_C":
+            return "Small";
+            case "Carapackage_SmallPackage_NoParachute_C":
+            return "Support Flare";
+        case null:
+            return "";
+        default:
+            Console.WriteLine("Unknown Care Package: " + itemId);
+            return itemId;
+    }
+}
     public string GetDamageDescription(string? damageCategory, string? damageReason)
     {
         switch (damageCategory)
@@ -1267,6 +1326,22 @@ else
                 return "Bandage";
             case "Item_Heal_MedKit_C":
                 return "Med Kit";
+
+            // Crate Weapons
+            case "Item_Weapon_Mk14_C":
+                return "MK14";
+            case "Item_Weapon_L6_C":
+                return "Lynx AMR";
+            case "Item_Weapon_P90_C":
+                return "P90";
+            case "Item_Weapon_FAMASG2_C":
+                return "FAMAS";
+            case "Item_Weapon_Groza_C":
+                return "Groza";
+            case "Item_Weapon_IntegratedRepair_C":
+                return "Repair Kit";
+            case "Item_Weapon_Pickaxe_C":
+                return "Pickaxe";
             default:
                 Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                 return weapon;
