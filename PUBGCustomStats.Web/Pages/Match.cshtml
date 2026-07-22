@@ -11,7 +11,7 @@
 @if (!string.IsNullOrEmpty(Model.Match?.MatchDescription))
 {
     <p>
-        @Html.Raw(FormatDescription(Model.Match.MatchDescription))
+        @Html.Raw(MatchHelpers.FormatDescription(Model.Match.MatchDescription))
     </p>
 }
 
@@ -29,7 +29,7 @@
 @if (!string.IsNullOrEmpty(Model.Match?.Weather))
 {
     <p>
-        Weather: @FixWeather(Model.Match.Weather)
+        Weather: @MatchHelpers.FixWeather(Model.Match.Weather)
     </p>
 }
 @if (!string.IsNullOrEmpty(Model.Match?.Perspective))
@@ -120,7 +120,7 @@
                             }
                             else
                             {
-                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " killed by " + GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " killed by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                             }
                         }
                         else
@@ -133,13 +133,13 @@
                             else
                             {
 
-                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " died from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " died from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                             }
                         }
 
                         if (!string.IsNullOrEmpty(evt.Weapon) && evt.Weapon != "None")
                         {
-                            var weapon = GetWeaponDescription(evt.Weapon);
+                            var weapon = MatchHelpers.GetWeaponDescription(evt.Weapon);
 
                             switch (weapon)
                             {
@@ -167,7 +167,7 @@
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
 
                         if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
@@ -187,7 +187,7 @@
                                 {
                                     if (player.PlayerIsNPC.GetValueOrDefault())
                                     {
-                                        playerList += GetNPCName(player.PlayerAccountId);
+                                        playerList += MatchHelpers.GetNPCName(player.PlayerAccountId);
                                     }
                                     else
                                     {
@@ -201,7 +201,7 @@
 
                         if (evt.IndividualRanking != null && evt.IndividualRanking > 0)
                         {
-                            descripion += ". Individual ranking " + GetRanking(evt.IndividualRanking.Value);
+                            descripion += ". Individual ranking " + MatchHelpers.GetRanking(evt.IndividualRanking.Value);
                         }
 
                         break;
@@ -218,11 +218,11 @@
                             {
                                 if (evt.PlayerGuid == evt.SecondaryPlayerGuid)
                                 {
-                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked themself by " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked themself by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                                 }
                                 else
                                 {
-                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                                 }
                             }
                         }
@@ -235,13 +235,13 @@
                             }
                             else
                             {
-                                descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                             }
                         }
 
                         if (!string.IsNullOrEmpty(evt.Weapon))
                         {
-                            var weapon = GetWeaponDescription(evt.Weapon);
+                            var weapon = MatchHelpers.GetWeaponDescription(evt.Weapon);
 
                             switch (weapon)
                             {
@@ -267,7 +267,7 @@
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
 
                         /*
@@ -290,22 +290,22 @@
                             {
                                 if (evt.SecondaryPlayerAccountId == evt.PlayerAccountId)
                                 {
-                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " self revived";
+                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " self revived";
                                 }
                                 else
                                 {
-                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived by " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived by " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                                 }
                             }
                         }
                         else
                         {
-                            descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived";
+                            descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived";
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
@@ -314,7 +314,7 @@
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
@@ -350,24 +350,24 @@
                         var wheel = "Wheel";
                         if (!string.IsNullOrEmpty(evt.Vehicle))
                         {
-                            wheel = GetWeaponDescription(evt.Vehicle) + " " + wheel;
+                            wheel = MatchHelpers.GetWeaponDescription(evt.Vehicle) + " " + wheel;
                         }
                         if (evt.PlayerIsNPC.GetValueOrDefault())
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + GetNPCName(evt.PlayerAccountId);
+                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
                         }
                         else if (evt.PlayerGuid == null)
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
+                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
                         }
                         else
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
+                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
@@ -375,24 +375,24 @@
                         var vehicle = "Vehicle";
                         if (!string.IsNullOrEmpty(evt.Vehicle))
                         {
-                            vehicle = GetWeaponDescription(evt.Vehicle);
+                            vehicle = MatchHelpers.GetWeaponDescription(evt.Vehicle);
                         }
                         if (evt.PlayerIsNPC.GetValueOrDefault())
                         {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + GetNPCName(evt.PlayerAccountId);
+                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
                         }
                         else if (evt.PlayerGuid == null)
                         {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
+                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
                         }
                         else
                         {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
+                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
@@ -407,7 +407,7 @@
                         }
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         descripion += ".";
 
@@ -475,7 +475,7 @@
                         descripion += " Care Package Dropping";
                         if (evt.Weapon != null)
                         {
-                            descripion += ". Containing " + GetWeaponDescription(evt.Weapon);
+                            descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                         }
                         break;
 
@@ -488,7 +488,7 @@
                         descripion += " Care Package Landed";
                         if (evt.Weapon != null)
                         {
-                            descripion += ". Containing " + GetWeaponDescription(evt.Weapon);
+                            descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                         }
                         break;
 
@@ -532,7 +532,7 @@
                             descripion = "🪂 " + evt.Player?.PlayerName + " landed";
                             if (!string.IsNullOrEmpty(evt.Zone))
                             {
-                                descripion += " in " + GetZoneDescription(evt.Zone);
+                                descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
 
                             }
                             descripion += " (Parachuted " + evt.Distance?.ToString("N0") + "m)";
@@ -547,7 +547,7 @@
                         else
                         {
                             descripion = "🧱 " + evt.Player?.PlayerName + " destroyed wall";
-                            descripion += " with " + GetWeaponDescription(evt.Weapon);
+                            descripion += " with " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                         }
                         break;
 
@@ -594,7 +594,7 @@
 
                         if (!string.IsNullOrEmpty(evt.Zone) && !skip)
                         {
-                            descripion += " in " + GetZoneDescription(evt.Zone);
+                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         descripion += ".";
                         break;
@@ -603,7 +603,7 @@
                         switch (evt.DamageCategory)
                         {
                             case "VendingMachine":
-                                descripion = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + GetWeaponDescription(evt.Weapon);
+                                descripion = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                                 break;
                             case "FuelPuddle":
                                 switch (evt.DamageReason)
@@ -652,7 +652,7 @@
                                     }
                                     else
                                     {
-                                        descripion = "🚷 " + evt.Player?.PlayerName + " took damage from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
+                                        descripion = "🚷 " + evt.Player?.PlayerName + " took damage from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
                                     }
                                 }
                                 else
@@ -720,1117 +720,3 @@ else
     <p>Sorry, no match events available</p>
 }
 
-
-
-
-@functions {
-    public string GetNPCName(string? playerAccountId)
-    {
-        if (playerAccountId == null)
-        {
-            return "Unknown";
-        }
-        if (playerAccountId.StartsWith("Guard.ai"))
-        {
-            return "GUARD";
-        }
-        if (playerAccountId.StartsWith("Commander.ai"))
-        {
-            return "Commander";
-        }
-        if (playerAccountId.StartsWith("ai"))
-        {
-            return "BOT";
-        }
-        if (playerAccountId.StartsWith("Monster.Bear"))
-        {
-            return "BEAR";
-        }
-        return playerAccountId;
-    }
-
-    public string GetDamageDescription(string? damageCategory, string? damageReason)
-    {
-        switch (damageCategory)
-        {
-            case "Damage_BlueZone":
-                return "Blue Zone";
-            case "Damage_DropStructHit":
-                return "Drop Structure";
-            case "Damage_CarePackageDropHit":
-                return "Care Package Drop";
-            case "Damage_Drown":
-                return "Drowning";
-            case "Damage_Explosion_C4":
-                return "C4";
-            case "Damage_Explosion_Grenade":
-                return "Grenade";
-            case "Damage_Explosion_JerryCan":
-                return "Jerry Can";
-            case "Damage_Explosion_Mortar":
-                return "Mortar";
-            case "Damage_Explosion_PanzerFaustBackBlast":
-                return "Panzer Back Blast";
-            case "Damage_Explosion_PanzerFaustWarhead":
-                return "Panzer";
-            case "Damage_Explosion_PanzerFaustWarheadVehicleArmorPenetration":
-                return "Panzer Vehicle Penetration";
-            case "Damage_Explosion_RedZone":
-                return "Red Zone";
-            case "Damage_Explosion_BlackZone":
-                return "Black Zone";
-            case "Damage_Explosion_StickyBomb":
-                return "Sticky Bomb";
-            case "Damage_Explosion_Vehicle":
-                return "Vehicle Explosion";
-            case "Damage_Explosion_GasPump":
-                return "Gas Pump Explosion";
-
-            case "Damage_Gun_Penetrate_BRDM":
-            case "Damage_Gun":
-                return FormatDamageReason(damageReason);
-            case "Damage_Instant_Fall":
-                return "Fall";
-            case "Damage_Lava":
-                return "Lava";
-
-            case "Damage_Melee":
-                return "Melee to " + SimplifyDamageReason(damageReason);
-            case "Damage_MeleeThrow":
-                return "Melee Throw to " + SimplifyDamageReason(damageReason);
-            case "Damage_Molotov":
-                return "Molotov";
-            case "Damage_Monster":
-                return "Monster";
-            case "Damage_Punch":
-                return SimplifyDamageReason(damageReason) + " Punch";
-            case "Damage_VehicleCrashHit":
-                return "Vehicle Crash";
-            case "Damage_VehicleHit":
-                return "Vehicle";
-            /* return damageReason;*/
-            case "Damage_HelicopterHit":
-                return "Helicopter";
-            case "Damage_Groggy":
-            case "Damage_DBNO":
-                return "Bleeding out";
-            case "Damage_BlueZoneGrenade":
-                return "BZ Grenade";
-            case null:
-                return "Unknown";
-            default:
-                return damageCategory + " " + damageReason;
-        }
-    }
-
-    public string FormatDamageReason(string? damageReason)
-    {
-        switch (damageReason)
-        {
-            case "ArmShot":
-                return "Arm Shot";
-            case "HeadShot":
-                return "Head Shot";
-            case "LegShot":
-                return "Leg Shot";
-            case "PelvisShot":
-                return "Pelvis Shot";
-            case "TorsoShot":
-                return "Torso Shot";
-            case null:
-                return "";
-            default:
-                return damageReason;
-        }
-    }
-
-    public string SimplifyDamageReason(string? damageReason)
-    {
-        switch (damageReason)
-        {
-            case "ArmShot":
-                return "Arm";
-            case "HeadShot":
-                return "Head";
-            case "LegShot":
-                return "Leg";
-            case "PelvisShot":
-                return "Pelvis";
-            case "TorsoShot":
-                return "Torso";
-            case "None":
-            case null:
-                return "";
-            default:
-                return damageReason;
-        }
-    }
-
-    public string GetWeaponDescription(string? damageCategory, string? damageReason)
-    {
-        switch (damageCategory)
-        {
-            case "Damage_DropStructHit":
-                return "Structure Drop";
-            case "Damage_CarePackageDropHit":
-                return "Care Package Drop";
-            case "Damage_Explosion_GasPump":
-                return "Gas Pump Explosion";
-            case "Damage_Explosion_Mortar":
-                return "Mortar";
-            case "Damage_Explosion_PanzerFaustWarheadVehicleArmorPenetration":
-            case "Damage_Explosion_PanzerFaustWarhead":
-                return "Panzer";
-            case "Damage_Explosion_RedZone":
-                return "Red Zone";
-            case "Damage_Lava":
-                return "Lava";
-            case "Damage_Monster":
-                return "Bear";
-            case "Damage_Punch":
-                return "Punch";
-            case "Damage_Explosion_C4":
-            case "WeapC4_C":
-                return "C4";
-            case "Damage_Explosion_Grenade":
-                return "Grenade";
-            case "Damage_Explosion_StickyBomb":
-                return "Sticky Bomb";
-            case "Damage_Instant_Fall":
-                return "Fall";
-            case "Damage_VehicleCrashHit":
-                return "Crash";
-            case "Damage_Gun":
-            case "Damage_Gun_Penetrate_BRDM":
-            case "Damage_Melee":
-                return GetWeaponDescription(damageReason);
-            default:
-                return damageCategory + " " + damageReason;
-        }
-    }
-
-    public string GetWeaponDescription(string? weapon)
-    {
-        if (weapon == null){
-            return "";
-        }
-        // Remove anything after _C
-        if (weapon.Contains("_C_"))
-        {
-            weapon = weapon.Substring(0, weapon.IndexOf("_C_") + 2);
-        }
-
-        // Lookup weapon from: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/damageCauserName.json
-        // Lookup vehicle from: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/vehicle/vehicleId.json
-        switch (weapon)
-        {
-            case "WeapAKM_C":
-                return "AKM";
-            case "WeapM416_C":
-                return "M416";
-            case "WeapSLR_C":
-                return "SLR";
-            case "LMG6":
-                return "LMG6";
-            case "TslGameModeBase_BattleRoyale_CustomBP_C":
-            case "TslGameModeBase_BattleRoyaleBP_C":
-                return "Blue Zone";
-            case "WeapGrenade_C":
-                return "Grenade";
-            case "Item_Weapon_StickyGrenade_C":
-                return "Sticky Bomb";
-            case "Uaz_C":
-                return "Uaz";
-            case "WeapFamasG2_C":
-                return "FAMAS";
-            case "WeapSmokeBomb_C":
-                return "Smoke Bomb";
-            case "WeapMolotov_C":
-                return "Molotov";
-
-
-
-
-
-
-
-
-            case "AIPawn_Base_Female_C":
-            case "AIPawn_Base_Male_C":
-                return "AI Player";
-            case "AirBoat_V2_C":
-                return "Airboat";
-            case "AquaRail_A_01_C":
-            case "AquaRail_A_02_C":
-            case "AquaRail_A_03_C":
-                return "Aquarail";
-            case "BP_ATV_C":
-                return "Quad";
-            case "BP_BearV2_C":
-                return "Bear";
-            case "BP_BRDM_C":
-                return "BRDM-2";
-            case "BP_Bicycle_C":
-            case "BP_Bicycle_Succubus_C":
-                return "Bicycle";
-            case "BP_Blanc_C":
-            case "BP_Blanc_Esports_C":
-                return "Coupe SUV";
-            case "BP_Carrera_LGD_C":
-                return "Carrera";
-            case "BP_Cayenne_EP_C":
-                return "Cayenne";
-            case "BP_Chiron_ULT_C":
-            case "BP_Chiron_LGD_C":
-                return "Chiron";
-            case "BP_Classic_01_C":
-                return "Classic Car";
-            case "BP_CoupeRB_C":
-                return "Coupe RB";
-            case "BP_DO_Circle_Train_Merged_C":
-            case "BP_DO_Line_Train_Dino_Merged_C":
-            case "BP_DO_Line_Train_Merged_C":
-                return "Train";
-            case "BP_Dirtbike_C":
-                return "Dirt Bike";
-            case "BP_DronePackage_Projectile_C":
-                return "Drone";
-            case "BP_Urus_EP_C":
-                return "Lamborghini";
-            case "BP_Eragel_CargoShip01_C":
-                return "Ferry Damage";
-            case "BP_FakeLootProj_AmmoBox_C":
-            case "BP_FakeLootProj_MilitaryCrate_C":
-                return "Loot Truck";
-            case "BP_FireEffectController_C":
-                return "Molotov Fire";
-            case "BP_FireEffectController_JerryCan_C":
-                return "Jerrycan Fire";
-            case "BP_Food_Truck_C":
-                return "Food Truck";
-            case "BP_Helicopter_C":
-                return "Pillar Scout Helicopter";
-            case "BP_IncendiaryDebuff_C":
-            case "BP_JerryCanFireDebuff_C":
-            case "BP_JerryCan_FuelPuddle_C":
-                return "Burn";
-            case "BP_KillTruck_C":
-                return "Kill Truck";
-            case "BP_LootTruck_C":
-                return "Loot Truck";
-            case "BP_M_Rony_A_01_C":
-            case "BP_M_Rony_A_02_C":
-            case "BP_M_Rony_A_03_C":
-                return "Rony";
-            case "BP_McLarenGT_St_white_C":
-                return "McLaren";
-            case "BP_Mirado_A_02_C":
-            case "BP_Mirado_A_03_C":
-            case "BP_Mirado_A_03_Esports_C":
-                return "Mirado";
-            case "BP_Mirado_Open_03_C":
-            case "BP_Mirado_Open_04_C":
-            case "BP_Mirado_Open_05_C":
-                return "Mirado (open top)";
-            case "BP_MolotovFireDebuff_C":
-                return "Molotov Fire Damage";
-            case "BP_Motorbike_04_C":
-            case "BP_Motorbike_04_Desert_C":
-                return "Motorcycle";
-            case "BP_Motorbike_04_SideCar_C":
-            case "BP_Motorbike_04_SideCar_Desert_C":
-                return "Motorcycle (w/ Sidecar)";
-            case "BP_Motorbike_Solitario_C":
-                return "Motorcycle";
-            case "BP_Motorglider_C":
-            case "BP_Motorglider_Green_C":
-            case "BP_Motorglider_Orange_C":
-                return "Motor Glider";
-            case "BP_Niva_01_C":
-            case "BP_Niva_02_C":
-            case "BP_Niva_03_C":
-            case "BP_Niva_04_C":
-            case "BP_Niva_05_C":
-            case "BP_Niva_06_C":
-            case "BP_Niva_07_C":
-            case "BP_Niva_Esports_C":
-                return "Zima";
-            case "BP_PickupTruck_A_01_C":
-            case "BP_PickupTruck_A_02_C":
-            case "BP_PickupTruck_A_03_C":
-            case "BP_PickupTruck_A_04_C":
-            case "BP_PickupTruck_A_05_C":
-            case "BP_PickupTruck_A_esports_C": // Closed op
-            case "BP_PickupTruck_B_01_C":
-            case "BP_PickupTruck_B_02_C":
-            case "BP_PickupTruck_B_03_C":
-            case "BP_PickupTruck_B_04_C":
-            case "BP_PickupTruck_B_05_C": //Open op
-                return "Pickup Truck";
-            case "BP_PicoBus_C":
-                return "Pico Bus";
-            case "BP_Pillar_Car_C": return "Pillar Security Car";
-            case "BP_Panamera_ULT_C": return "Porche";
-            case "BP_PonyCoupe_C": return "Pony Coupe";
-            case "BP_Porter_C": return "Porter";
-            case "BP_RoadGlideST_LGD_C": return "Harley-Davidson";
-            case "BP_Rubber_boat_C": return "Inflatable Boat";
-            case "BP_Scooter_01_A_C":
-            case "BP_Scooter_02_A_C":
-            case "BP_Scooter_03_A_C":
-            case "BP_Scooter_04_A_C":
-                return "Scooter";
-            case "BP_Snowbike_01_C":
-            case "BP_Snowbike_02_C":
-                return "Snowbike";
-            case "BP_Snowmobile_01_C":
-            case "BP_Snowmobile_02_C":
-            case "BP_Snowmobile_03_C":
-                return "Snowmobile";
-            case "BP_Spiketrap_C":
-                return "Spike Trap";
-            case "BP_Special_FbrBike_C":
-                return "Special FBR Bike";
-            case "BP_TslGasPump_C":
-                return "Gas Pump";
-            case "BP_TukTukTuk_A_01_C":
-            case "BP_TukTukTuk_A_02_C":
-            case "BP_TukTukTuk_A_03_C":
-                return "Tukshai";
-            case "BP_Van_A_01_C":
-            case "BP_Van_A_02_C":
-            case "BP_Van_A_03_C":
-                return "Van";
-            case "BP_Vantage_EP_C":
-                return "Vantage";
-            case "BattleRoyaleModeController_Chimera_C":
-            case "BattleRoyaleModeController_Def_C":
-            case "BattleRoyaleModeController_Desert_C":
-            case "BattleRoyaleModeController_DihorOtok_C":
-            case "BattleRoyaleModeController_Heaven_C":
-            case "BattleRoyaleModeController_Kiki_C":
-            case "BattleRoyaleModeController_Savage_C":
-            case "BattleRoyaleModeController_Summerland_C":
-            case "BattleRoyaleModeController_Tiger_C":
-                return "Bluezone";
-            case "BlackZoneController_Def_C":
-                return "Blackzone";
-            case "Bluezonebomb_EffectActor_C":
-                return "Bluezone Grenade";
-            case "Boat_PG117_C":
-                return "PG-117";
-            case "Buff_DecreaseBreathInApnea_C":
-                return "Drowning";
-            case "Buggy_A_01_C":
-            case "Buggy_A_02_C":
-            case "Buggy_A_03_C":
-            case "Buggy_A_04_C":
-            case "Buggy_A_05_C":
-            case "Buggy_A_06_C":
-                return "Buggy";
-            case "Carepackage_Container_C":
-                return "Care Package";
-            case "Dacia_A_01_v2_C":
-            case "Dacia_A_01_v2_snow_C":
-            case "Dacia_A_02_v2_C":
-            case "Dacia_A_03_v2_C":
-            case "Dacia_A_03_v2_Esports_C":
-            case "Dacia_A_04_v2_C":
-                return "Dacia";
-            case "DroppedItemGroup":
-                return "Object Fragments";
-            case "EmergencyAircraft_Tiger_C":
-                return "Emergency Aircraft";
-            case "Jerrycan":
-                return "Jerrycan";
-            case "JerrycanFire":
-                return "Jerrycan Fire";
-            case "Lava":
-                return "Lava";
-            case "Mortar_Projectile_C":
-                return "Mortar";
-            case "None":
-                return "None";
-            case "PG117_A_01_C":
-                return "PG-117";
-            case "PanzerFaust100M_Projectile_C":
-                return "Panzerfaust";
-            case "PlayerFemale_A_C":
-            case "PlayerMale_A_C":
-                return "Player";
-            case "ProjC4_C":
-                return "C4";
-            case "ProjGrenade_C":
-                return "Frag Grenade";
-            case "ProjIncendiary_C":
-                return "Incendiary Projectile";
-            case "ProjMolotov_C":
-                return "Molotov Cocktail";
-            case "ProjMolotov_DamageField_Direct_C":
-                return "Molotov Cocktail Fire Field";
-            case "ProjStickyGrenade_C":
-                return "Sticky Bomb";
-            case "RacingDestructiblePropaneTankActor_C":
-                return "Propane Tank";
-            case "RacingModeContorller_Desert_C":
-                return "Bluezone";
-            case "RedZoneBomb_C":
-            case "RedZoneBombingField":
-            case "RedZoneBombingField_Def_C":
-            case "RedZoneBombingField_Savage_C":
-                return "Redzone";
-            case "SandStormBuff_BP_C":
-                return "Sandstorm";
-            case "TslDestructibleSurfaceManager":
-                return "Destructible Surface";
-            case "TslPainCausingVolume":
-                return "Lava";
-            case "Uaz_A_01_C":
-            case "Uaz_Armored_C":
-            case "Uaz_B_01_C":
-            case "Uaz_B_01_esports_C":
-            case "Uaz_C_01_C":
-                return "UAZ";
-            case "UltAIPawn_Base_Female_C":
-            case "UltAIPawn_Base_Male_C":
-                return "BOT";
-            case "WeapACE32_C":
-                return "ACE32";
-            case "WeapAK47_C":
-                return "AKM";
-            case "WeapAUG_C":
-                return "AUG A3";
-            case "WeapAWM_C":
-                return "AWM";
-            case "WeapBerreta686_C":
-                return "S686";
-            case "WeapBerylM762_C":
-                return "Beryl";
-            case "WeapBizonPP19_C":
-                return "Bizon";
-            case "WeapBluezoneGrenade_C":
-                return "BZ Grenade";
-            case "WeapCowbarProjectile_C":
-            case "WeapCowbar_C":
-                return "Crowbar";
-            case "WeapCrossbow_1_C":
-                return "Crossbow";
-            case "WeapDP12_C":
-                return "DBS";
-            case "WeapDP28_C":
-                return "DP-28";
-            case "WeapDesertEagle_C":
-                return "Deagle";
-            case "WeapDragunov_C":
-                return "Dragunov";
-            case "WeapDuncansHK416_C":
-                return "M416";
-            case "WeapFlareGun_C":
-                return "Flare Gun";
-            case "WeapFlashBang_C":
-                return "Flash Bang";
-            case "WeapFNFal_C":
-                return "SLR";
-            case "WeapG18_C":
-                return "P18C";
-            case "WeapG36C_C":
-                return "G36C";
-            case "WeapGroza_C":
-                return "Groza";
-            case "WeapHK416_C":
-                return "M416";
-            case "WeapIntegratedRepair_C":
-                return "Repair Kit";
-            case "WeapJS9_C":
-                return "JS9";
-            case "WeapJerryCan_C":
-                return "Jerry Can";
-            case "WeapJuliesKar98k_C":
-                return "Kar98k";
-            case "WeapK2_C":
-                return "K2";
-            case "WeapKar98k_C":
-                return "Kar98k";
-            case "WeapL6_C":
-                return "Lynx AMR";
-            case "WeapLunchmeatsAK47_C":
-                return "AKM";
-            case "WeapM16A4_C":
-                return "M16A4";
-            case "WeapM1911_C":
-                return "P1911";
-            case "WeapM249_C":
-                return "M249";
-            case "WeapM24_C":
-                return "M24";
-            case "WeapM79_C":
-                return "M79";
-            case "WeapM9_C":
-                return "P92";
-            case "WeapMG3_C":
-                return "MG3";
-            case "WeapMP5K_C":
-                return "MP5K";
-            case "WeapMP9_C":
-                return "MP9";
-            case "WeapMacheteProjectile_C":
-            case "WeapMachete_C":
-                return "Machete";
-            case "WeapMadsQBU88_C": return "QBU88";
-            case "WeapMini14_C": return "Mini 14";
-            case "WeapMk12_C": return "Mk12";
-            case "WeapMk14_C": return "Mk14";
-            case "WeapMk47Mutant_C": return "Mk47 Mutant";
-            case "WeapMosinNagant_C": return "Mosin-Nagant";
-            case "WeapNagantM1895_C": return "R1895";
-            case "WeapOriginS12_C": return "O12";
-            case "WeapP90_C": return "P90";
-            case "WeapPanProjectile_C":
-            case "WeapPan_C":
-                return "Pan";
-            case "WeapPanzerFaust100M1_C":
-                return "Panzerfaust";
-            case "WeapPickaxeProjectile_C": return "Pick Axe";
-            case "WeapQBU88_C": return "QBU";
-            case "WeapQBZ95_C": return "QBZ";
-            case "WeapRhino_C": return "R45";
-            case "WeapSCAR-L_C": return "SCAR-L";
-            case "WeapSKS_C": return "SKS";
-            case "WeapSaiga12_C": return "S12K";
-            case "WeapSawnoff_C": return "Sawed-off";
-            case "WeapSickleProjectile_C":
-            case "WeapSickle_C":
-                return "Sickle";
-            case "WeapStickyGrenade_C":
-                return "Sticky Bomb";
-            case "WeapThompson_C": return "Tommy Gun";
-            case "WeapTurret_KillTruck_Main_C": return "Kill Truck Turret";
-            case "WeapUMP_C": return "UMP9";
-            case "WeapUZI_C": return "Micro Uzi";
-            case "WeapVSS_C": return "VSS";
-            case "WeapVector_C": return "Vector";
-            case "WeapWin94_C": return "Win94";
-            case "WeapWinchester_C": return "S1897";
-            case "Weapvz61Skorpion_C":
-                return "Skorpion";
-
-            case "Item_Boost_EnergyDrink_C":
-                return "Energy Drink";
-            case "Item_Boost_PainKiller_C":
-                return "Painkiller";
-            case "Item_Heal_FirstAid_C":
-                return "First Aid";
-            case "Item_Heal_Bandage_C":
-                return "Bandage";
-            case "Item_Heal_MedKit_C":
-                return "Med Kit";
-
-            // Crate Weapons
-            case "Item_Weapon_AWM_C":
-                return "AWM";
-            case "Item_Weapon_Mk14_C":
-                return "MK14";
-            case "Item_Weapon_L6_C":
-                return "Lynx AMR";
-            case "Item_Weapon_P90_C":
-                return "P90";
-            case "Item_Weapon_FAMASG2_C":
-                return "FAMAS";
-            case "Item_Weapon_Groza_C":
-                return "Groza";
-            case "Item_Weapon_IntegratedRepair_C":
-                return "Repair Kit";
-            case "Item_Weapon_Pickaxe_C":
-                return "Pickaxe";
-            default:
-                Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
-                return weapon;
-        }
-    }
-    public string GetDamageDescription(dynamic evt)
-    {
-        var playerName = evt.PlayerIsNPC.GetValueOrDefault() ? evt.PlayerAccountId : evt.Player.PlayerName;
-        var secondaryName = evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? evt.SecondaryPlayerAccountId : evt.SecondaryPlayer.PlayerName;
-
-        if (evt.SecondaryPlayerGuid.HasValue || evt.SecondaryPlayerIsNPC.GetValueOrDefault())
-        {
-            return $"{playerName} killed by {evt.DamageReason} from {secondaryName}";
-        }
-        else
-        {
-            return $"{playerName} died {evt.DamageReason}";
-        }
-    }
-
-    public MarkupString FormatDescription(string description)
-    {
-        return (MarkupString)description.Replace("\r\n", "<br>")
-                                        .Replace("\r", "<br>")
-                                        .Replace("\n", "<br>");
-    }
-
-    public string GetRanking(int ranking)
-    {
-        switch (ranking % 10)
-        {
-            case 0:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                return ranking + "th";
-            case 1:
-                if (ranking % 100 == 11)
-                {
-                    return ranking + "th";
-                }
-                return ranking + "st";
-            case 2:
-                if (ranking % 100 == 12)
-                {
-                    return ranking + "th";
-                }
-                return ranking + "nd";
-            case 3:
-                if (ranking % 100 == 13)
-                {
-                    return ranking + "th";
-                }
-                return ranking + "rd";
-        }
-        return ranking.ToString();
-    }
-
-    public string FixWeather(string weather)
-    {
-        switch (weather)
-        {
-            case "Snow_01":
-                return "Snow";
-            default:
-                return weather;
-        }
-    }
-    public string GetZoneDescription(string zone)
-    {
-        // Zone List: https://github.com/pubg/api-assets/blob/master/enums/telemetry/regionId.json
-        switch (zone)
-        {
-            // Sanhok Zones (Savage_Main)
-            case "bootcamp":
-                return "Bootcamp";
-            case "campalpha":
-                return "Camp Alpha";
-            case "campomilitar":
-                return "Military Base";
-            case "chumacera":
-                return "Quarry";
-            case "cruzdelvalle":
-                return "Valley Crossing";
-            case "elazahar":
-                return "El Azahar";
-            case "elpozo":
-                return "El Pozo";
-            case "graveyard":
-                return "Graveyard";
-            case "haciendadelpatron":
-                return "Hacienda del Patrón";
-            case "hatinh":
-                return "Hatin";
-            case "kampong":
-                return "Kampong";
-            case "getaway":
-                return "Getaway";
-            case "lawaki":
-                return "Lawaki";
-            case "campbravo":
-                return "Camp Bravo";
-            case "campcharlie":
-                return "Camp Charlie";
-            case "bantai":
-                return "Ban Tai";
-            case "sahmee":
-                return "Sahmee";
-            case "nakham":
-                return "Na Kham";
-            case "tambang":
-                return "Tambang";
-            case "cave":
-                return "Cave";
-            
-            
-            // Miramar (Desert_Main)
-            case "impala":
-                return "Impala";
-            case "khao":
-                return "Khao";
-            case "lakawi":
-                return "Lakawi";
-            case "losleones":
-                return "Los Leones";
-            case "manisgenerales":
-                return "Mani Generales";
-            case "montenuevo":
-                return "Monte Nuevo";
-            case "oasis":
-                return "Oasis";
-            case "painan":
-                return "Painan";
-            case "paradiseresort":
-                return "Paradise Resort";
-            case "pecado":
-                return "Pecado";
-            case "powergrid":
-                return "Power Grid";
-            case "puertoparaiso":
-                return "Puerto Paraiso";
-            case "quarry":
-                return "Quarry";
-            case "ruins":
-                return "Ruins";
-            case "sanmartin":
-                return "San Martin";
-            case "tatmok":
-                return "Tat Mok";
-            case "tierrabronca":
-                return "Tierra Bronca";
-            case "watertreatment":
-                return "Water Treatment";
-            case "alcantara":
-                return "Alcantara";
-            case "ladrillera":
-                return "Ladrillera";
-            case "labendita":
-                return "La Bendita";
-            case "lacobreria":
-                return "La Cobrera";
-            case "lmpala":
-                return "Impala";
-            case "loshigos":
-                return "Los Higos";
-            case "minasdelsur":
-                return "Minas del Sur";
-            case "minasgenerales":
-                return "Minas Generales";
-            case "trailerpark":
-                return "Trailer Park";
-            case "craterfields":
-                return "Crater Fields";
-            case "junkyard":
-                return "Junkyard";
-            case "torreahumada":
-                return "Torre Ahumada";
-            case "valledelmar":
-                return "Valle del Mar";
-            case "heciendadelpatron":
-                return "Hacienda del Patrón";
-
-            // Deston Zones
-            case "arena":
-                return "Arena";
-            case "assembly":
-                return "Assembly";
-            case "barclift":
-                return "Barclift";
-            case "buxley":
-                return "Buxley";
-            case "carpenter`send":
-            case "Carpenter’s End":
-                return "Carpenter's End";
-            case "cavala":
-                return "Cavala";
-            case "concert":
-                return "Concert Hall";
-            case "constructionsite,Construction Site":
-                return "Construction Site";
-            case "El Koro":
-            case "elkoro":
-            case "elkoro,El Koro":
-                return "El Koro";
-            case "hydroelectricdam":
-            case "hydroelectricdam,Hydroelectric Dam":
-                return "Hydroelectric Dam";
-            case "holstonmeadows,Holston Meadows":
-            case "holstonmeadows":
-                return "Holston Meadows";
-            case "lipton, Ripton":
-                return "Ripton";
-            case "lodge":
-            case "Lodge":
-                return "Lodge";
-            case "losacro":
-            case "losacros,Los Arcos":
-                return "Los Acros";
-            case "Ripton":
-            case "lipton,Ripton":
-                return "Ripton";
-            case "sancarna":
-                return "Sancarna";
-            case "swamp":
-                return "Swamp";
-            case "tenforts,swamp":
-                return "Ten Forts & Swamp";
-            case "tenfort":
-            case "tenforts,Ten Forts":
-                return "Ten Forts";
-            case "turrita":
-            case "Turrita":
-                return "Turrita";
-            case "Wind Farms":
-            case "windfarm,Wind Farms":
-                return "Wind Farms";
-            case "windfarm,Coastal Towns":
-                return "Wind Farms & Coastal Towns";
-            
-
-            // Erangal Zones (Erangel_Main)
-            case "BAL_SecretRoom":
-                return "Secret Room";
-            case "boatyard":
-                return "Boat Yard";
-            case "farm":
-                return "Farm";
-            case "ferrypier":
-            case "ferrypier,8thEventSpot":
-                return "Ferry Pier";
-            case "gatka":
-                return "Gatka";
-            case "georgopol":
-                return "Georgopol";
-            case "georgopol,hospital":
-                return "Georgopol & Hospital";
-            case "lipovka":
-                return "Lipovka";
-            case "mansion":
-                return "Mansion";
-            case "mylta":
-                return "Mylta";
-            case "myltapower":
-                return "Mylta Power";
-            case "pochinki":
-                return "Pochinki";
-            case "primorsk":
-                return "Primorsk";
-            case "prison":
-                return "Prison";
-            // Covered by another caase
-            // case "quarry":
-            //              return "Quarry";
-            case "rozhok":
-                return "Rozhok";
-            //case "ruins":
-            //  return "Ruins";
-            //case "school":
-            //    return "School";
-            case "SecretRoom":
-                return "Secret Room";
-            case "severny":
-                return "Severny";
-            case "shelter":
-                return "Shelter";
-            case "shootingrange":
-                return "Shooting Range";
-            case "sosnovkamilitarybase":
-                return "Military Base";
-            case "stalber":
-                return "Stalber";
-            case "yasnayapolyana":
-                return "Yasnaya Polyana";
-            case "zharki":
-                return "Zharki";
-            case "novorepnoye":
-                return "Novorepnoye";
-
-            // Haven Zones
-            case "coalyards":
-                return "Coalyards";
-            case "docks":
-                return "Docks";
-            case "industrialpark":
-                return "Industrial Park";
-            case "railyard":
-                return "Railyard";
-            case "residential":
-                return "Residential Area";
-            case "steelmill":
-                return "Steel Mill";
-
-            // Karakin Zones (Summerland_Main)
-            case "alhabar":
-                return "Al Habar";
-            case "alhayik":
-                return "Al Hayik";
-            case "bahrsahir":
-                return "Bahrsahir";
-            case "bashara":
-                return "Bashara";
-            case "cargoship":
-                return "Cargo Ship";
-            case "hadiqanemo":
-                return "Hadiqane Mo";
-
-
-            // Paramo Zones
-        case "Lab":
-                return "Lab";
-            case "Level_A":
-                return "Level A";
-            case "Level_B":
-                return "Level B";
-            case "Level_C":
-                return "Level C";
-            case "Level_D":
-                return "Level D";
-            case "Ruins":
-                return "Ruins";
-
-            // Rondo Zones
-            case "danching":
-                return "Danching";
-            case "hungshan":
-                return "Hungshan";
-            case "fongtun":
-                return "Fong Tun";
-            case "jadenacity":
-                return "Jadena City";
-            case "jaotin":
-                return "Jao Tin";
-            case "lanpo":
-                return "Lan Po";
-            case "lohuaxing":
-                return "Lohuaxing";
-            case "meyran":
-                return "Meyran";
-            case "muhopan":
-                return "Muhopan";
-            case "neoxfactory":
-                return "Neox Factory";
-            case "neoxfactory, testtrack":
-                return "Neox Factory & Test Track";
-            case "stadium":
-                return "Stadium";
-            case "testtrack":
-                return "Test Track";
-            case "tuling":
-                return "Tuling";
-            case "yulin":
-                return "Yulin";
-
-
-            // Taego Zones (Tiger_Main)
-            case "armybase":
-                return "Army Base";
-            case "airport":
-                return "Airport";                
-            case "buksansa":
-                return "Buksansa";
-            case "fishingcamp":
-                return "Fishing Camp";
-            case "godok":
-                return "Go Dok";
-            case "haemoosa":
-                return "Haemoosa";
-            case "hapo":
-                return "Hapo";
-            case "hosan":
-                return "Hosan";
-            case "Hospital":
-            case "hospital":
-                return "Hospital";
-            case "hosanprison":
-                return "Hosan Prison";
-            case "kangneung":
-                return "Kangneung";
-            case "ohhyang":
-                return "Oh Hyang";
-            case "palace":
-                return "Palace";
-            case "school":
-                return "School";
-            case "shipyard":
-                return "Shipyard";
-            case "songam":
-                return "Songam";
-            case "terminal":
-                return "Terminal";
-            case "wolsong":
-                return "Wolsong";
-            case "yongcheon":
-                return "Yongcheon";
-
-            // Vikendi Zones (DihorOtok_Main)
-
-            case "castle":
-                return "Castle";
-            case "coalmine":
-                return "Coal Mine";
-            case "dinoland":
-                return "Dino Land";
-            case "naros":
-                return "Naros";
-            case "lumberyard":
-                return "Lumber Yard";
-            case "trainstation":
-                return "Train Station";
-            case "trika":
-                return "Trika";
-            //case "winery":
-            //    return "Winery";
-            case "dekamesto":
-                return "Deka Mesto";
-            case "port":
-                return "Port";
-            case "cosmodrome":
-                return "Cosmodrome";
-            case "trevno":
-                return "Trevno";
-            case "peshkova":
-                return "Peshkova";
-            case "mountkreznic":
-                return "Mount Kreznic";
-            case "goroka":
-                return "Goroka";
-            case "dobromesto":
-                return "Dobromesto";
-            case "vihar":
-                return "Vihar";
-            case "movatra":
-                return "Movatra";
-            case "dinopark":
-                return "Dino Park";
-            case "tovar":
-                return "Tovar";
-            case "cementfactory":
-                return "Cement Factory";
-            case "cantra":
-                return "Cantra";
-            case "hotspring":
-                return "Hot Spring";
-            case "volnova":
-                return "Volnova";
-            case "abbey":
-                return "Abbey";
-            case "winery":
-                return "Winery";
-            case "milnar":
-                return "Milnar";
-            case "zabava":
-                return "Zabava";
-            case "krichas":
-                return "Krichas";
-            case "pilnec":
-                return "Pilnec";
-
-
-            // Unspecified or unknown zone
-            case null:
-                return "";
-
-            default:
-                Console.WriteLine($"Unknown location: {zone}");
-                return zone;
-        }
-    }
-}
