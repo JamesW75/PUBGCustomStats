@@ -23,8 +23,10 @@ In matches with bots, they can take a place in the match and damage rankings. Ho
 Known Issues ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/JamesW75/PUBGCustomStats)
 ------------
 
-* ![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/JamesW75/PUBGCustomStats/1) Incorrect data location on a Mac
-* ![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/JamesW75/PUBGCustomStats/2) No PC support
+| Status | Description |
+|--------|-------------|
+| ![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/JamesW75/PUBGCustomStats/1) | Incorrect data location on a Mac |
+| ![GitHub issue/pull request detail](https://img.shields.io/github/issues/detail/state/JamesW75/PUBGCustomStats/2) | No PC support |
 
 Prerequisites
 -------------
