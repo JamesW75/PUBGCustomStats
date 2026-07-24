@@ -647,6 +647,10 @@ namespace PUBGCustomStats.Web.Pages
                     return "Pickaxe";
                 case "Item_Weapon_DP12_C":
                     return "DBS";
+                case "Item_Weapon_MG3_C":
+                    return "MG3";
+                case "Item_Weapon_TraumaBag_C":
+                    return "Trauma Bag";
                 default:
                     Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                     return weapon;
