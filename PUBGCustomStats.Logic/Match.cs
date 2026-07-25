@@ -115,6 +115,25 @@ namespace PUBGCustomStats.Logic
             }
         }
 
+        /// <summary>
+        /// Set the DoNotCount flag for a match according to the include parameter.
+        /// If include == true -> DoNotCount = false (match is included)
+        /// If include == false -> DoNotCount = true (match is excluded)
+        /// Returns true if the match was found and updated, false otherwise.
+        /// </summary>
+        public bool IncludeExcludeMatch(Guid matchGuid, bool include)
+        {
+            var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
+            if (match == null)
+            {
+                return false;
+            }
+
+            match.DoNotCount = !include;
+            DbContext.SaveChanges();
+            return true;
+        }
+
         public void DeleteMatch(Guid matchGuid)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);

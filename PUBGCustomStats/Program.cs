@@ -110,6 +110,7 @@ if (args.Length > 0)
 
         var currentSeason = season.GetCurrentSeason();
 
+
         switch (args[0].ToLower())
         {
 
@@ -278,6 +279,57 @@ if (args.Length > 0)
                 var deleteMatch = new Match(dbContextOptions, integrationService);
                 deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId));
                 Console.WriteLine($"Match deleted: {deleteMatchId}");
+                break;
+
+            case "--excludematch":
+                // Mark a match as excluded (DoNotCount = true)
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No match ID provided. Use --help for usage information.");
+                    return;
+                }
+                var excludeMatchId = args[1];
+                if (!Guid.TryParse(excludeMatchId, out Guid parsedExcludeGuid))
+                {
+                    Console.WriteLine("Error: Invalid match GUID format. Please provide a valid GUID.");
+                    return;
+                }
+                var excludeMatch = new Match(dbContextOptions, integrationService);
+                var excluded = excludeMatch.IncludeExcludeMatch(parsedExcludeGuid, false);
+                if (excluded)
+                {
+                    Console.WriteLine($"Match {excludeMatchId} marked as excluded (DoNotCount = true).");
+                }
+                else
+                {
+                    Console.WriteLine($"Match not found: {excludeMatchId}");
+                }
+                break;
+
+            case "--includematch":
+                // Unset DoNotCount for a match (DoNotCount = false)
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No match ID provided. Use --help for usage information.");
+                    return;
+                }
+                var includeMatchId = args[1];
+                if (!Guid.TryParse(includeMatchId, out Guid parsedIncludeGuid))
+                {
+                    Console.WriteLine("Error: Invalid match GUID format. Please provide a valid GUID.");
+                    return;
+                }
+
+                var includeMatch = new Match(dbContextOptions, integrationService);
+                var included = includeMatch.IncludeExcludeMatch(parsedIncludeGuid, true);
+                if (included)
+                {
+                    Console.WriteLine($"Match {includeMatchId} marked as included (DoNotCount = false).");
+                }
+                else
+                {
+                    Console.WriteLine($"Match not found: {includeMatchId}");
+                }
                 break;
 
             case "--movematch":
