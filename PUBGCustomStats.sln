@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. UI", "4. UI", "{6B016589-C48A-4F22-B423-A0149A90275B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PUBGCustomStats.Desktop", "PUBGCustomStats.Desktop\PUBGCustomStats.Desktop.csproj", "{B371F644-AF80-49A6-9876-B70F1EEB462A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{8B7EAABF-FEE8-4686-BC2C-368EDE285796}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7EAABF-FEE8-4686-BC2C-368EDE285796}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7EAABF-FEE8-4686-BC2C-368EDE285796}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B371F644-AF80-49A6-9876-B70F1EEB462A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B371F644-AF80-49A6-9876-B70F1EEB462A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B371F644-AF80-49A6-9876-B70F1EEB462A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B371F644-AF80-49A6-9876-B70F1EEB462A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{6F2D4F5B-1C9A-4C4E-9BF8-ACDBDBE7978F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5D770AE5-032F-4F3D-AFEF-FDEE521B0D8C} = {AC42BAC3-FB11-452D-91D8-1999F6259B30}
 		{8B7EAABF-FEE8-4686-BC2C-368EDE285796} = {6B016589-C48A-4F22-B423-A0149A90275B}
+		{B371F644-AF80-49A6-9876-B70F1EEB462A} = {6B016589-C48A-4F22-B423-A0149A90275B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9B7B771-8A07-4127-A348-92A9BBF87CF6}

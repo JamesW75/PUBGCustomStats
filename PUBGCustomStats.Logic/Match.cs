@@ -95,6 +95,7 @@ namespace PUBGCustomStats.Logic
         {
             return DbContext.Matches.ToList();
         }
+
         public void EditMatch(Guid matchGuid, string newMatchName)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);

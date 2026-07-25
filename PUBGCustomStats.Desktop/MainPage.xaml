@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PUBGCustomStats.Desktop.MainPage">
+
+    <Grid ColumnDefinitions="250,*">
+        <!-- Left pane: Seasons tree/list -->
+        <Border BackgroundColor="#F0F0F0" Padding="8" Grid.Column="0">
+            <CollectionView x:Name="SeasonsView" SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="6" Margin="0,4" HasShadow="False" BorderColor="#DDD">
+                            <VerticalStackLayout>
+                                <HorizontalStackLayout Spacing="6">
+                                    <Button Text="+" WidthRequest="24" HeightRequest="24" Clicked="OnSeasonExpandClicked" VerticalOptions="Center" Padding="0" FontSize="Small">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                <Setter Property="IsVisible" Value="False" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="-" WidthRequest="24" HeightRequest="24" Clicked="OnSeasonCollapseClicked" VerticalOptions="Center" Padding="0" FontSize="Small" IsVisible="False">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                <Setter Property="IsVisible" Value="True" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Label Text="{Binding Season.SeasonName}" FontAttributes="Bold">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSeasonTapped" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                </HorizontalStackLayout>
+                                <CollectionView ItemsSource="{Binding Sessions}" Margin="8,6,0,0" IsVisible="{Binding IsExpanded}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Frame Padding="4" Margin="0,2" HasShadow="False" BorderColor="#EEE">
+                                                <VerticalStackLayout>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Button Text="+" WidthRequest="16" HeightRequest="16" Clicked="OnSessionExpandClicked" VerticalOptions="Center" Padding="0" FontSize="12">
+                                                            <Button.Triggers>
+                                                                <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                                    <Setter Property="IsVisible" Value="False" />
+                                                                </DataTrigger>
+                                                            </Button.Triggers>
+                                                        </Button>
+                                                        <Button Text="-" WidthRequest="16" HeightRequest="16" Clicked="OnSessionCollapseClicked" VerticalOptions="Center" Padding="0" FontSize="12" IsVisible="False">
+                                                            <Button.Triggers>
+                                                                <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                                    <Setter Property="IsVisible" Value="True" />
+                                                                </DataTrigger>
+                                                            </Button.Triggers>
+                                                        </Button>
+                                                        <Label Text="{Binding Display}" FontAttributes="Italic">
+                                                            <Label.GestureRecognizers>
+                                                                <TapGestureRecognizer Tapped="OnSessionTapped" />
+                                                            </Label.GestureRecognizers>
+                                                        </Label>
+                                                    </HorizontalStackLayout>
+                                                    <CollectionView ItemsSource="{Binding Matches}" Margin="8,4,0,0" IsVisible="{Binding IsExpanded}">
+                                                        <CollectionView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Frame Padding="2" Margin="0,1" HasShadow="False" BorderColor="#F5F5F5">
+                                                                    <Label Text="{Binding Display}">
+                                                                        <Label.GestureRecognizers>
+                                                                            <TapGestureRecognizer Tapped="OnMatchTapped" />
+                                                                        </Label.GestureRecognizers>
+                                                                    </Label>
+                                                                </Frame>
+                                                            </DataTemplate>
+                                                        </CollectionView.ItemTemplate>
+                                                    </CollectionView>
+                                                </VerticalStackLayout>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+
+        <!-- Right pane: editor on top, browser on bottom -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <!-- Editor area -->
+            <Border Padding="12" BackgroundColor="#FFFFFF" Grid.Row="0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Editor" FontAttributes="Bold" />
+                    <StackLayout Orientation="Horizontal" Spacing="8">
+                        <Label Text="Type:" VerticalOptions="Center" />
+                        <Label x:Name="EditorTypeLabel" Text="(none)" VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" Spacing="8">
+                        <Label Text="Name:" VerticalOptions="Center" />
+                        <Entry x:Name="EditorNameEntry" HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" Spacing="8">
+                        <Label Text="Date:" VerticalOptions="Center" />
+                        <Entry x:Name="EditorDateEntry" Placeholder="yyyy-MM-dd HH:mm" HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" Spacing="8">
+                        <Label Text="DoNotCount:" VerticalOptions="Center" />
+                        <Switch x:Name="EditorDoNotCountSwitch" HorizontalOptions="Start" />
+                    </StackLayout>
+
+                    <Button Text="Save" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Browser area -->
+            <VerticalStackLayout Grid.Row="1">
+                <HorizontalStackLayout Spacing="8" Padding="8" VerticalOptions="Start">
+                    <Button Clicked="OnBrowserBackClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Clicked="OnBrowserForwardClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Clicked="OnBrowserHomeClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Clicked="OnBrowserReloadClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Entry x:Name="BrowserUrlEntry" Placeholder="http://localhost:5209/" HorizontalOptions="FillAndExpand" />
+                    <Button Clicked="OnBrowserGoClicked" WidthRequest="48" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                </HorizontalStackLayout>
+                <Label x:Name="BrowserStatusLabel" TextColor="Red" IsVisible="False" FontSize="Small" Padding="8,0" />
+                <WebView x:Name="BrowserView" Source="http://localhost:5209/" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Navigating="OnBrowserNavigating" Navigated="OnBrowserNavigated" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>
