@@ -1,5 +1,4 @@
 ﻿@page
-@using Microsoft.AspNetCore.Components
 @model PUBGCustomStats.Web.Pages.MatchModel
 @{
     ViewData["Title"] = Model.Match?.MatchNameOrDefault();
@@ -16,7 +15,6 @@
 }
 
 <p>Mode: @Model.Match?.GameMode</p>
-
 
 <p>Map: @Model.Match?.Map</p>
 
@@ -106,7 +104,6 @@
                                 descripion = "❓ Unknown";
                                 break;
                         }
-
                         break;
 
                     case "LogPlayerKillV2":
@@ -383,340 +380,347 @@
                         }
                         else if (evt.PlayerGuid == null)
                         {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
-                        }
-                        else
-                        {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
-                        }
-
-                        if (!string.IsNullOrEmpty(evt.Zone))
-                        {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
-                        }
-                        break;
-
-                    case "LogEmPickupLiftOff":
-                        if (evt.PlayerGuid == null)
-                        {
-                            descripion = "🛫 Emergency Pickup Called";
-                        }
-                        else
-                        {
-                            descripion = "🛫 " + evt.Player?.PlayerName + " called Emergency Pickup";
-                        }
-                        if (!string.IsNullOrEmpty(evt.Zone))
-                        {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
-                        }
-                        descripion += ".";
-
-                        if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
-                        {
-                            var playerList = "";
-                            foreach (var player in evt.MatchTimelinePlayers)
+                            if (evt.Vehicle == evt.DamageReason)
                             {
-                                if (!string.IsNullOrEmpty(playerList))
-                                {
-                                    playerList += ", ";
-                                }
-                                if (player.Player != null)
-                                {
-                                    playerList += player.Player.PlayerName;
-                                }
-                                else
-                                {
-                                    playerList += player.PlayerAccountId;
-                                }
-                            }
-
-                            descripion += " Carrying " + playerList + ".";
-                        }
-                        break;
-
-                    case "LogCharacterCarry":
-                        if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
-                        {
-                            skip = true;
-                        }
-                        else
-                        {
-                            switch (evt.Status)
-                            {
-                                case "BodyCarry_Start_Carrier":
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " started carrying player";
-                                    break;
-                                case "BodyCarry_Start_Carried":
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " is being carried";
-                                    break;
-                                case "BodyCarry_End_Carrier":
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " stopped carrying player";
-                                    break;
-                                case "BodyCarry_End_Carried":
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " is no longer being carried";
-                                    break;
-                                case "BodyCarry_Died_Carrier":
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " carrier died";
-                                    break;
-                                default:
-                                    descripion = "🏋️ " + evt.Player?.PlayerName + " carrying player/being carried";
-                                    break;
-                            }
-                        }
-
-                        break;
-
-                    case "LogCarePackageSpawn":
-                        descripion = "📦 ";
-                        if (evt.DamageCategory != null)
-                        {
-                            descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
-                        }
-                        descripion += " Care Package Dropping";
-                        if (evt.Weapon != null)
-                        {
-                            descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
-                        }
-                        break;
-
-                    case "LogCarePackageLand":
-                        descripion = "📦 ";
-                        if (evt.DamageCategory != null)
-                        {
-                            descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
-                        }
-                        descripion += " Care Package Landed";
-                        if (evt.Weapon != null)
-                        {
-                            descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
-                        }
-                        break;
-
-                    case "LogRedZoneEnded":
-                        descripion = "🔴 Red Zone Ended";
-                        break;
-
-                    case "LogBlackZoneEnded":
-                        descripion = "🟣 Black Zone Ended";
-                        break;
-
-                    case "LogPlayerRedeploy":
-                        if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
-                        {
-                            skip = true;
-                        }
-                        else
-                        {
-                            descripion = "🪂 " + evt.Player?.PlayerName + " redeployed";
-                        }
-                        break;
-
-                    case "LogPlayerRedeployBRStart":
-                        if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
-                        {
-                            skip = true;
-                        }
-                        else
-                        {
-                            descripion = "🪂 " + evt.Player?.PlayerName + " started redeploy";
-                        }
-                        break;
-
-                    case "LogParachuteLanding":
-                        if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
-                        {
-                            skip = true;
-                        }
-                        else
-                        {
-                            descripion = "🪂 " + evt.Player?.PlayerName + " landed";
-                            if (!string.IsNullOrEmpty(evt.Zone))
-                            {
-                                descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
-
-                            }
-                            descripion += " (Parachuted " + evt.Distance?.ToString("N0") + "m)";
-                        }
-                        break;
-
-                    case "LogPlayerDestroyBreachableWall":
-                        if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
-                        {
-                            skip = true;
-                        }
-                        else
-                        {
-                            descripion = "🧱 " + evt.Player?.PlayerName + " destroyed wall";
-                            descripion += " with " + MatchHelpers.GetWeaponDescription(evt.Weapon);
-                        }
-                        break;
-
-                    case "LogVehicleLeave":
-                        switch (evt.Vehicle)
-                        {
-                            case "BP_EmergencyPickupVehicle_C":
-                                descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Emergency Pickup";
-                                break;
-
-                            case "RedeployAircraft_Tiger_C":
-                                descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Redeploy Aircraft";
-                                break;
-
-                            default:
-                                skip = true;
-                                break;
-                        }
-                        break;
-
-                    case "LogItemUse":
-                        switch (evt.Weapon)
-                        {
-                            case "Item_BTSecretRoom_Key_C": // Erangal - Secreate Basement Key
-                                descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Basement Key";
-                                break;
-
-                            case "Item_Tiger_Key_C": // Taego - Secret Key
-                                descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Key";
-                                break;
-
-                            case "Item_DihorOtok_Key_C": // Vikendi - Security Key
-                            case "Item_Secuity_Keycard_C": // Deston - Security Key
-                                descripion = "🔑 " + evt.Player?.PlayerName + " used Security Key";
-                                break;
-
-                            case "Item_Bluechip_C":
-                                descripion = "🗼 " + evt.Player?.PlayerName + " used Blue Chip Tower";
-                                break;
-                            default:
-                                skip = true;
-                                break;
-                        }
-
-                        if (!string.IsNullOrEmpty(evt.Zone) && !skip)
-                        {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
-                        }
-                        descripion += ".";
-                        break;
-
-                    case "LogObjectInteraction":
-                        switch (evt.DamageCategory)
-                        {
-                            case "VendingMachine":
-                                descripion = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + MatchHelpers.GetWeaponDescription(evt.Weapon);
-                                break;
-                            case "FuelPuddle":
-                                switch (evt.DamageReason)
-                                {
-                                    case "Ignite":
-                                        descripion = "⛽ " + evt.Player?.PlayerName + " ignited Fuel Puddle";
-                                        break;
-                                    default:
-                                        descripion = "⛽ " + evt.Player?.PlayerName + " " + evt.DamageReason + " Fuel Puddle";
-                                        break;
-                                }
-
-                                break;
-                            default:
-                                skip = true;
-                                break;
-                        }
-                        break;
-                    case "LogPlayerAttack":
-                        // emp, unil NoFireUntilPhase has been reached.
-                        skip = true;
-                        //descripion = evt.Player.PlayerName + " attacked with " + evt.Weapon;
-                        break;
-
-                    case "LogPlayerTakeDamage":
-                        // emp, unil NoFireUntilPhase has been reached.
-                        if (Model.Match?.NoFireUntilPhase == null)
-                        {
-                            // Skip when no fire period not set
-                            skip = true;
-                        }
-                        else
-                        {
-                            if (evt.IsGame >= Model.Match.NoFireUntilPhase)
-                            {
-                                // Skip when phase has passed
-                                skip = true;
+                                descripion = "🚗 " + vehicle + " self exploded.";
                             }
                             else
                             {
-                                if (evt.SecondaryPlayer != null)
+                                descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
+                            }
+                        }
+                        else
+                            {
+                                descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
+                            }
+
+                            if (!string.IsNullOrEmpty(evt.Zone))
+                            {
+                                descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            }
+                            break;
+
+                    case "LogEmPickupLiftOff":
+                                if (evt.PlayerGuid == null)
                                 {
-                                    if (evt.SecondaryPlayerGuid == evt.PlayerGuid)
+                                    descripion = "🛫 Emergency Pickup Called";
+                                }
+                                else
+                                {
+                                    descripion = "🛫 " + evt.Player?.PlayerName + " called Emergency Pickup";
+                                }
+                                if (!string.IsNullOrEmpty(evt.Zone))
+                                {
+                                    descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                }
+                                descripion += ".";
+
+                                if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
+                                {
+                                    var playerList = "";
+                                    foreach (var player in evt.MatchTimelinePlayers)
                                     {
-                                        skip = true; // Skip self inflicted
+                                        if (!string.IsNullOrEmpty(playerList))
+                                        {
+                                            playerList += ", ";
+                                        }
+                                        if (player.Player != null)
+                                        {
+                                            playerList += player.Player.PlayerName;
+                                        }
+                                        else
+                                        {
+                                            playerList += player.PlayerAccountId;
+                                        }
+                                    }
+
+                                    descripion += " Carrying " + playerList + ".";
+                                }
+                                break;
+
+                            case "LogCharacterCarry":
+                                if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
+                                {
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    switch (evt.Status)
+                                    {
+                                        case "BodyCarry_Start_Carrier":
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " started carrying player";
+                                            break;
+                                        case "BodyCarry_Start_Carried":
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " is being carried";
+                                            break;
+                                        case "BodyCarry_End_Carrier":
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " stopped carrying player";
+                                            break;
+                                        case "BodyCarry_End_Carried":
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " is no longer being carried";
+                                            break;
+                                        case "BodyCarry_Died_Carrier":
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " carrier died";
+                                            break;
+                                        default:
+                                            descripion = "🏋️ " + evt.Player?.PlayerName + " carrying player/being carried";
+                                            break;
+                                    }
+                                }
+
+                                break;
+
+                            case "LogCarePackageSpawn":
+                                descripion = "📦 ";
+                                if (evt.DamageCategory != null)
+                                {
+                                    descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
+                                }
+                                descripion += " Care Package Dropping";
+                                if (evt.Weapon != null)
+                                {
+                                    descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                }
+                                break;
+
+                            case "LogCarePackageLand":
+                                descripion = "📦 ";
+                                if (evt.DamageCategory != null)
+                                {
+                                    descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
+                                }
+                                descripion += " Care Package Landed";
+                                if (evt.Weapon != null)
+                                {
+                                    descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                }
+                                break;
+
+                            case "LogRedZoneEnded":
+                                descripion = "🔴 Red Zone Ended";
+                                break;
+
+                            case "LogBlackZoneEnded":
+                                descripion = "🟣 Black Zone Ended";
+                                break;
+
+                            case "LogPlayerRedeploy":
+                                if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
+                                {
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    descripion = "🪂 " + evt.Player?.PlayerName + " redeployed";
+                                }
+                                break;
+
+                            case "LogPlayerRedeployBRStart":
+                                if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
+                                {
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    descripion = "🪂 " + evt.Player?.PlayerName + " started redeploy";
+                                }
+                                break;
+
+                            case "LogParachuteLanding":
+                                if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
+                                {
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    descripion = "🪂 " + evt.Player?.PlayerName + " landed";
+                                    if (!string.IsNullOrEmpty(evt.Zone))
+                                    {
+                                        descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+
+                                    }
+                                    descripion += " (Parachuted " + evt.Distance?.ToString("N0") + "m)";
+                                }
+                                break;
+
+                            case "LogPlayerDestroyBreachableWall":
+                                if (evt.PlayerIsNPC.GetValueOrDefault() || evt.PlayerGuid == null)
+                                {
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    descripion = "🧱 " + evt.Player?.PlayerName + " destroyed wall";
+                                    descripion += " with " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                }
+                                break;
+
+                            case "LogVehicleLeave":
+                                switch (evt.Vehicle)
+                                {
+                                    case "BP_EmergencyPickupVehicle_C":
+                                        descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Emergency Pickup";
+                                        break;
+
+                                    case "RedeployAircraft_Tiger_C":
+                                        descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Redeploy Aircraft";
+                                        break;
+
+                                    default:
+                                        skip = true;
+                                        break;
+                                }
+                                break;
+
+                            case "LogItemUse":
+                                switch (evt.Weapon)
+                                {
+                                    case "Item_BTSecretRoom_Key_C": // Erangal - Secreate Basement Key
+                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Basement Key";
+                                        break;
+
+                                    case "Item_Tiger_Key_C": // Taego - Secret Key
+                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Key";
+                                        break;
+
+                                    case "Item_DihorOtok_Key_C": // Vikendi - Security Key
+                                    case "Item_Secuity_Keycard_C": // Deston - Security Key
+                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Security Key";
+                                        break;
+
+                                    case "Item_Bluechip_C":
+                                        descripion = "🗼 " + evt.Player?.PlayerName + " used Blue Chip Tower";
+                                        break;
+                                    default:
+                                        skip = true;
+                                        break;
+                                }
+
+                                if (!string.IsNullOrEmpty(evt.Zone) && !skip)
+                                {
+                                    descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                }
+                                descripion += ".";
+                                break;
+
+                            case "LogObjectInteraction":
+                                switch (evt.DamageCategory)
+                                {
+                                    case "VendingMachine":
+                                        descripion = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                        break;
+                                    case "FuelPuddle":
+                                        switch (evt.DamageReason)
+                                        {
+                                            case "Ignite":
+                                                descripion = "⛽ " + evt.Player?.PlayerName + " ignited Fuel Puddle";
+                                                break;
+                                            default:
+                                                descripion = "⛽ " + evt.Player?.PlayerName + " " + evt.DamageReason + " Fuel Puddle";
+                                                break;
+                                        }
+
+                                        break;
+                                    default:
+                                        skip = true;
+                                        break;
+                                }
+                                break;
+                            case "LogPlayerAttack":
+                                // emp, unil NoFireUntilPhase has been reached.
+                                skip = true;
+                                //descripion = evt.Player.PlayerName + " attacked with " + evt.Weapon;
+                                break;
+
+                            case "LogPlayerTakeDamage":
+                                // emp, unil NoFireUntilPhase has been reached.
+                                if (Model.Match?.NoFireUntilPhase == null)
+                                {
+                                    // Skip when no fire period not set
+                                    skip = true;
+                                }
+                                else
+                                {
+                                    if (evt.IsGame >= Model.Match.NoFireUntilPhase)
+                                    {
+                                        // Skip when phase has passed
+                                        skip = true;
                                     }
                                     else
                                     {
-                                        descripion = "🚷 " + evt.Player?.PlayerName + " took damage from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
+                                        if (evt.SecondaryPlayer != null)
+                                        {
+                                            if (evt.SecondaryPlayerGuid == evt.PlayerGuid)
+                                            {
+                                                skip = true; // Skip self inflicted
+                                            }
+                                            else
+                                            {
+                                                descripion = "🚷 " + evt.Player?.PlayerName + " took damage from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            skip = true; // Skip environmental/blue zone/crash
+                                                         //descripion = evt.Player.PlayerName + " took damage from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case "LogPlayerLogout":
+                                if (!matchEnded)
+                                {
+                                    if (evt.Player != null)
+                                    {
+                                        descripion = "🚪 " + evt.Player?.PlayerName + " logged out.";
+                                    }
+                                    else
+                                    {
+                                        descripion = "🚪 Unknown Player logged out.";
                                     }
                                 }
                                 else
                                 {
-                                    skip = true; // Skip environmental/blue zone/crash
-                                    //descripion = evt.Player.PlayerName + " took damage from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                    skip = true;
                                 }
-                            }
-                        }
-                        break;
 
-                    case "LogPlayerLogout":
-                        if (!matchEnded)
-                        {
-                            if (evt.Player != null)
-                            {
-                                descripion = "🚪 " + evt.Player?.PlayerName + " logged out.";
-                            } 
-                            else 
-                            {
-                                descripion = "🚪 Unknown Player logged out.";
-                            }    
-                        } 
-                        else 
-                        {
-                            skip = true;
-                        }
-
-                        break;
-
-                    case "LogPlayerUseThrowable":
-
-                        switch (evt.Weapon)
-                        {
-                            case "Item_Weapon_PackageFlare_C":
-                                descripion = "🎆 "+ evt.Player?.PlayerName + " used Package Flare";
                                 break;
-                            case "Item_Weapon_CoverStructDropHandFlare_C":
-                                descripion = "🎆 "+ evt.Player?.PlayerName + " used Cover Flare";
+
+                            case "LogPlayerUseThrowable":
+
+                                switch (evt.Weapon)
+                                {
+                                    case "Item_Weapon_PackageFlare_C":
+                                        descripion = "🎆 " + evt.Player?.PlayerName + " used Package Flare";
+                                        break;
+                                    case "Item_Weapon_CoverStructDropHandFlare_C":
+                                        descripion = "🎆 " + evt.Player?.PlayerName + " used Cover Flare";
+                                        break;
+                                    default:
+                                        skip = true;
+                                        break;
+                                }
                                 break;
+
                             default:
                                 skip = true;
                                 break;
+                            }
+
+                            if (!skip)
+                            {
+                                <tr>
+                                    <td>@timeStamp.ToString("mm':'ss'.'ff")</td>
+                                    <td> @descripion</td>
+                                </tr>
+                            }
                         }
-                        break;                    
-
-                    default:
-                        skip = true;
-                        break;
                 }
-
-                if (!skip)
-                {
-                    <tr>
-                        <td>@timeStamp.ToString("mm':'ss'.'ff")</td>
-                        <td> @descripion</td>
-                    </tr>
-                }
-            }
+            </Table>
         }
-    </Table>
-}
-else
-{
-    <p>Sorry, no match events available</p>
-}
+        else
+        {
+        <p>Sorry, no match events available</p>
+        }
 

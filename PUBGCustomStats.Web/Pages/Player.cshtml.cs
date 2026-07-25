@@ -193,7 +193,13 @@ namespace PUBGCustomStats.Web.Pages
                                     playerName = "Vehicle Hit";
                                     break;
 
+                                case "Damage_KillTruckTurret":
+                                    playerId = "Kill Truck Turret";
+                                    playerName = "Kill Truck Turret";
+                                    break;
+
                                 default:
+                                    Console.WriteLine("Unknown player damage category:" + timeline.DamageCategory);
                                     break;
                             }
                         }

@@ -148,8 +148,19 @@ namespace PUBGCustomStats.Web.Pages
                     break;
 
                 case "Lava":
-                    // TODO: check this
+                    matchTimelinesKiller = _context.MatchTimeline
+                    .Where(mt => mt.DamageCategory == "Damage_Lava" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Include(mt => mt.Player)
+                    .ToList();
+                    
                     return;
+
+                case "KillTruck":
+                    matchTimelinesKiller = _context.MatchTimeline
+                        .Where(mt => mt.DamageCategory == "Damage_KillTruckTurret" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                        .Include(mt => mt.Player)
+                        .ToList();
+                    break;
 
                 default:
                     // Unknown, go to error page
