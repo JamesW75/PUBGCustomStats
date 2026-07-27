@@ -18,7 +18,7 @@ namespace PUBGCustomStats.Desktop.ViewModels
     {
         public Session Session { get; set; }
         public string Display { get; set; } = string.Empty;
-        public List<MatchItem> Matches { get; set; } = new List<MatchItem>();
+        public List<MatchItem> Matches { get; set; } = [];
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -34,7 +34,7 @@ namespace PUBGCustomStats.Desktop.ViewModels
     public class SeasonItem : INotifyPropertyChanged
     {
         public Season Season { get; set; }
-        public List<SessionItem> Sessions { get; set; } = new List<SessionItem>();
+        public List<SessionItem> Sessions { get; set; } = [];
 
         private bool _isExpanded;
         public bool IsExpanded

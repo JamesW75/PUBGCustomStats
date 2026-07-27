@@ -7,7 +7,7 @@
     Title="PUBGCustomStats.Desktop">
 
     <ShellContent
-        Title="Home"
+        Title="PUBG Custom Stats"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 

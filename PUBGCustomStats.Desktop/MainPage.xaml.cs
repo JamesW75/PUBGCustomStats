@@ -41,8 +41,7 @@ namespace PUBGCustomStats.Desktop
         private void OnBrowserHomeClicked(object? sender, EventArgs e)
         {
             var browser = GetControl<WebView>("BrowserView");
-            if (browser != null)
-                browser.Source = "http://localhost:5209/";
+            browser?.Source = "http://localhost:5209/";
         }
 
         private void OnBrowserReloadClicked(object? sender, EventArgs e)
@@ -88,8 +87,7 @@ namespace PUBGCustomStats.Desktop
             var browser = GetControl<WebView>("BrowserView");
             if (urlEntry != null && string.IsNullOrWhiteSpace(urlEntry.Text))
                 urlEntry.Text = "http://localhost:5209/";
-            if (browser != null)
-                browser.Source = urlEntry?.Text ?? "http://localhost:5209/";
+            browser?.Source = urlEntry?.Text ?? "http://localhost:5209/";
 
             LoadSeasons();
         }
@@ -110,14 +108,39 @@ namespace PUBGCustomStats.Desktop
             if (status == null)
                 return;
 
-            if (e.Result == WebNavigationResult.Success )
+            if (e.Result == WebNavigationResult.Success)
             {
                 status.IsVisible = false;
+                // Update the URL entry to reflect the loaded URL
+                var browser = GetControl<WebView>("BrowserView");
+                var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+
+                if (urlEntry != null)
+                {
+                    urlEntry.Text = e.Url;
+                }
+
             }
             else
             {
                 status.Text = $"Failed to load: {e.Result}";
                 status.IsVisible = true;
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            // Ensure the URL entry shows the current browser URL when the page appears
+            var browser = GetControl<WebView>("BrowserView");
+            var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+            if (browser != null && urlEntry != null)
+            {
+                if (browser.Source is Microsoft.Maui.Controls.UrlWebViewSource urlSource)
+                    urlEntry.Text = urlSource.Url;
+                else
+                    urlEntry.Text = browser.Source?.ToString();
             }
         }
 
@@ -172,8 +195,7 @@ namespace PUBGCustomStats.Desktop
                             sessionItem.Matches.Add(new PUBGCustomStats.Desktop.ViewModels.MatchItem { Match = m, Display = display });
                         }
 
-                        sessionItem.Display = (sess.StartDateTime.HasValue ? sess.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : "")
-                                              + (string.IsNullOrWhiteSpace(sess.SessionName) ? "" : " - " + sess.SessionName);
+                        sessionItem.Display = (sess.StartDateTime.HasValue ? sess.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : "");
 
                         seasonItem.Sessions.Add(sessionItem);
                     }
@@ -217,11 +239,11 @@ namespace PUBGCustomStats.Desktop
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                if (typeLabel != null) typeLabel.Text = "Season";
-                if (nameEntry != null) nameEntry.Text = item.Season.SeasonName;
-                if (dateEntry != null) dateEntry.Text = string.Empty;
-                if (doNotCount != null) doNotCount.IsVisible = false;
-                if (browser != null) browser.Source = "http://localhost:5209/";
+                typeLabel?.Text = "Season";
+                nameEntry?.Text = item.Season.SeasonName;
+                dateEntry?.Text = string.Empty;
+                doNotCount?.IsVisible = false;
+                browser?.Source = "http://localhost:5209/";
 
                 // refresh view so selection/editor state is visible
                 SeasonsView.ItemsSource = null;
@@ -231,7 +253,14 @@ namespace PUBGCustomStats.Desktop
 
         private void OnSessionTapped(object sender, EventArgs e)
         {
-            if (sender is Label lbl && lbl.BindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
+            // sender may be the Label or the containing layout (VerticalStackLayout) depending on where the TapGestureRecognizer is placed.
+            object? bindingContext = null;
+            if (sender is Microsoft.Maui.Controls.Element el)
+                bindingContext = el.BindingContext;
+            else if (sender is Microsoft.Maui.Controls.BindableObject bo)
+                bindingContext = bo.BindingContext;
+
+            if (bindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
             {
                 // Show editor for the session (do not toggle expand/collapse here).
                 _selectedSeason = null;
@@ -244,11 +273,11 @@ namespace PUBGCustomStats.Desktop
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                if (typeLabel != null) typeLabel.Text = "Session";
-                if (nameEntry != null) nameEntry.Text = item.Session.SessionName;
-                if (dateEntry != null) dateEntry.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
-                if (doNotCount != null) doNotCount.IsVisible = false;
-                if (browser != null) browser.Source = "http://localhost:5209/";
+                typeLabel?.Text = "Session";
+                nameEntry?.Text = item.Session.SessionName;
+                dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
+                doNotCount?.IsVisible = false;
+                browser?.Source = "http://localhost:5209/";
 
                 // refresh view so editor selection is visible
                 SeasonsView.ItemsSource = null;
@@ -311,12 +340,12 @@ namespace PUBGCustomStats.Desktop
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                if (typeLabel != null) typeLabel.Text = "Match";
-                if (nameEntry != null) nameEntry.Text = item.Match.MatchName;
-                if (dateEntry != null) dateEntry.Text = item.Match.StartTime.HasValue ? item.Match.StartTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
-                if (doNotCount != null) doNotCount.IsVisible = true;
-                if (doNotCount != null) doNotCount.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
-                if (browser != null) browser.Source = "http://localhost:5209/";
+                typeLabel?.Text = "Match";
+                nameEntry?.Text = item.Match.MatchName;
+                dateEntry?.Text = item.Match.StartTime.HasValue ? item.Match.StartTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
+                doNotCount?.IsVisible = true;
+                doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
+                browser?.Source = "http://localhost:5209/";
             }
         }
 

@@ -12,14 +12,14 @@
                         <Border Padding="6" Margin="0,4" Stroke="#DDD">
                             <VerticalStackLayout>
                                 <HorizontalStackLayout Spacing="6">
-                                    <Button Text="+" WidthRequest="24" HeightRequest="24" Clicked="OnSeasonExpandClicked" VerticalOptions="Center" Padding="0" FontSize="Small">
+                                    <Button Text="+" Style="{StaticResource SmallButton}" Clicked="OnSeasonExpandClicked" VerticalOptions="Center">
                                         <Button.Triggers>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
                                                 <Setter Property="IsVisible" Value="False" />
                                             </DataTrigger>
                                         </Button.Triggers>
                                     </Button>
-                                    <Button Text="-" WidthRequest="24" HeightRequest="24" Clicked="OnSeasonCollapseClicked" VerticalOptions="Center" Padding="0" FontSize="Small" IsVisible="False">
+                                    <Button Text="-" Style="{StaticResource SmallButton}" Clicked="OnSeasonCollapseClicked" VerticalOptions="Center" IsVisible="False">
                                         <Button.Triggers>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
                                                 <Setter Property="IsVisible" Value="True" />
@@ -38,36 +38,47 @@
                                             <Border Padding="4" Margin="0,2" Stroke="#EEE">
                                                 <VerticalStackLayout>
                                                     <HorizontalStackLayout Spacing="6">
-                                                        <Button Text="+" WidthRequest="16" HeightRequest="16" Clicked="OnSessionExpandClicked" VerticalOptions="Center" Padding="0" FontSize="12">
+                                                        <Button Text="+" Style="{StaticResource SmallButton}" Clicked="OnSessionExpandClicked" VerticalOptions="Center">
                                                             <Button.Triggers>
                                                                 <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
                                                                     <Setter Property="IsVisible" Value="False" />
                                                                 </DataTrigger>
                                                             </Button.Triggers>
                                                         </Button>
-                                                        <Button Text="-" WidthRequest="16" HeightRequest="16" Clicked="OnSessionCollapseClicked" VerticalOptions="Center" Padding="0" FontSize="12" IsVisible="False">
+                                                        <Button Text="-" Style="{StaticResource SmallButton}" Clicked="OnSessionCollapseClicked" VerticalOptions="Center" IsVisible="False">
                                                             <Button.Triggers>
                                                                 <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
                                                                     <Setter Property="IsVisible" Value="True" />
                                                                 </DataTrigger>
                                                             </Button.Triggers>
                                                         </Button>
-                                                        <Label Text="{Binding Display}" FontAttributes="Italic">
-                                                            <Label.GestureRecognizers>
+                                                        <VerticalStackLayout Spacing="0">
+                                                            <VerticalStackLayout.GestureRecognizers>
                                                                 <TapGestureRecognizer Tapped="OnSessionTapped" />
-                                                            </Label.GestureRecognizers>
-                                                        </Label>
+                                                            </VerticalStackLayout.GestureRecognizers>
+                                                            <Label Text="{Binding Display}" FontAttributes="Italic" />
+                                                            <Label Text="{Binding Session.SessionName}" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
                                                     </HorizontalStackLayout>
-                                                    <CollectionView ItemsSource="{Binding Matches}" Margin="8,4,0,0" IsVisible="{Binding IsExpanded}">
+                                                    <CollectionView ItemsSource="{Binding Matches}" Margin="24,4,0,0" IsVisible="{Binding IsExpanded}">
                                                         <CollectionView.ItemTemplate>
                                                             <DataTemplate>
-                                                                <Border Padding="2" Margin="0,1" Stroke="#F5F5F5">
-                                                                    <Label Text="{Binding Display}">
+                                                            <Border Padding="2" Margin="0,1" Stroke="#F5F5F5">
+                                                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                                                    <!-- 2-pixel swatch at left of match name (no padding so it forms a long line) -->
+                                                                    <BoxView WidthRequest="2" BackgroundColor="{StaticResource Primary}" VerticalOptions="Fill" Margin="-2,-2,0,-2" />
+                                                                    <Label Text="{Binding Display}" VerticalOptions="Center">
+                                                                        <Label.Triggers>
+                                                                            <DataTrigger TargetType="Label" Binding="{Binding Match.DoNotCount}" Value="True">
+                                                                                <Setter Property="FontAttributes" Value="Italic" />
+                                                                            </DataTrigger>
+                                                                        </Label.Triggers>
                                                                         <Label.GestureRecognizers>
                                                                             <TapGestureRecognizer Tapped="OnMatchTapped" />
                                                                         </Label.GestureRecognizers>
                                                                     </Label>
-                                                                </Border>
+                                                                </HorizontalStackLayout>
+                                                            </Border>
                                                             </DataTemplate>
                                                         </CollectionView.ItemTemplate>
                                                     </CollectionView>
@@ -114,17 +125,23 @@
             </Border>
 
             <!-- Browser area -->
-            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*">
-                <Grid ColumnDefinitions="36,36,36,36,*,48" Padding="8" ColumnSpacing="8">
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*">
+                <!-- Preview row spanning full width -->
+                <Border Grid.Row="0" BackgroundColor="#E0E0E0" Padding="8" Grid.ColumnSpan="6">
+                    <Label Text="Web Site Preview" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold" TextColor="Black" />
+                </Border>
+
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Padding="8" ColumnSpacing="8" HorizontalOptions="Fill">
                     <Button Grid.Column="0" Clicked="OnBrowserBackClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
                     <Button Grid.Column="1" Clicked="OnBrowserForwardClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
                     <Button Grid.Column="2" Clicked="OnBrowserHomeClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
                     <Button Grid.Column="3" Clicked="OnBrowserReloadClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
-                    <Entry Grid.Column="4" x:Name="BrowserUrlEntry" Placeholder="http://localhost:5209/" />
-                    <Button Grid.Column="5" Clicked="OnBrowserGoClicked" WidthRequest="48" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Entry Grid.Column="4" x:Name="BrowserUrlEntry" Placeholder="http://localhost:5209/" HorizontalOptions="Fill" />
+                    <Button Grid.Column="5" Clicked="OnBrowserGoClicked" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" HorizontalOptions="End" />
                 </Grid>
-                <Label Grid.Row="1" x:Name="BrowserStatusLabel" TextColor="Red" IsVisible="False" FontSize="Small" Padding="8,0" />
-                <WebView Grid.Row="2" x:Name="BrowserView" Source="http://localhost:5209/" Navigating="OnBrowserNavigating" Navigated="OnBrowserNavigated" />
+
+                <Label Grid.Row="2" x:Name="BrowserStatusLabel" TextColor="Red" IsVisible="False" FontSize="Small" Padding="8,0" />
+                <WebView Grid.Row="3" x:Name="BrowserView" Source="http://localhost:5209/" Navigating="OnBrowserNavigating" Navigated="OnBrowserNavigated" HorizontalOptions="Fill" VerticalOptions="Fill" />
             </Grid>
         </Grid>
     </Grid>
