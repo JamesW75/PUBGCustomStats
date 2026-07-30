@@ -116,6 +116,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Bleeding out";
                 case "Damage_BlueZoneGrenade":
                     return "BZ Grenade";
+                case "Damage_KillTruckTurret":
+                    return "Kill Truck Turret";
                 case null:
                     return "Unknown";
                 default:
@@ -205,7 +207,14 @@ namespace PUBGCustomStats.Web.Pages
                 case "Damage_Melee":
                     return GetWeaponDescription(damageReason);
                 default:
-                    return damageCategory + " " + damageReason;
+                    switch (damageReason)
+                    {
+                        case "BP_LootTruck_C":
+                            return "Loot Truck";
+                        default:
+                            Console.WriteLine("Unknown Weapon Description: " + damageCategory + " " + damageReason);
+                            return damageCategory + " " + damageReason;
+                    }
             }
         }
 
@@ -647,6 +656,12 @@ namespace PUBGCustomStats.Web.Pages
                     return "Pickaxe";
                 case "Item_Weapon_DP12_C":
                     return "DBS";
+                case "Item_Weapon_MG3_C":
+                    return "MG3";
+                case "Item_Weapon_TraumaBag_C":
+                    return "Trauma Bag";
+                case "Item_Weapon_PanzerFaust100M_C":
+                    return "Panzerfaust";
                 default:
                     Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                     return weapon;
@@ -718,6 +733,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Snow";
                 case "Clear_02":
                     return "Clear";
+                case "Sunset_a":
+                    return "Sunset";
                 default:
                     return weather;
             }
