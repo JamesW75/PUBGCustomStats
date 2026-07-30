@@ -13,9 +13,12 @@ namespace PUBGCustomStats.Web.Pages
                 case "Carapackage_RedBox_C":
                     return "Red Box";
                 case "Carapackage_SmallPackage_C":
+                case "Carapackage_SmallPackage_DihorOtok_C":
                     return "Small";
                 case "Carapackage_SmallPackage_NoParachute_C":
                     return "Support Flare";
+                case "BP_BRDM_C":
+                    return "BRDM";
                 case null:
                     return "";
                 default:
@@ -741,6 +744,14 @@ namespace PUBGCustomStats.Web.Pages
         }
         public static string GetZoneDescription(string zone)
         {
+            // If zone contains a comma, split it into two parts
+            if (zone.Contains(","))
+            {
+                var zones = zone.Split(',');
+
+                return GetZoneDescription(GetZoneDescription(zones[0]) + " & " + GetZoneDescription(zones[1]));
+            }
+
             // Zone List: https://github.com/pubg/api-assets/blob/master/enums/telemetry/regionId.json
             switch (zone)
             {
@@ -1148,6 +1159,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Krichas";
                 case "pilnec":
                     return "Pilnec";
+                case "laveni":
+                    return "Laveni";
 
 
                 // Unspecified or unknown zone
