@@ -182,6 +182,33 @@ if (args.Length > 0)
                 Console.WriteLine($"Session edited: {editSessionName}");
                 break;
 
+            case "--deletesession":
+                // Delete a session and all associated matches and data
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No session GUID provided. Use --help for usage information.");
+                    return;
+                }
+
+                var deleteSessionGuid = args[1];
+
+                if (!Guid.TryParse(deleteSessionGuid, out Guid parsedDeleteSessionGuid))
+                {
+                    Console.WriteLine("Error: Invalid session GUID format. Please provide a valid GUID.");
+                    return;
+                }
+
+                try
+                {
+                    session.DeleteSession(parsedDeleteSessionGuid);
+                    Console.WriteLine($"Session deleted: {deleteSessionGuid}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting session: {ex.Message}");
+                }
+                break;
+
             case "--listsessions":
                 if (currentSeason == null)
                 {
@@ -441,6 +468,7 @@ void DisplayHelp()
     Console.WriteLine("  --createsession <name> <datetime>     Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
     Console.WriteLine("  --editseason <name>                   Edit the current season");
     Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
+    Console.WriteLine("  --deletesession <sessionGuid>         Delete a session and all associated matches and data");
     Console.WriteLine("  --addmatch <matchId> [matchName]      Add a match to the current session. Match name is optional.");
     Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name");
     Console.WriteLine("  --listsessions                        List all sessions in the current season");
