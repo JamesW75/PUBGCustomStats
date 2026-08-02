@@ -12,6 +12,7 @@ namespace PUBGCustomStats.Web.Pages
         public List<string>? Victims { get; set; }
         // Rows: Player -> Columns: Victim -> Count
         public Dictionary<Guid, Dictionary<string, int>> Counts { get; set; } = new();
+        public HashSet<string> SuicideCells { get; set; } = new();
 
         public KillMatrixModel(PUBGCustomStatsContext context)
         {
@@ -120,6 +121,11 @@ namespace PUBGCustomStats.Web.Pages
                         continue;
                     }
                 }
+                else if (t.IsSuicide.GetValueOrDefault() && t.PlayerGuid != null)
+                {
+                    // Attribute suicides to the player who died (count as self-kill)
+                    killerGuid = t.PlayerGuid.Value;
+                }
                 else if (!string.IsNullOrEmpty(t.DamageCategory) && t.DamageCategory == "Damage_BlueZone")
                 {
                     // Attribute blue zone kills to synthetic Blue Zone player
@@ -130,13 +136,27 @@ namespace PUBGCustomStats.Web.Pages
                     continue;
                 }
 
-                var victimLabel = GetVictimLabel(t);
+                string victimLabel;
+                // If suicide, set victim label to the player's own name when possible so suicides appear under own name
+                if (t.IsSuicide.GetValueOrDefault() && t.Player != null && !string.IsNullOrEmpty(t.Player.PlayerName))
+                {
+                    victimLabel = t.Player.PlayerName!;
+                }
+                else
+                {
+                    victimLabel = GetVictimLabel(t);
+                }
                 if (string.IsNullOrEmpty(victimLabel)) continue;
 
                 if (Counts.TryGetValue(killerGuid, out var row))
                 {
                     if (!row.ContainsKey(victimLabel)) row[victimLabel] = 0;
                     row[victimLabel]++;
+                    // record suicide cells so view can render them differently
+                    if (t.IsSuicide.GetValueOrDefault())
+                    {
+                        SuicideCells.Add($"{killerGuid}:{victimLabel}");
+                    }
                 }
             }
         }

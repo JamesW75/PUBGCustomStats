@@ -1,7 +1,10 @@
 @page
 @model PUBGCustomStats.Web.Pages.KillMatrixModel
+@{
+    ViewData["Title"] = "Kill Matrix";
 
-<h2>Kill Matrix</h2>
+    Guid currentSeason = Guid.Empty;
+}
 
 <style>
     /* Right align kill counts */
@@ -29,6 +32,12 @@
 
     /* Make header text not wrap and keep spacing compact */
     table.table th, table.table td { vertical-align: middle; }
+    /* Suicide cells are dark grey - use stronger specificity to override table styles */
+    td.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
+    td.suicide-cell a { color: #fff !important; }
+    /* Blue Zone killer row cells */
+    td.bluezone-cell { background-color: #0d6efd !important; color: #fff !important; }
+    td.bluezone-cell a { color: #fff !important; }
 </style>
 
     <div class="table-responsive">
@@ -50,8 +59,23 @@
             {
                 foreach (var p in Model.Players)
                 {
+                    var isBlueZoneRow = string.Equals(p.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
                     <tr>
-                        <td class="text-nowrap"><a asp-page="/Player" asp-route-playerGuid="@p.PlayerGuid">@p.PlayerName</a></td>
+                        <td class="text-nowrap">
+                            @{
+                                var pname = p.PlayerName ?? string.Empty;
+                                var isNonPlayerLink = string.Equals(pname, "BOT", StringComparison.OrdinalIgnoreCase) || string.Equals(pname, "Blue Zone", StringComparison.OrdinalIgnoreCase);
+                            }
+                            @if (isNonPlayerLink)
+                            {
+                                var routeName = string.Equals(pname, "Blue Zone", StringComparison.OrdinalIgnoreCase) ? "BlueZone" : pname;
+                                <a asp-page="/NonPlayer" asp-route-name="@routeName">@p.PlayerName</a>
+                            }
+                            else
+                            {
+                                <a asp-page="/Player" asp-route-playerGuid="@p.PlayerGuid">@p.PlayerName</a>
+                            }
+                        </td>
                         @foreach (var v in Model.Victims)
                         {
                             var val = 0;
@@ -59,7 +83,17 @@
                             {
                                 if (row.TryGetValue(v, out var c)) val = c;
                             }
-                            <td class="text-end kill-count">@val</td>
+                            var cellClasses = "text-end kill-count";
+                            if (isBlueZoneRow)
+                            {
+                                cellClasses += " bluezone-cell";
+                            }
+                            var suicideKey = $"{p.PlayerGuid}:{v}";
+                            if (Model.SuicideCells.Contains(suicideKey))
+                            {
+                                cellClasses += " suicide-cell";
+                            }
+                            <td class="@cellClasses">@val</td>
                         }
                     </tr>
                 }
