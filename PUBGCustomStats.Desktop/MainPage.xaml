@@ -6,7 +6,29 @@
     <Grid ColumnDefinitions="250,*">
         <!-- Left pane: Seasons tree/list -->
         <Border BackgroundColor="#F0F0F0" Padding="8" Grid.Column="0">
-            <CollectionView x:Name="SeasonsView" SelectionMode="Single">
+            <VerticalStackLayout Spacing="8">
+                <!-- Controls to add items -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Start">
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Season" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddSeasonClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Session" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddSessionClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Match" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddMatchClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+                <CollectionView x:Name="SeasonsView" SelectionMode="Single">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border Padding="6" Margin="0,4" Stroke="#DDD">
@@ -92,6 +114,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            </VerticalStackLayout>
         </Border>
 
         <!-- Right pane: editor on top, browser on bottom -->

@@ -73,6 +73,22 @@ namespace PUBGCustomStats.Desktop
 
             browser.Source = url;
         }
+
+        // Add button handlers (stubs)
+        private async void OnAddSeasonClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Season", "Add Season clicked", "OK");
+        }
+
+        private async void OnAddSessionClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Session", "Add Session clicked", "OK");
+        }
+
+        private async void OnAddMatchClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Match", "Add Match clicked", "OK");
+        }
         private string? _connectionString;
         private System.Collections.Generic.List<PUBGCustomStats.Desktop.ViewModels.SeasonItem>? _seasonItems;
         private PUBGCustomStats.Desktop.ViewModels.SeasonItem? _selectedSeason;
