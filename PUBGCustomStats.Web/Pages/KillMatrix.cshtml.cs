@@ -22,17 +22,33 @@ namespace PUBGCustomStats.Web.Pages
         {
             _context.Database.EnsureCreatedAsync();
 
-            // Load players (exclude random players)
+            // Load players (exclude random players) and sort case-insensitively
             Players = _context.Players
                 .Where(p => p.IsRandom != true)
-                .OrderBy(p => p.PlayerName)
+                .OrderBy(p => (p.PlayerName ?? string.Empty).ToLower())
                 .ToList();
 
+            // Add synthetic BOT player so NPC kills can be shown as a row
+            var botGuid = new Guid("00000000-0000-0000-0000-000000000001");
+            if (!Players.Any(p => p.PlayerGuid == botGuid))
+            {
+                Players.Add(new Player { PlayerGuid = botGuid, PlayerName = "BOT" });
+            }
+
+            // Add synthetic Blue Zone player to represent environment kills as a killer
+            var blueZoneGuid = new Guid("00000000-0000-0000-0000-000000000002");
+            if (!Players.Any(p => p.PlayerGuid == blueZoneGuid))
+            {
+                Players.Add(new Player { PlayerGuid = blueZoneGuid, PlayerName = "Blue Zone" });
+            }
+
             // Load relevant match timeline events into memory for processing
+            // Exclude knocks (LogPlayerMakeGroggy) and any matches marked DoNotCount
             var timelines = _context.MatchTimeline
-                .Where(mt => mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2")
                 .Include(mt => mt.Player)
                 .Include(mt => mt.SecondaryPlayer)
+                .Include(mt => mt.Match)
+                .Where(mt => mt.EventType == "LogPlayerKillV2" && mt.Match != null && mt.Match.DoNotCount != true)
                 .ToList();
 
             // Build set of victim labels: include all players (so every player appears as a column)
@@ -64,6 +80,15 @@ namespace PUBGCustomStats.Web.Pages
 
             Victims = victimLabels.ToList();
 
+            // Exclude Blue Zone from victim columns (keep Blue Zone as a killer row only)
+            Victims.RemoveAll(v => string.Equals(v, "Blue Zone", StringComparison.OrdinalIgnoreCase));
+
+            // Move BOT label to the end of the victims list so it's the last column
+            if (Victims.Remove("BOT"))
+            {
+                Victims.Add("BOT");
+            }
+
             // Initialize counts dictionary
             if (Players != null)
             {
@@ -73,12 +98,38 @@ namespace PUBGCustomStats.Web.Pages
                 }
             }
 
-            // Populate counts: for each timeline where there is a killer (SecondaryPlayerGuid)
+            // Populate counts: for each timeline determine killer GUID (real player or synthetic BOT) and increment
             foreach (var t in timelines)
             {
-                if (t.SecondaryPlayerGuid == null) continue;
+                Guid killerGuid;
 
-                var killerGuid = t.SecondaryPlayerGuid.Value;
+                if (t.SecondaryPlayerGuid != null)
+                {
+                    killerGuid = t.SecondaryPlayerGuid.Value;
+                }
+                else if (!string.IsNullOrEmpty(t.SecondaryPlayerAccountId) && t.SecondaryPlayerIsNPC.GetValueOrDefault())
+                {
+                    // Map NPC account ids starting with ai to BOT synthetic player
+                    if (t.SecondaryPlayerAccountId.StartsWith("ai"))
+                    {
+                        killerGuid = botGuid;
+                    }
+                    else
+                    {
+                        // Unknown NPC type - skip
+                        continue;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(t.DamageCategory) && t.DamageCategory == "Damage_BlueZone")
+                {
+                    // Attribute blue zone kills to synthetic Blue Zone player
+                    killerGuid = blueZoneGuid;
+                }
+                else
+                {
+                    continue;
+                }
+
                 var victimLabel = GetVictimLabel(t);
                 if (string.IsNullOrEmpty(victimLabel)) continue;
 
