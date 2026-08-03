@@ -17,6 +17,7 @@
 <table class="table table-sm table-bordered">
     <thead>
         <tr>
+            <th>Session</th>
             <th>Start Time</th>
             <th>Mode</th>
             <th>Map</th>
@@ -29,6 +30,16 @@
     </thead>
     <tbody>
         <tr>
+            <td>
+                @if (Model.Match?.Session != null && Model.Match.SessionGuid.HasValue)
+                {
+                    <a href="/session?sessionGuid=@Model.Match.SessionGuid">@(!String.IsNullOrEmpty(Model.Match.Session.SessionName) ? Model.Match.Session.SessionName : Model.Match.Session.StartDateTime?.ToString("yyyy-MM-dd HH:mm") ?? "Session")</a>
+                }
+                else
+                {
+                    <span class="text-muted">No session</span>
+                }
+            </td>
             <td>
                 @Model.Match?.StartTime?.ToLocalTime().ToShortDateString()</span>
                     @Model.Match?.StartTime?.ToLocalTime().ToLongTimeString()
