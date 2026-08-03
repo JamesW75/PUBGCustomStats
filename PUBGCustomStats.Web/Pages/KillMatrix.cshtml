@@ -1,0 +1,151 @@
+@page
+@model PUBGCustomStats.Web.Pages.KillMatrixModel
+@{
+    ViewData["Title"] = "Kill Matrix";
+
+    Guid currentSeason = Guid.Empty;
+}
+
+<style>
+    /* Right align kill counts */
+    .kill-count { text-align: right; }
+
+    /* Rotate victim header text 90 degrees */
+    .victim-header {
+        /* Use vertical writing mode so the cell's natural width reflects rotated text
+           This keeps the header label inside the column and avoids absolute positioning */
+        padding: 0.25rem 0.15rem;
+        height: 160px; /* header height so rotated labels don't overlap player names */
+        vertical-align: bottom;
+        text-align: center;
+        white-space: normal;
+    }
+    .victim-header > .rotated {
+        /* vertical-rl makes text flow top-to-bottom; rotate 180deg to orient readable top-to-bottom */
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        display: inline-block;
+        white-space: nowrap;
+        line-height: 1;
+        padding: 0 0.25rem;
+    }
+
+    /* Make header text not wrap and keep spacing compact */
+    table.table th, table.table td { vertical-align: middle; }
+    /* Suicide cells are dark grey - use stronger specificity to override table styles */
+    td.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
+    td.suicide-cell a { color: #fff !important; }
+    /* Blue Zone killer row cells */
+    td.bluezone-cell { background-color: #0d6efd !important; color: #fff !important; }
+    td.bluezone-cell a { color: #fff !important; }
+</style>
+
+    <div class="table-responsive">
+    <table class="table table-sm table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="min-width:200px">Player \ Victim</th>
+                @if (Model.Victims != null)
+                {
+                    foreach (var v in Model.Victims)
+                    {
+                        <th class="victim-header"><div class="rotated">@v</div></th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Players != null && Model.Victims != null)
+            {
+                foreach (var p in Model.Players)
+                {
+                    var isBlueZoneRow = string.Equals(p.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
+                    <tr>
+                        <td class="text-nowrap">
+                            @{
+                                var pname = p.PlayerName ?? string.Empty;
+                                var isNonPlayerLink = string.Equals(pname, "BOT", StringComparison.OrdinalIgnoreCase) || string.Equals(pname, "Blue Zone", StringComparison.OrdinalIgnoreCase);
+                            }
+                            @if (isNonPlayerLink)
+                            {
+                                var routeName = string.Equals(pname, "Blue Zone", StringComparison.OrdinalIgnoreCase) ? "BlueZone" : pname;
+                                <a asp-page="/NonPlayer" asp-route-name="@routeName">@p.PlayerName</a>
+                            }
+                            else
+                            {
+                                <a asp-page="/Player" asp-route-playerGuid="@p.PlayerGuid">@p.PlayerName</a>
+                            }
+                        </td>
+                        @foreach (var v in Model.Victims)
+                        {
+                            var val = 0;
+                            if (Model.Counts.TryGetValue(p.PlayerGuid, out var row))
+                            {
+                                if (row.TryGetValue(v, out var c)) val = c;
+                            }
+                            var cellClasses = "text-end kill-count";
+                            if (isBlueZoneRow)
+                            {
+                                cellClasses += " bluezone-cell";
+                            }
+                            var suicideKey = $"{p.PlayerGuid}:{v}";
+                            if (Model.SuicideCells.Contains(suicideKey))
+                            {
+                                cellClasses += " suicide-cell";
+                            }
+                            <td class="@cellClasses">@val</td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    (function(){
+        const table = document.querySelector('table.table');
+        if (!table) return;
+
+        function addHoverHandlers() {
+            // Add handlers to header and body cells
+            const cells = table.querySelectorAll('thead th, tbody td');
+            cells.forEach(function(cell) {
+                cell.addEventListener('mouseenter', function () {
+                    const idx = this.cellIndex;
+                    // highlight column
+                    table.querySelectorAll('tr').forEach(function (tr) {
+                        const c = tr.cells[idx];
+                        if (c) c.classList.add('hover-col');
+                    });
+                    // highlight row only for body cells
+                    if (this.tagName === 'TD') {
+                        this.parentElement.classList.add('hover-row');
+                    }
+                });
+                cell.addEventListener('mouseleave', function () {
+                    const idx = this.cellIndex;
+                    table.querySelectorAll('tr').forEach(function (tr) {
+                        const c = tr.cells[idx];
+                        if (c) c.classList.remove('hover-col');
+                    });
+                    if (this.tagName === 'TD') {
+                        this.parentElement.classList.remove('hover-row');
+                    }
+                });
+            });
+        }
+
+        // If DOM is ready, attach handlers
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', addHoverHandlers);
+        } else {
+            addHoverHandlers();
+        }
+    })();
+</script>
+
+<style>
+    /* Highlighting styles for hovered row/column */
+    .hover-row td { background-color: #e6f7ff !important; }
+    .hover-col { background-color: #e6f7ff !important; }
+</style>
