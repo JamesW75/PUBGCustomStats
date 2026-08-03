@@ -440,6 +440,25 @@ if (args.Length > 0)
                 }
                 break;
 
+            case "--setrandom":
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No player ID provided. Use --help for usage information.");
+                    return;
+                }
+                var randomPlayerId = args[1];
+                var randomPlayer = new Player(dbContextOptions, integrationService);
+                var randomSet = randomPlayer.SetRandomFlag(randomPlayerId);
+                if (randomSet)
+                {
+                    Console.WriteLine($"Player {randomPlayerId} marked as random.");
+                }
+                else
+                {
+                    Console.WriteLine($"Player not found: {randomPlayerId}");
+                }
+                break;
+
             case "--help":
                 DisplayHelp();
                 break;
@@ -476,6 +495,7 @@ void DisplayHelp()
     Console.WriteLine("  --listmatches                         List all matches in the current session");
     Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
+    Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");

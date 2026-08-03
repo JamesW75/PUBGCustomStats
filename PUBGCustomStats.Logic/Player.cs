@@ -81,6 +81,25 @@ namespace PUBGCustomStats.Logic
             return player?.PlayerGuid;
         }
 
+        public bool SetRandomFlag(string? gamerTag)
+        {
+            if (string.IsNullOrEmpty(gamerTag))
+            {
+                throw new ArgumentException("Player ID cannot be null or empty", nameof(gamerTag));
+            }
+
+            DbContext.Database.EnsureCreated();
+            var player = DbContext.Players.FirstOrDefault(p => p.PlayerName == gamerTag);
+            if (player == null)
+            {
+                return false;
+            }
+
+            player.IsRandom = true;
+            DbContext.SaveChanges();
+            return true;
+        }
+
         public IEnumerable<Guid> GetRecentMatches(string pubgPlayerId)
         {
             var result = new List<Guid>();
