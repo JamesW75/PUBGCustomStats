@@ -8,27 +8,27 @@ namespace PUBGCustomStats.Logic
     public class Match
     {
         public PUBGCustomStatsContext DbContext { get; set; }
-        private DbContextOptions<PUBGCustomStatsContext> _dbContextOptions { get; set; }
+        private DbContextOptions<PUBGCustomStatsContext> DbContextOptions { get; set; }
         const int SecondsToTicksFactor = 1000000; // 1 second = 10 million ticks
-        private IntegrationService _integrationService;
-        private string _baseStoragePath;
-        private string _baseTelemetryStoragePath;
+        private readonly IntegrationService _integrationService;
+        private readonly string BaseStoragePath;
+        private readonly string BaseTelemetryStoragePath;
 
         public Match(DbContextOptions<PUBGCustomStatsContext> options, IntegrationService integrationService)
         {
-            _dbContextOptions = options;
+            DbContextOptions = options;
             _integrationService = integrationService;
-            _baseStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Matches");
-            _baseTelemetryStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Telemetry");
+            BaseStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Matches");
+            BaseTelemetryStoragePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PUBGCustomStats", "Telemetry");
 
-            if (!Directory.Exists(_baseStoragePath))
+            if (!Directory.Exists(BaseStoragePath))
             {
-                Directory.CreateDirectory(_baseStoragePath);
+                Directory.CreateDirectory(BaseStoragePath);
             }
 
-            if (!Directory.Exists(_baseTelemetryStoragePath))
+            if (!Directory.Exists(BaseTelemetryStoragePath))
             {
-                Directory.CreateDirectory(_baseTelemetryStoragePath);
+                Directory.CreateDirectory(BaseTelemetryStoragePath);
             }
 
             // Initialize the DbContext with the required options
@@ -41,17 +41,17 @@ namespace PUBGCustomStats.Logic
             // Save to the storage folder
             Integration.JsonObject.Match? matchData;
 
-            if (!File.Exists(Path.Combine(_baseStoragePath, matchGuid.ToString() + ".json")))
+            if (!File.Exists(Path.Combine(BaseStoragePath, matchGuid.ToString() + ".json")))
             {
                 matchData = _integrationService.GetMatch(matchGuid);
                 if (matchData != null)
                 {
-                    File.WriteAllText(Path.Combine(_baseStoragePath, matchGuid.ToString() + ".json"), matchData.RawData);
+                    File.WriteAllText(Path.Combine(BaseStoragePath, matchGuid.ToString() + ".json"), matchData.RawData);
                 }
             }
             else
             {
-                var rawData = File.ReadAllText(Path.Combine(_baseStoragePath, matchGuid.ToString() + ".json"));
+                var rawData = File.ReadAllText(Path.Combine(BaseStoragePath, matchGuid.ToString() + ".json"));
                 matchData = _integrationService.ParseMatch(rawData);
             }
 
@@ -68,32 +68,29 @@ namespace PUBGCustomStats.Logic
 
             match = DbContext.Matches.First(m => m.MatchGuid == matchGuid);
 
-            if (!File.Exists(Path.Combine(_baseTelemetryStoragePath, matchGuid.ToString() + ".json")))
+            if (!File.Exists(Path.Combine(BaseTelemetryStoragePath, matchGuid.ToString() + ".json")))
             {
                 if (!string.IsNullOrEmpty(match.TelemetryUrl))
                 {
                     Console.WriteLine($"Downloading telemetry data for match: {matchGuid}");
                     var telemetryData = _integrationService.GetTelemetry(match.TelemetryUrl);
 
-                    File.WriteAllText(Path.Combine(_baseTelemetryStoragePath, matchGuid.ToString() + ".json"), telemetryData.Result);
+                    File.WriteAllText(Path.Combine(BaseTelemetryStoragePath, matchGuid.ToString() + ".json"), telemetryData.Result);
 
                     ParseTelemetry(matchGuid, telemetryData.Result);
                 }
             }
             else
             {
-                var telemetryRawData = File.ReadAllText(Path.Combine(_baseTelemetryStoragePath, matchGuid.ToString() + ".json"));
+                var telemetryRawData = File.ReadAllText(Path.Combine(BaseTelemetryStoragePath, matchGuid.ToString() + ".json"));
                 ParseTelemetry(matchGuid, telemetryRawData);
             }
         }
 
-        public List<Data.Models.Match> ListMatches(Guid sessionGuid)
-        {
-            return DbContext.Matches.Where(m => m.SessionGuid == sessionGuid).ToList();
-        }
+        public List<Data.Models.Match> ListMatches(Guid sessionGuid) => [.. DbContext.Matches.Where(m => m.SessionGuid == sessionGuid)];
         public List<Data.Models.Match> ListMatches()
         {
-            return DbContext.Matches.ToList();
+            return [.. DbContext.Matches];
         }
         public void EditMatch(Guid matchGuid, string newMatchName)
         {
@@ -239,7 +236,7 @@ namespace PUBGCustomStats.Logic
             float? lastDamageDealt = 0;
             int lastDamagePosition = 0;
 
-            Player player = new Player(_dbContextOptions, _integrationService);
+            var player = new Player(DbContextOptions, _integrationService);
 
             if (players == null)
             {
@@ -359,72 +356,38 @@ namespace PUBGCustomStats.Logic
         public static string GetMapName(string? mapNameRaw)
         {
             // Reference: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/mapName.json
-            switch (mapNameRaw)
+            return mapNameRaw switch
             {
-                case "Desert_Main":
-                    return "Miramar";
-                case "Erangel_Main":
-                case "Baltic_Main":
-                    return "Erangel";
-                case "Vikendi_Main":
-                case "DihorOtok_Main":
-                    return "Vikendi";
-                case "Savage_Main":
-                    return "Sanhok";
-                case "Taego_Main":
-                case "Tiger_Main":
-                    return "Taego";
-                case "Karakin_Main":
-                case "Summerland_Main":
-                    return "Karakin";
-                case "Paramo_Main":
-                case "Chimera_Main":
-                    return "Paramo";
-                case "Deston_Main":
-                case "Kiki_Main":
-                    return "Deston";
-                case "Arenas_Main":
-                    return "Arenas";
-                case "Training_Main":
-                    return "Training";
-                case "Custom_Main":
-                    return "Custom";
-                case "Neon_Main":
-                    return "Rondo";
-                case "Heaven_Main":
-                    return "Haven";
-                case "Range_Main":
-                    return "Camp Jackal";
-                case null:
-                    return "Unknown";
-                default:
-                    return mapNameRaw;
-            }
+                "Desert_Main" => "Miramar",
+                "Erangel_Main" or "Baltic_Main" => "Erangel",
+                "Vikendi_Main" or "DihorOtok_Main" => "Vikendi",
+                "Savage_Main" => "Sanhok",
+                "Taego_Main" or "Tiger_Main" => "Taego",
+                "Karakin_Main" or "Summerland_Main" => "Karakin",
+                "Paramo_Main" or "Chimera_Main" => "Paramo",
+                "Deston_Main" or "Kiki_Main" => "Deston",
+                "Arenas_Main" => "Arenas",
+                "Training_Main" => "Training",
+                "Custom_Main" => "Custom",
+                "Neon_Main" => "Rondo",
+                "Heaven_Main" => "Haven",
+                "Range_Main" => "Camp Jackal",
+                null => "Unknown",
+                _ => mapNameRaw,
+            };
         }
 
         public static string GetGameMode(string? gameModeRaw)
         {
-            switch (gameModeRaw)
+            return gameModeRaw switch
             {
-                case "normal-solo":
-                case "normal-solo-fpp":
-                case "solo":
-                    return "Solo";
-                case "normal-duo":
-                case "normal-duo-fpp":
-                case "duo":
-                    return "Duo";
-                case "normal-squad":
-                case "normal-squad-fpp":
-                case "squad":
-                    return "Squad";
-                case "tdm":
-                    return "TDM";
-                case null:
-                    return "Unknown";
-                default:
-                    return gameModeRaw;
-            }
+                "normal-solo" or "normal-solo-fpp" or "solo" => "Solo",
+                "normal-duo" or "normal-duo-fpp" or "duo" => "Duo",
+                "normal-squad" or "normal-squad-fpp" or "squad" => "Squad",
+                "tdm" => "TDM",
+                null => "Unknown",
+                _ => gameModeRaw,
+            };
         }
 
         public void ParseTelemetry(Guid matchGuid, string telemetryRawData)
@@ -434,12 +397,12 @@ namespace PUBGCustomStats.Logic
 
             var telemetryData = _integrationService.ParseTelemetry(telemetryRawData);
 
-            Console.WriteLine($"Total telemetry events: {telemetryData?.Count()}");
+            Console.WriteLine($"Total telemetry events: {telemetryData?.Length}");
 
 
             DbContext.Database.EnsureCreated();
 
-            Player player = new Player(_dbContextOptions, _integrationService);
+            var player = new Player(DbContextOptions, _integrationService);
 
             var existingData = DbContext.MatchTimeline.Where(mt => mt.MatchGuid == matchGuid).Include("MatchTimelinePlayers");
             // Delete existing timeline events for this match
@@ -501,10 +464,7 @@ namespace PUBGCustomStats.Logic
                                                 }
                                             }
 
-                                            if (matchTimeline.MatchTimelinePlayers == null)
-                                            {
-                                                matchTimeline.MatchTimelinePlayers = new List<MatchTimelinePlayer>();
-                                            }
+                                            matchTimeline.MatchTimelinePlayers ??= [];
                                             matchTimeline.MatchTimelinePlayers.Add(winningPlayer);
                                         }
                                     }
@@ -595,10 +555,7 @@ namespace PUBGCustomStats.Logic
                                             assistPlayer.PlayerIsNPC = true;
                                         }
                                     }
-                                    if (matchTimeline.MatchTimelinePlayers == null)
-                                    {
-                                        matchTimeline.MatchTimelinePlayers = new List<MatchTimelinePlayer>();
-                                    }
+                                    matchTimeline.MatchTimelinePlayers ??= [];
                                     matchTimeline.MatchTimelinePlayers.Add(assistPlayer);
                                 }
                             }
@@ -843,10 +800,7 @@ namespace PUBGCustomStats.Logic
                                             assistPlayer.PlayerIsNPC = true;
                                         }
                                     }
-                                    if (matchTimeline.MatchTimelinePlayers == null)
-                                    {
-                                        matchTimeline.MatchTimelinePlayers = new List<MatchTimelinePlayer>();
-                                    }
+                                    matchTimeline.MatchTimelinePlayers ??= [];
                                     matchTimeline.MatchTimelinePlayers.Add(assistPlayer);
                                 }
                             }
@@ -1314,7 +1268,7 @@ namespace PUBGCustomStats.Logic
             DbContext.SaveChanges();
         }
 
-        private int CalculateScore(int? rank, int? killPlace, int? damagePlace)
+        private static int CalculateScore(int? rank, int? killPlace, int? damagePlace)
         {
             int score = 1; // Participation point
 
@@ -1383,7 +1337,7 @@ namespace PUBGCustomStats.Logic
             }
         }
 
-        public string ArrayToCsv(string[] array)
+        public static string ArrayToCsv(string[] array)
         {
             return string.Join(",", array);
         }
