@@ -9,6 +9,7 @@
 
 <table class="table table-hover" data-toggle="table"
        data-sortable="true">
+       <thead class="table-light">
     <tr>
         <th>Clan</th>
         <th class="text-end">Matches</th>
@@ -24,7 +25,8 @@
         <th class="text-end">Suicides</th>
         <th class="text-end">Score</th>
     </tr>
-
+</thead>
+<tbody>
     @foreach (var clan in Model.Clans.OrderByDescending(c => c.Stats.Score))
     {
         if (clan.Stats.Score > 0)
@@ -46,7 +48,7 @@
             </tr>
         }
     }
-
+</tbody>
 </table>
 
 @foreach (var clan in Model.Clans.OrderBy(c => c.Tag))
@@ -57,6 +59,7 @@
 
         <table class="table table-hover" data-toggle="table"
                data-sortable="true">
+            <thead class="table-light">
             <tr>
                 <th>Player</th>
                 <th class="text-end">Matches</th>
@@ -72,6 +75,8 @@
                 <th class="text-end">Suicides</th>
                 <th class="text-end">Score</th>
             </tr>
+            </thead>
+            <tbody>
             @foreach (var player in clan.PlayerTable.Values.OrderByDescending(p => p.Score))
             {
                 <tr>
@@ -90,6 +95,7 @@
                     <td class="text-end">@player.Score.ToString("N0")</td>
                 </tr>
             }
+            </tbody>
             <tfoot>
                 <tr>
                     <td>Total</td>
