@@ -80,7 +80,7 @@
             @foreach (var player in clan.PlayerTable.Values.OrderByDescending(p => p.Score))
             {
                 <tr>
-                    <td>@player.PlayerName</td>
+                    <td><a href="/Player/@player.PlayerGuid">@player.PlayerName</a></td>
                     <td class="text-end">@player.MatchesPlayed.ToString("N0")</td>
                     <td class="text-end">@player.Wins</td>
                     <td class="text-end">@player.Kills (@player.HeadshotKills)</td>

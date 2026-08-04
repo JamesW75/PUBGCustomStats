@@ -197,7 +197,14 @@ else
                             <span title="Bled Out">&#129656;</span>
                             break;
                     }
-                    @playerKilled.PlayerName
+                    @if (playerKilled.PlayerGuid != null)
+                    {
+                        <a href="/Player/@playerKilled.PlayerGuid">@playerKilled.PlayerName</a>
+                    }
+                    else
+                    {
+                        @playerKilled.PlayerName
+                    }
                 </td>
                 <td class="text-end">@playerKilled.KillCount</td>
                 <td class="text-end">@playerKilled.KnockCount </td>
@@ -273,7 +280,14 @@ else
                             <span title="Bled Out">&#129656;</span>
                             break;
                     }
-                    @playerKilled.PlayerName
+                    @if (playerKilled.PlayerGuid != null)
+                    {
+                        <a href="/Player/@playerKilled.PlayerGuid">@playerKilled.PlayerName</a>
+                    }
+                    else
+                    {
+                        @playerKilled.PlayerName
+                    }
                 </td>
                 <td class="text-end">@playerKilled.KillCount</td>
                 <td class="text-end">@playerKilled.KnockCount </td>
