@@ -72,15 +72,15 @@
             <th>Player</th>
             <th class="text-end" data-sortable="true">Matches</th>
             <th class="text-end" data-sortable="true">Wins</th>
-            <th class="text-end">Kills (Headshots)</th>
-            <th class="text-end">Assists</th>
-            <th class="text-end">DBNOs</th>
+            <th class="text-end">Kills <span class="d-none d-md-inline">(Headshots)</span></th>
+            <th class="text-end d-none d-md-table-cell">Assists</th>
+            <th class="text-end d-none d-md-table-cell">DBNOs</th>
             <th class="text-end">Damage</th>
-            <th class="text-end">Heals</th>
-            <th class="text-end">Boosts</th>
-            <th class="text-end">Revives</th>
-            <th class="text-end">Play Zoned</th>
-            <th class="text-end">Suicides</th>
+            <th class="text-end d-none d-md-table-cell">Heals</th>
+            <th class="text-end d-none d-md-table-cell">Boosts</th>
+            <th class="text-end d-none d-md-table-cell">Revives</th>
+            <th class="text-end d-none d-md-table-cell">Play Zoned</th>
+            <th class="text-end d-none d-md-table-cell">Suicides</th>
             <th class="text-end">Score</th>
         </tr>
         </thead>
@@ -90,15 +90,15 @@
                 <td><a href="/Player/@row.PlayerGuid">@row.PlayerName</a></td>
                 <td class="text-end">@row.MatchesPlayed</td>
                 <td class="text-end">@row.Wins</td>
-                <td class="text-end">@row.Kills (@row.HeadshotKills)</td>
-                <td class="text-end">@row.Assists</td>
-                <td class="text-end">@row.DBNOs</td>
+                <td class="text-end">@row.Kills <span class="d-none d-md-inline">(@row.HeadshotKills)</span></td>
+                <td class="text-end d-none d-md-table-cell">@row.Assists</td>
+                <td class="text-end d-none d-md-table-cell">@row.DBNOs</td>
                 <td class="text-end">@row.DamageDealt.ToString("N2")</td>
-                <td class="text-end">@row.Heals</td>
-                <td class="text-end">@row.Boosts</td>
-                <td class="text-end">@row.Revives</td>
-                <td class="text-end">@row.DeathByZone</td>
-                <td class="text-end">@row.DeathBySuicide</td>
+                <td class="text-end d-none d-md-table-cell">@row.Heals</td>
+                <td class="text-end d-none d-md-table-cell">@row.Boosts</td>
+                <td class="text-end d-none d-md-table-cell">@row.Revives</td>
+                <td class="text-end d-none d-md-table-cell">@row.DeathByZone</td>
+                <td class="text-end d-none d-md-table-cell">@row.DeathBySuicide</td>
                 <td class="text-end">@row.Score</td>
             </tr>
         }
@@ -133,13 +133,13 @@
         <tr class="@rowClass">
             <th>Player</th>
             <th class="text-end" data-sortable="true">Position</th>
-            <th class="text-end">Kills (Headshots)</th>
-            <th class="text-end">Assists</th>
-            <th class="text-end">DBNOs</th>
-            <th class="text-end">Damage (Place)</th>
-            <th class="text-end">Heals</th>
-            <th class="text-end">Boosts</th>
-            <th class="text-end">Revives</th>
+            <th class="text-end">Kills <span class="d-none d-md-inline">(Headshots)</span></th>
+            <th class="text-end d-none d-md-table-cell">Assists</th>
+            <th class="text-end d-none d-md-table-cell">DBNOs</th>
+            <th class="text-end">Damage <span class="d-none d-md-inline">(Place)</span></th>
+            <th class="text-end d-none d-md-table-cell">Heals</th>
+            <th class="text-end d-none d-md-table-cell">Boosts</th>
+            <th class="text-end d-none d-md-table-cell">Revives</th>
             <th class="text-end">Death Type</th>
             <th class="text-end">Score</th>
         </tr>
@@ -168,9 +168,9 @@
                     }
                 </td>
 
-                <td class="text-end">@row.Kills (@row.HeadshotKills)</td>
-                <td class="text-end">@row.Assists</td>
-                <td class="text-end">@row.DBNOs</td>
+                <td class="text-end">@row.Kills <span class="d-none d-md-inline">(@row.HeadshotKills)</span></td>
+                <td class="text-end d-none d-md-table-cell">@row.Assists</td>
+                <td class="text-end d-none d-md-table-cell">@row.DBNOs</td>
                 <td class="text-end">
                     @row.DamageDealt.GetValueOrDefault(0).ToString("N2") @if (row.DamagePlace.HasValue) {
                     <text>(</text>@if (row.DamagePlaceEqual.GetValueOrDefault()) {
@@ -186,9 +186,9 @@
                 <text> (-) </text>
             }
         </td>
-        <td class="text-end">@row.Heals</td>
-        <td class="text-end">@row.Boosts</td>
-        <td class="text-end">@row.Revives</td>
+        <td class="text-end d-none d-md-table-cell">@row.Heals</td>
+        <td class="text-end d-none d-md-table-cell">@row.Boosts</td>
+        <td class="text-end d-none d-md-table-cell">@row.Revives</td>
         <td class="text-end">
             @row.DeathType
             @switch (row.DeathType)
