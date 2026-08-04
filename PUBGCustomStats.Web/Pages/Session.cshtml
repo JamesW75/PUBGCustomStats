@@ -67,6 +67,7 @@
     }
     <table class="table table-hover" data-toggle="table"
            data-sortable="true">
+           <thead class="table-light">
         <tr>
             <th>Player</th>
             <th class="text-end" data-sortable="true">Matches</th>
@@ -82,6 +83,7 @@
             <th class="text-end">Suicides</th>
             <th class="text-end">Score</th>
         </tr>
+        </thead>
         @foreach (var row in Model.Table.Values.OrderByDescending(s => s.Score).ThenByDescending(k => k.Kills))
         {
             <tr>
@@ -127,6 +129,7 @@
     }
     <table class="table table-hover" data-toggle="table"
            data-sortable="true">
+           <thead class="table-light">
         <tr class="@rowClass">
             <th>Player</th>
             <th class="text-end" data-sortable="true">Position</th>
@@ -140,6 +143,7 @@
             <th class="text-end">Death Type</th>
             <th class="text-end">Score</th>
         </tr>
+        </thead>
         @foreach (var row in match.PlayerStats.OrderBy(r => r.Rank).ThenByDescending(s => s.Score))
         {
             <tr class="@rowClass">

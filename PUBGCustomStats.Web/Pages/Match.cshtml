@@ -15,7 +15,7 @@
 }
 
 <table class="table table-sm table-bordered">
-    <thead>
+    <thead class="table-light">
         <tr>
             <th>Session</th>
             <th>Start Time</th>
@@ -28,7 +28,7 @@
             <th>Perspective</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         <tr>
             <td>
                 @if (Model.Match?.Session != null && Model.Match.SessionGuid.HasValue)
@@ -57,7 +57,14 @@
 
 @if (Model.MatchTimeline != null && Model.MatchTimeline.Any())
 {
-    <Table class="table table-hover table-bordered">
+    <Table class="table table-md table-hover table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Time</th>
+                <th>Event</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
         @{
             var firstEvent = Model.MatchTimeline.First().EventTimestamp;
 
@@ -735,6 +742,7 @@
                             }
                         }
                 }
+                </tbody>
             </Table>
         }
         else

@@ -8,6 +8,7 @@
 {
     <table class="table table-hover" data-toggle="table"
            data-sortable="true">
+           <thead class="table-light">
         <tr>
             <th>Player</th>
             <th class="text-end" data-sortable="true">Matches</th>
@@ -23,6 +24,8 @@
             <th class="text-end d-none d-sm-table-cell">Suicides</th>
             <th class="text-end">Score</th>
         </tr>
+        </thead>
+        <tbody>
         @foreach (var row in Model.Table.Values.OrderByDescending(s => s.Score).ThenByDescending(w => w.Wins).ThenByDescending(d => d.DamageDealt))
         {
             <tr>
@@ -41,6 +44,7 @@
                 <td class="text-end">@row.Score</td>
             </tr>
         }
+        </tbody>
     </table>
     <p>Scoring: 1 point for participation. 10 points for a win, 9 for second place and so on to 1 point for 10th place. 10 points for most damage, 9 points for second most damage, down to 1 point for 10th most damage. No damage points awarded, if no damage dealt.</p>
     foreach (var session in season.Sessions.OrderByDescending(s => s.StartDate))
@@ -58,7 +62,7 @@
             <div class="card-body">
 
                 <table class="table table-bordered ">
-                    <thead class="thead-light">
+                    <thead class="table-light">
                         <tr>
                             <th>Time</th>
                             <th>Name</th>
@@ -68,6 +72,7 @@
                             <th>Winner</th>
                         </tr>
                     </thead>
+                    <tbody>
                     @foreach (var match in session.Matches.OrderBy(m => m.MatchStartTime))
                     {
                         var rowClass = "";
@@ -88,6 +93,7 @@
                             <td>@match.Winner</td>
                         </tr>
                     }
+                    </tbody>
                 </table>
             </div>
         </div>
