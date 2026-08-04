@@ -215,9 +215,11 @@ namespace PUBGCustomStats.Web.Pages
                         KnockCount = 0
                     });
                 }
-                else if (matchTimelinesAsPlayer[playerId].PlayerGuid == null)
+                
+                if (timeline.Match != null)
+                //if (matchTimelinesAsPlayer[playerId].PlayerGuid == null)
                 {
-                    matchTimelinesAsPlayer[playerId].PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid;
+                    //matchTimelinesAsPlayer[playerId].PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid;
                         if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
                             if (timeline.Match.DoNotCount.GetValueOrDefault())
