@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using PUBGCustomStats.Integration.JsonObject;
-using System.IO.Compression;
 using System.Net;
 
 namespace PUBGCustomStats.Integration

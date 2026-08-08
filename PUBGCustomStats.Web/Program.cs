@@ -1,11 +1,6 @@
 using AspNetStatic;
-using AspNetStatic.Optimizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using PUBGCustomStats.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 

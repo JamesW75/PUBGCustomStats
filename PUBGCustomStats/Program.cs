@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PUBGCustomStats.Data;
-using PUBGCustomStats.Logic;
-using System.Runtime.InteropServices;
-using System;
-using PUBGCustomStats.Integration;
-using System.Configuration;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using System.Diagnostics.Eventing.Reader;
+using PUBGCustomStats.Data;
+using PUBGCustomStats.Integration;
+using PUBGCustomStats.Logic;
 
 // Console application that builds stats from custom PUBG matches and players.
 // Uses the PUBG API to retrieve data and stores it in a local SQLite database.
