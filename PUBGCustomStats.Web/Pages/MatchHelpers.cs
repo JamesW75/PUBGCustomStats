@@ -249,6 +249,7 @@ namespace PUBGCustomStats.Web.Pages
                     return "LMG6";
                 case "TslGameModeBase_BattleRoyale_CustomBP_C":
                 case "TslGameModeBase_BattleRoyaleBP_C":
+                case "TslGameMode_IntenseBattleRoyaleBP_C":
                     return "Blue Zone";
                 case "WeapGrenade_C":
                     return "Grenade";
