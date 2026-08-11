@@ -17,6 +17,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Small";
                 case "Carapackage_SmallPackage_NoParachute_C":
                     return "Support Flare";
+                case "Carapackage_FlareGun_C":
+                    return "Flare Gun";
                 case "BP_BRDM_C":
                     return "BRDM";
                 case null:
@@ -939,6 +941,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Georgopol";
                 case "georgopol,hospital":
                     return "Georgopol & Hospital";
+                case "kameshki":
+                    return "Kameshki";
                 case "lipovka":
                     return "Lipovka";
                 case "mansion":
