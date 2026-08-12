@@ -138,20 +138,95 @@ if (args.Length > 0)
                     var db = new PUBGCustomStatsContext(dbContextOptions);
                     db.Database.EnsureCreated();
 
+                    // Remove matchbluezone entries with no match (old orphaned data, before foreign keys fixed)
+                    var matchBlueZonesToDelete = db.MatchBlueZone
+                        .Where(mbz => mbz.Match == null)
+                        .ToList();
+
+                    Console.WriteLine($"Found {matchBlueZonesToDelete.Count} orphaned matchbluezone entries.");
+                   /* if (matchBlueZonesToDelete.Count > 0)
+                    {
+                        foreach (var mbz in matchBlueZonesToDelete)
+                        {
+                            Console.WriteLine($"Deleting orphaned matchbluezone entry: {mbz.MatchBlueZoneGuid}");
+                            db.MatchBlueZone.Remove(mbz);
+                        }
+                        Console.WriteLine($"Deleted {matchBlueZonesToDelete.Count} orphaned matchbluezone entries.");
+                    }*/
+
+                    // Remove matchtimeline entries with no match (old orphaned data, before foreign keys fixed)
+                    var matchTimelineToDelete = db.MatchTimeline
+                        .Where(mt => mt.Match == null)
+                        .ToList();
+
+                    Console.WriteLine($"Found {matchTimelineToDelete.Count} orphaned matchtimeline entries.");
+                    /*if (matchTimelineToDelete.Count > 0)
+                    {
+                        foreach (var mt in matchTimelineToDelete)
+                        {
+                            Console.WriteLine($"Deleting orphaned matchtimeline entry: {mt.MatchTimelineGuid}");
+                            db.MatchTimeline.Remove(mt);
+                        }
+                        Console.WriteLine($"Deleted {matchTimelineToDelete.Count} orphaned matchtimeline entries.");
+                    }*/
+
+                    // Remove matchtimelineplayer entries with no matchtimeline (old orphaned data, before foreign keys fixed)
+                    var matchTimelinePlayerToDelete = db.MatchTimelinePlayer
+                        .Where(mtp => !db.MatchTimeline.Any(mt => mt.MatchTimelineGuid == mtp.MatchTimelineGuid))
+                        .ToList();  
+
+                    Console.WriteLine($"Found {matchTimelinePlayerToDelete.Count} orphaned matchtimelineplayer entries.");
+                    /*if (matchTimelinePlayerToDelete.Count > 0)
+                    {
+                        foreach (var mtp in matchTimelinePlayerToDelete)
+                        {           
+                            Console.WriteLine($"Deleting orphaned matchtimelineplayer entry: {mtp.MatchTimelinePlayerGuid}");
+                            db.MatchTimelinePlayer.Remove(mtp);
+                        }
+                        Console.WriteLine($"Deleted {matchTimelinePlayerToDelete.Count} orphaned matchtimelineplayer entries.");
+                    }*/
+
+
                     // Find players that have no MatchPlayerStat entries
                     var playersToDelete = db.Players
                         .Where(p => !db.MatchPlayerStats.Any(mps => mps.PlayerGuid == p.PlayerGuid))
                         .ToList();
 
-                    Console.WriteLine($"Found {playersToDelete.Count} players with no matches.");
+                    Console.WriteLine($"Found {playersToDelete.Count} players with no match stats.");
                     if (playersToDelete.Count > 0)
                     {
                         foreach (var p in playersToDelete)
                         {
+                            // CHeck for player records which should already be deleted
+                            var playerRecord = db.MatchPlayerStats.FirstOrDefault(pr => pr.PlayerGuid == p.PlayerGuid);
+                            if (playerRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchPlayerStats for match: {playerRecord.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelineRecord = db.MatchTimeline.FirstOrDefault(mt => mt.PlayerGuid == p.PlayerGuid);
+                            if (matchTimelineRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimeline for match: {matchTimelineRecord.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelineRecord2 = db.MatchTimeline.FirstOrDefault(mt => mt.SecondaryPlayerGuid == p.PlayerGuid);
+                            if (matchTimelineRecord2 != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimeline for match: {matchTimelineRecord2.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelinePlayerRecord = db.MatchTimelinePlayer.FirstOrDefault(mtp => mtp.PlayerGuid == p.PlayerGuid);
+                            if (matchTimelinePlayerRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimelinePlayer for matchtimeline: {matchTimelinePlayerRecord.MatchTimelineGuid}");
+                                continue;
+                            }
+                            
                             Console.WriteLine($"Deleting player: {p.PlayerName} ({p.PlayerGuid})");
                             db.Players.Remove(p);
+                            db.SaveChanges();
                         }
-                        db.SaveChanges();
                         Console.WriteLine($"Deleted {playersToDelete.Count} players.");
                     }
 
@@ -350,8 +425,16 @@ if (args.Length > 0)
                 }
                 var deleteMatchId = args[1];
                 var deleteMatch = new Match(dbContextOptions, integrationService);
-                deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId));
-                Console.WriteLine($"Match deleted: {deleteMatchId}");
+                if (deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId)))
+                {
+                    Console.WriteLine($"Match deleted: {deleteMatchId}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Match not found: {deleteMatchId}");
+                    Console.ResetColor();
+                }
                 break;
 
             case "--excludematch":
@@ -505,6 +588,32 @@ if (args.Length > 0)
                 }
                 break;
 
+case "--setrandominteractive":
+                // Present a list of players with 1 match and ask if they are random, then set the flag in the database
+                var randomPlayerInteractive = new Player(dbContextOptions, integrationService);
+                var playersWithOneMatch = randomPlayerInteractive.GetPlayersWithNumMatch(1);
+                Console.WriteLine($"Found {playersWithOneMatch.Count()} players with only 1 match");
+                foreach (var p in playersWithOneMatch)
+                {
+                    Console.WriteLine($" - {p.PlayerName} ({p.PlayerGuid})");
+                    Console.Write("Is this player random? (Yes/No/Quit) ? ");
+                    var key = Console.ReadKey();
+                    Console.WriteLine();
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Y:
+                            randomPlayerInteractive.SetRandomFlag(p.PlayerName); 
+                            break;
+                        case ConsoleKey.N:
+                            continue;
+                        case ConsoleKey.Q:
+                            return;
+                        default:
+                            Console.WriteLine("Unknown response, skipping");
+                            break;
+                    }
+                }
+                break;
             case "--help":
                 DisplayHelp();
                 break;

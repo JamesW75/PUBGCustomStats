@@ -131,7 +131,7 @@ namespace PUBGCustomStats.Logic
             return true;
         }
 
-        public void DeleteMatch(Guid matchGuid)
+        public bool DeleteMatch(Guid matchGuid)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
             if (match != null)
@@ -139,6 +139,12 @@ namespace PUBGCustomStats.Logic
                 // Delete related MatchPlayerStats
                 var playerStats = DbContext.MatchPlayerStats.Where(mps => mps.MatchGuid == matchGuid);
                 DbContext.MatchPlayerStats.RemoveRange(playerStats);
+
+                // Delete related MatchBlueZones
+                var blueZones = DbContext.MatchBlueZone.Where(mbz => mbz.MatchGuid == matchGuid);
+                DbContext.MatchBlueZone.RemoveRange(blueZones);
+               
+
                 // Delete related MatchTimeline and MatchTimelinePlayers
                 var timelines = DbContext.MatchTimeline.Where(mt => mt.MatchGuid == matchGuid).Include("MatchTimelinePlayers");
                 foreach (var timeline in timelines)
@@ -152,6 +158,11 @@ namespace PUBGCustomStats.Logic
                 // Delete the match itself
                 DbContext.Matches.Remove(match);
                 DbContext.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
