@@ -679,8 +679,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "Item_Weapon_MG3_C":
                     return "MG3";
                 case "Item_Weapon_TraumaBag_C":
-                    //return "Trauma Bag";
-                    return "Med Kit";
+                    return "EMT Gear";
                 case "Item_Weapon_PanzerFaust100M_C":
                     return "Panzerfaust";
                 case "Item_Ammo_762mm_C":
@@ -745,7 +744,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "Item_Weapon_CoverStructDropHandFlare_C":
                     return "Cover Flare";
                 case "Item_Weapon_FlashBang_C":
-                    return "Flash Bang";
+                    return "Stun Grenade";
                 case "Item_Weapon_SmokeBomb_C":
                     return "Smoke Bomb";
                 case "Item_Weapon_Molotov_C":
