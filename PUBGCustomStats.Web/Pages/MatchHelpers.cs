@@ -229,6 +229,20 @@ namespace PUBGCustomStats.Web.Pages
             {
                 return "";
             }
+            if (weapon.Contains(','))
+            {
+                var weapons = weapon.Split(',');
+                if (weapons.Length < 2)
+                {
+                    return GetWeaponDescription(weapons[0]);
+                }
+                for (int i = 0; i < weapons.Length; i++)
+                {
+                    weapons[i] = GetWeaponDescription(weapons[i]);
+                }
+                return string.Join(", ", weapons);
+            }
+
             // Remove anything after _C
             if (weapon.Contains("_C_"))
             {
@@ -665,9 +679,81 @@ namespace PUBGCustomStats.Web.Pages
                 case "Item_Weapon_MG3_C":
                     return "MG3";
                 case "Item_Weapon_TraumaBag_C":
-                    return "Trauma Bag";
+                    //return "Trauma Bag";
+                    return "Med Kit";
                 case "Item_Weapon_PanzerFaust100M_C":
                     return "Panzerfaust";
+                case "Item_Ammo_762mm_C":
+                    return "7.62mm Ammo";
+                case "Item_Attach_Weapon_Upper_Scope6x_C":
+                    return "6x Scope";
+                case "Item_Armor_C":
+                    return "Level 3 Armor";
+                case "Item_Head_G_01_Lv3_C":
+                    return "Level 3 Helmet";
+                case "Item_Back_C":
+                    return "Level 3 Backpack";
+                case "Item_Ghillie_01_C":
+                case "Item_Ghillie_02_C":
+                case "Item_Ghillie_03_C":
+                case "Item_Ghillie_07_C":
+                    return "Ghillie Suit";
+                case "Item_Weapon_PackageFlare_C":
+                    return "Package Flare";
+                case "Item_Ammo_12Guage_C":
+                    return "12 Gauge Ammo";
+                case "Item_Attach_Weapon_Stock_AR_HeavyStock_C":
+                    return "Heavy Stock";
+                case "Item_Weapon_C4_C":
+                    return "C4";
+                case "Item_Ammo_556mm_C":
+                    return "5.56mm Ammo";
+                case "Item_Ammo_9mm_C":
+                    return "9mm Ammo";
+                case "Item_BulletproofShield_C":
+                    return "Folded Shield";
+                case "Item_Armor_D_01_Lv2_C":
+                    return "Level 2 Armor";
+                case "Item_Head_F_01_Lv2_C":
+                    return "Level 2 Helmet";
+                case "Item_Attach_Weapon_Stock_SniperRifle_CheekPad_C":
+                    return "Cheek Pad";
+                case "Item_Back_BlueBlocker_Lv3":
+                    return "Level 3 Jammer Pack";
+                case "Item_Ammo_57mm_C":
+                    return "5.7mm Ammo";
+                case "Item_Ammo_300Magnum_C":
+                    return ".300 Magnum Ammo";
+                case "Item_Attach_Weapon_Magazine_ExtendedQuickDraw_Large_C":
+                    return "Extended Quickdraw";
+                case "Item_Attach_Weapon_Upper_CQBSS_C":
+                    return "8x Scope";
+                case "Item_Weapon_PackageFlare_nonDest_C":
+                    return "Package Flare";
+                case "Item_Boost_AdrenalineSyringe_C":
+                    return "Adrenaline Syringe";
+                case "Item_Attach_Weapon_Muzzle_Suppressor_SniperRifle_C":
+                    return "Sniper Suppressor";
+                case "Item_Attach_Weapon_Upper_DualOptic_4x1x_C":
+                    return "Hybrid Scope";
+                case "Item_Attach_Weapon_Magazine_ExtendedQuickDraw_SniperRifle_C":
+                    return "Sniper Extended Quickdraw";
+                case "Item_Attach_Weapon_Upper_PM2_01_C":
+                    return "15x Scope";
+                case "Item_Attach_Weapon_Stock_AR_Composite_C":
+                    return "Tactical Stock";
+                case "Item_Weapon_CoverStructDropHandFlare_C":
+                    return "Cover Flare";
+                case "Item_Weapon_FlashBang_C":
+                    return "Flash Bang";
+                case "Item_Weapon_SmokeBomb_C":
+                    return "Smoke Bomb";
+                case "Item_Weapon_Molotov_C":
+                    return "Molotov";
+                case "Item_Weapon_Grenade_C":
+                    return "Grenade";
+                case "Item_Weapon_BluezoneGrenade_C":
+                    return "BZ Grenade";
                 default:
                     Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                     return weapon;
@@ -748,11 +834,21 @@ namespace PUBGCustomStats.Web.Pages
         public static string GetZoneDescription(string zone)
         {
             // If zone contains a comma, split it into two parts
-            if (zone.Contains(","))
+            if (zone.Contains(','))
             {
                 var zones = zone.Split(',');
 
-                return GetZoneDescription(GetZoneDescription(zones[0]) + " & " + GetZoneDescription(zones[1]));
+                if (zones.Length < 2)
+                {
+                    return zone;
+                }
+
+                if (zones[0] == zones[1])
+                {
+                    return GetZoneDescription(zones[0]);
+                }
+
+                return GetZoneDescription(zones[0]) + " & " + GetZoneDescription(zones[1]);
             }
 
             // Zone List: https://github.com/pubg/api-assets/blob/master/enums/telemetry/regionId.json
