@@ -498,8 +498,11 @@ if (args.Length > 0)
                 var moveMatchId = args[1];
                 var newSessionId = args[2];
                 var moveMatch = new Match(dbContextOptions, integrationService);
-                moveMatch.MoveMatch(Guid.Parse(moveMatchId), Guid.Parse(newSessionId));
-                Console.WriteLine($"Moved match {moveMatchId} to session {newSessionId}");
+                if (moveMatch.MoveMatch(Guid.Parse(moveMatchId), Guid.Parse(newSessionId)))
+                {
+                    Console.WriteLine($"Moved match {moveMatchId} to session {newSessionId}");
+                }
+
                 break;
             case "--listmatches":
                 // List all matches in the current session
