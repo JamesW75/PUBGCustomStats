@@ -19,6 +19,7 @@ namespace PUBGCustomStats.Data.Models
         public double SpreadRatio { get; set; }
         public int LandRatio { get; set; }
         public int CircleAlgorithm { get; set; }
+        public virtual Match? Match { get; set; }
     }
 }
 
