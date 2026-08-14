@@ -182,6 +182,33 @@ if (args.Length > 0)
                 Console.WriteLine($"Session edited: {editSessionName}");
                 break;
 
+            case "--deletesession":
+                // Delete a session and all associated matches and data
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No session GUID provided. Use --help for usage information.");
+                    return;
+                }
+
+                var deleteSessionGuid = args[1];
+
+                if (!Guid.TryParse(deleteSessionGuid, out Guid parsedDeleteSessionGuid))
+                {
+                    Console.WriteLine("Error: Invalid session GUID format. Please provide a valid GUID.");
+                    return;
+                }
+
+                try
+                {
+                    session.DeleteSession(parsedDeleteSessionGuid);
+                    Console.WriteLine($"Session deleted: {deleteSessionGuid}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting session: {ex.Message}");
+                }
+                break;
+
             case "--listsessions":
                 if (currentSeason == null)
                 {
@@ -413,6 +440,25 @@ if (args.Length > 0)
                 }
                 break;
 
+            case "--setrandom":
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Error: No player ID provided. Use --help for usage information.");
+                    return;
+                }
+                var randomPlayerId = args[1];
+                var randomPlayer = new Player(dbContextOptions, integrationService);
+                var randomSet = randomPlayer.SetRandomFlag(randomPlayerId);
+                if (randomSet)
+                {
+                    Console.WriteLine($"Player {randomPlayerId} marked as random.");
+                }
+                else
+                {
+                    Console.WriteLine($"Player not found: {randomPlayerId}");
+                }
+                break;
+
             case "--help":
                 DisplayHelp();
                 break;
@@ -441,6 +487,7 @@ void DisplayHelp()
     Console.WriteLine("  --createsession <name> <datetime>     Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
     Console.WriteLine("  --editseason <name>                   Edit the current season");
     Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
+    Console.WriteLine("  --deletesession <sessionGuid>         Delete a session and all associated matches and data");
     Console.WriteLine("  --addmatch <matchId> [matchName]      Add a match to the current session. Match name is optional.");
     Console.WriteLine("  --editmatch <matchId> <newMatchName>  Edit a match name");
     Console.WriteLine("  --listsessions                        List all sessions in the current season");
@@ -448,6 +495,7 @@ void DisplayHelp()
     Console.WriteLine("  --listmatches                         List all matches in the current session");
     Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
+    Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");

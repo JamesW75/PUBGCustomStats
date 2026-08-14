@@ -81,7 +81,7 @@ PUBGCustomStats --createsession "<session name>" "<yyyy-MM-dd HH:mm>"
 ```bash
 PUBGCustomStats --addmatch <match guid>
 ```
-6a. Alternatively, use the interactive prompt, which shows the recent matches for a player, and asks wheher or not to add the mach. 
+6a. Alternatively, use the interactive prompt, which shows the recent matches for a player, and asks wheher or not to add the match. Capitalisaion must be correct on the gamer tag.
 ```bash
 PUBGCustomStats --getmatches <gamerTag>
 ```
