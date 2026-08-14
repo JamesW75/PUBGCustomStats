@@ -166,18 +166,38 @@ namespace PUBGCustomStats.Desktop
             {
                 var appSettingsPath = System.IO.Path.Combine(AppContext.BaseDirectory, "appsettings.json");
                 if (!System.IO.File.Exists(appSettingsPath))
+                {
+                    DisplayAlert("Error", $"App settings not found at {appSettingsPath}", "OK");
                     return;
-
+                }
                 var json = System.IO.File.ReadAllText(appSettingsPath);
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
                 if (!root.TryGetProperty("ConnectionStrings", out var conn))
+                {
+                    DisplayAlert("Error", "Connection string not found in app settings", "OK");
                     return;
+                }
                 if (!conn.TryGetProperty("PUBGCustomStatsContext", out var cs))
+                {
+                    DisplayAlert("Error", "PUBGCustomStatsContext connection string not found", "OK");
                     return;
+                }
 
                 var connectionString = cs.GetString() ?? string.Empty;
-                connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+
+                // Special case for macos
+#if MACCATALYST || MACOS
+                string appSupport = Foundation.NSFileManager.DefaultManager.GetUrls(
+                Foundation.NSSearchPathDirectory.ApplicationSupportDirectory,
+                Foundation.NSSearchPathDomain.User)[0].Path;
+
+                // Remove Containers/com.companyname.pubgcustomstats.desktop/Data/Library from the path
+                //appSupport = appSupport.Replace("Containers/com.companyname.pubgcustomstats.desktop/Data/Library/", "");
+                connectionString = connectionString.Replace("{AppDataPath}", appSupport);
+#else
+    connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+#endif
 
                 var optionsBuilder = new DbContextOptionsBuilder<PUBGCustomStatsContext>();
                 optionsBuilder.UseSqlite(connectionString);
@@ -190,7 +210,7 @@ namespace PUBGCustomStats.Desktop
                 var matchLogic = new PUBGCustomStats.Logic.Match(options, new PUBGCustomStats.Integration.IntegrationService(""));
 
                 var seasons = seasonLogic.ListSeasons();
-
+                
                 var seasonItems = new System.Collections.Generic.List<PUBGCustomStats.Desktop.ViewModels.SeasonItem>();
                 foreach (var s in seasons)
                 {
@@ -237,6 +257,7 @@ namespace PUBGCustomStats.Desktop
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to load seasons: {ex.Message}");
+                DisplayAlert("Error", $"Failed to load seasons: {ex}", "OK");
             }
         }
 
