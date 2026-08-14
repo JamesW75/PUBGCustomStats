@@ -19,6 +19,7 @@
         <tr>
             <th>Session</th>
             <th>Start Time</th>
+            <th>Duration</th>
             <th>Mode</th>
             <th>Map</th>
             @if (Model.Match?.NoFireUntilPhase.HasValue == true) {
@@ -44,6 +45,7 @@
                 @Model.Match?.StartTime?.ToLocalTime().ToShortDateString()</span>
                     @Model.Match?.StartTime?.ToLocalTime().ToLongTimeString()
 </td>
+            <td>@(Model.Match?.MatchLength?.ToString("mm:ss"))</td>
             <td>@(Model.Match?.GameMode ?? String.Empty)</td>
             <td>@(Model.Match?.Map ?? String.Empty)</td>
                         @if (Model.Match?.NoFireUntilPhase.HasValue == true) {
