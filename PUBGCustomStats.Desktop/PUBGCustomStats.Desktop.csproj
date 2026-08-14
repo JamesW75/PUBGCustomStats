@@ -48,8 +48,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+    <!-- App Icon: use favicon-96x96.png from the web project -->
+    <MauiIcon Include="Resources\AppIcon\favicon.png" ForegroundFile="Resources\AppIcon\favicon.png" Color="#512BD4" />
 
     <!-- Splash Screen -->
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -69,9 +69,13 @@
     <ProjectReference Include="..\PUBGCustomStats.Logic\PUBGCustomStats.Logic.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-maccatalyst'">
+  <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Resources\AppIcon\favicon.png">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -84,13 +88,6 @@
     <MakeDir Directories="$(_MacCatalystAppBundleDir)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)/appsettings.json" DestinationFolder="$(_MacCatalystAppBundleDir)" SkipUnchangedFiles="true" />
   </Target>
-
-  <ItemGroup>
-    <None Include="..\PUBGCustomStats.Web\wwwroot\favicon-96x96.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
