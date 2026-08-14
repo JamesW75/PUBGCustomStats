@@ -833,24 +833,6 @@ namespace PUBGCustomStats.Web.Pages
         }
         public static string GetZoneDescription(string zone)
         {
-            // If zone contains a comma, split it into two parts
-            if (zone.Contains(','))
-            {
-                var zones = zone.Split(',');
-
-                if (zones.Length < 2)
-                {
-                    return zone;
-                }
-
-                if (zones[0] == zones[1])
-                {
-                    return GetZoneDescription(zones[0]);
-                }
-
-                return GetZoneDescription(zones[0]) + " & " + GetZoneDescription(zones[1]);
-            }
-
             // Zone List: https://github.com/pubg/api-assets/blob/master/enums/telemetry/regionId.json
             switch (zone)
             {
@@ -976,9 +958,12 @@ namespace PUBGCustomStats.Web.Pages
                 case "Carpenter’s End":
                     return "Carpenter's End";
                 case "cavala":
+                case "Cavala":
                     return "Cavala";
                 case "concert":
                     return "Concert Hall";
+                case "constructionsite":
+                case "Construction Site":
                 case "constructionsite,Construction Site":
                     return "Construction Site";
                 case "El Koro":
@@ -1269,8 +1254,29 @@ namespace PUBGCustomStats.Web.Pages
                     return "";
 
                 default:
-                    Console.WriteLine($"Unknown location: {zone}");
-                    return zone;
+                    // If zone contains a comma (but not already handled), split it into two parts
+                    if (zone.Contains(','))
+                    {
+                        var zones = zone.Split(',');
+
+                        if (zones.Length < 2)
+                        {
+                            return zone;
+                        }
+
+                        if (zones[0] == zones[1])
+                        {
+                            return GetZoneDescription(zones[0]);
+                        }
+
+                        return GetZoneDescription(zones[0]) + " & " + GetZoneDescription(zones[1]);
+                    }
+                    else
+                    {
+                        // Otherwise, report as unknown
+                        Console.WriteLine($"Unknown location: {zone}");
+                        return zone;
+                    }
             }
         }
     }
