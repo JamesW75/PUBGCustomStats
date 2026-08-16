@@ -209,14 +209,17 @@ namespace PUBGCustomStats.Web.Pages
                     {
                         matchTimelinesAsPlayer.Add(playerId, new PlayerStats
                         {
-                            PlayerName = playerName,
-                            KillCount = 0,
-                            KnockCount = 0
-                        });
-                    }
-
-                    if (timeline.Match != null)
-                    {
+                        PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid,
+                        PlayerName = playerName,
+                        KillCount = 0,
+                        KnockCount = 0
+                    });
+                }
+                
+                if (timeline.Match != null)
+                //if (matchTimelinesAsPlayer[playerId].PlayerGuid == null)
+                {
+                    //matchTimelinesAsPlayer[playerId].PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid;
                         if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
                             if (timeline.Match.DoNotCount.GetValueOrDefault())
@@ -278,10 +281,15 @@ namespace PUBGCustomStats.Web.Pages
                         {
                             matchTimelinesAsKiller.Add(playerId, new PlayerStats
                             {
+                                PlayerGuid = timeline.Player?.PlayerGuid,
                                 PlayerName = playerName,
                                 KillCount = 0,
                                 KnockCount = 0
                             });
+                        }
+                        else if (matchTimelinesAsKiller[playerId].PlayerGuid == null)
+                        {
+                            matchTimelinesAsKiller[playerId].PlayerGuid = timeline.Player?.PlayerGuid;
                         }
 
                         if (timeline.EventType == "LogPlayerMakeGroggy")
@@ -325,6 +333,7 @@ namespace PUBGCustomStats.Web.Pages
 
         public class PlayerStats
         {
+            public Guid? PlayerGuid { get; set; }
             public string PlayerName { get; set; } = string.Empty;
             public int KillCount { get; set; }
             public int KnockCount { get; set; }

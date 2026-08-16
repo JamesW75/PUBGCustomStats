@@ -102,13 +102,21 @@ namespace PUBGCustomStats.Logic
             }
         }
 
-        public void MoveMatch(Guid matchGuid, Guid newSessionId)
+        public bool MoveMatch(Guid matchGuid, Guid newSessionId)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
             if (match != null)
             {
                 match.SessionGuid = newSessionId;
                 DbContext.SaveChanges();
+                return true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Match with GUID {matchGuid} not found.");
+                Console.ResetColor();
+                return false;
             }
         }
 
@@ -131,7 +139,7 @@ namespace PUBGCustomStats.Logic
             return true;
         }
 
-        public void DeleteMatch(Guid matchGuid)
+        public bool DeleteMatch(Guid matchGuid)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
             if (match != null)
@@ -139,6 +147,12 @@ namespace PUBGCustomStats.Logic
                 // Delete related MatchPlayerStats
                 var playerStats = DbContext.MatchPlayerStats.Where(mps => mps.MatchGuid == matchGuid);
                 DbContext.MatchPlayerStats.RemoveRange(playerStats);
+
+                // Delete related MatchBlueZones
+                var blueZones = DbContext.MatchBlueZone.Where(mbz => mbz.MatchGuid == matchGuid);
+                DbContext.MatchBlueZone.RemoveRange(blueZones);
+               
+
                 // Delete related MatchTimeline and MatchTimelinePlayers
                 var timelines = DbContext.MatchTimeline.Where(mt => mt.MatchGuid == matchGuid).Include("MatchTimelinePlayers");
                 foreach (var timeline in timelines)
@@ -152,6 +166,11 @@ namespace PUBGCustomStats.Logic
                 // Delete the match itself
                 DbContext.Matches.Remove(match);
                 DbContext.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -847,9 +866,16 @@ namespace PUBGCustomStats.Logic
 
                                     foreach (var item in telemetryEvent.itemPackage.items)
                                     {
-                                        if (item.category == "Weapon")
+                                        //if (item.category == "Weapon")
+                                        //{
+                                        //    matchTimeline.Weapon = item.itemId;
+                                        //}
+                                        if (string.IsNullOrEmpty(matchTimeline.Weapon))
                                         {
-                                            matchTimeline.Weapon = item.itemId;
+                                            matchTimeline.Weapon = item.itemId; 
+                                        } else
+                                        {
+                                            matchTimeline.Weapon = matchTimeline.Weapon + "," + item.itemId;
                                         }
                                     }
                                 }

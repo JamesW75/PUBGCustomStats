@@ -16,6 +16,7 @@ namespace PUBGCustomStats.Web.Pages
         }
         public class Stats
         {
+            public Guid PlayerGuid { get; set; }
             public string? PlayerName { get; set; }
             public int MatchesPlayed { get; set; }
             public int Wins { get; set; }
@@ -72,6 +73,7 @@ namespace PUBGCustomStats.Web.Pages
                     {
                         var stats = new Stats
                         {
+                            PlayerGuid = player.PlayerGuid,
                             PlayerName = player.PlayerName,
                             MatchesPlayed = 0, // Initialize to 0, will be updated later
                             Wins = 0, // Initialize to 0, will be updated later

@@ -15,9 +15,11 @@
 }
 
 <table class="table table-sm table-bordered">
-    <thead>
+    <thead class="table-light">
         <tr>
+            <th>Session</th>
             <th>Start Time</th>
+            <th>Duration</th>
             <th>Mode</th>
             <th>Map</th>
             @if (Model.Match?.NoFireUntilPhase.HasValue == true) {
@@ -27,12 +29,23 @@
             <th>Perspective</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         <tr>
+            <td>
+                @if (Model.Match?.Session != null && Model.Match.SessionGuid.HasValue)
+                {
+                    <a href="/session?sessionGuid=@Model.Match.SessionGuid">@(!String.IsNullOrEmpty(Model.Match.Session.SessionName) ? Model.Match.Session.SessionName : Model.Match.Session.StartDateTime?.ToString("yyyy-MM-dd HH:mm") ?? "Session")</a>
+                }
+                else
+                {
+                    <span class="text-muted">No session</span>
+                }
+            </td>
             <td>
                 @Model.Match?.StartTime?.ToLocalTime().ToShortDateString()</span>
                     @Model.Match?.StartTime?.ToLocalTime().ToLongTimeString()
 </td>
+            <td>@(Model.Match?.MatchLength?.ToString("mm:ss"))</td>
             <td>@(Model.Match?.GameMode ?? String.Empty)</td>
             <td>@(Model.Match?.Map ?? String.Empty)</td>
                         @if (Model.Match?.NoFireUntilPhase.HasValue == true) {
@@ -46,7 +59,14 @@
 
 @if (Model.MatchTimeline != null && Model.MatchTimeline.Any())
 {
-    <Table class="table table-hover table-bordered">
+    <Table class="table table-md table-hover table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Time</th>
+                <th>Event</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
         @{
             var firstEvent = Model.MatchTimeline.First().EventTimestamp;
 
@@ -724,6 +744,7 @@
                             }
                         }
                 }
+                </tbody>
             </Table>
         }
         else

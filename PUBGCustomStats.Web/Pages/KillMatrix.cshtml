@@ -30,6 +30,59 @@
         padding: 0 0.25rem;
     }
 
+    /* Top-left corner header keeps Player horizontal and Victim vertical */
+    .corner-header {
+        min-width: 200px;
+        height: 160px;
+        padding: 0.25rem 0.35rem;
+        text-align: center;
+        vertical-align: bottom;
+        position: relative;
+        background-color: transparent;
+    }
+    .corner-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+            to bottom left,
+            transparent 49.6%,
+            rgba(222, 226, 230, 0.95) 49.6%,
+            rgba(222, 226, 230, 0.95) 50.4%,
+            transparent 50.4%
+        );
+        z-index: 0;
+    }
+    .corner-header .corner-player {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 0.25rem;
+        transform: translateX(-50%);
+        font-weight: 600;
+        white-space: nowrap;
+        line-height: 1.2;
+        z-index: 1;
+    }
+    .corner-header .corner-victim {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        bottom: 1.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+    .corner-header .corner-victim > span {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        display: inline-block;
+        white-space: nowrap;
+        line-height: 1;
+    }
+
     /* Make header text not wrap and keep spacing compact */
     table.table th, table.table td { vertical-align: middle; }
     /* Suicide cells are dark grey - use stronger specificity to override table styles */
@@ -44,7 +97,10 @@
     <table class="table table-sm table-bordered table-hover">
         <thead>
             <tr>
-                <th style="min-width:200px">Player \ Victim</th>
+                <th class="corner-header">
+                    <span class="corner-player">Player</span>
+                    <span class="corner-victim"><span>Victim</span></span>
+                </th>
                 @if (Model.Victims != null)
                 {
                     foreach (var v in Model.Victims)

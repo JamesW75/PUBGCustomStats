@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using PUBGCustomStats.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PUBGCustomStats.Logic
 {

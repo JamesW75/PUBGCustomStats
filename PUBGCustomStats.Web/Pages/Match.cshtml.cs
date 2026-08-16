@@ -32,7 +32,7 @@ namespace PUBGCustomStats.Web.Pages
             // Ensure the database is created
             _context.Database.EnsureCreatedAsync();
             Match = _context.Matches
-
+                            .Include(m => m.Session)
                             .Where(m => m.MatchGuid == MatchGuid)
                             .FirstOrDefault();
 
