@@ -1246,6 +1246,10 @@ namespace PUBGCustomStats.Web.Pages
                     return "Pilnec";
                 case "laveni":
                     return "Laveni";
+                case "kranik":
+                    return "Kranik";
+                case "pavilka":
+                    return "Pavilka";
 
 
                 // Unspecified or unknown zone
