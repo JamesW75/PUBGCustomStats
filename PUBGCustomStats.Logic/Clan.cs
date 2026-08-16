@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PUBGCustomStats.Data;
 using PUBGCustomStats.Integration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PUBGCustomStats.Logic
 {

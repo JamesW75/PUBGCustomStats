@@ -54,11 +54,17 @@ namespace PUBGCustomStats.Data
 
             modelBuilder.Entity<MatchPlayerStat>().ToTable("MatchPlayerStat").HasKey(mps => mps.MatchPlayerStatGuid);
 
-            modelBuilder.Entity<MatchBlueZone>().ToTable("MatchBlueZone").HasKey(mps => mps.MatchBlueZoneGuid);
+            modelBuilder.Entity<MatchBlueZone>().ToTable("MatchBlueZone").HasKey(mbz => mbz.MatchBlueZoneGuid);
+            modelBuilder.Entity<MatchBlueZone>()
+                .HasOne(mbz => mbz.Match)
+                .WithMany(m => m.MatchBlueZones)
+                .HasForeignKey(mbz => mbz.MatchGuid);
 
             modelBuilder.Entity<MatchTimeline>().ToTable("MatchTimeline").HasKey(mt => mt.MatchTimelineGuid);
             modelBuilder.Entity<MatchTimeline>()
-                .HasOne(mt => mt.Match);
+                .HasOne(mt => mt.Match)
+                .WithMany(m => m.MatchTimelines)
+                .HasForeignKey(mt => mt.MatchGuid);
             modelBuilder.Entity<MatchTimeline>()
                   .HasOne(mt => mt.Player)
                   .WithMany(p => p.MatchTimelines)

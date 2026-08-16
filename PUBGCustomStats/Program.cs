@@ -1,29 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PUBGCustomStats.Data;
-using PUBGCustomStats.Logic;
-using System.Runtime.InteropServices;
-using System;
-using PUBGCustomStats.Integration;
-using System.Configuration;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using System.Diagnostics.Eventing.Reader;
+using PUBGCustomStats.Data;
+using PUBGCustomStats.Integration;
+using PUBGCustomStats.Logic;
 
-// This is a console application that creates stats from cusomt PUBG matches and players. It uses the PUBG API to get the data and stores it in a local database. The application can be run with command line arguments to specify which player or match to track. 
-
+// Console application that builds stats from custom PUBG matches and players.
+// Uses the PUBG API to retrieve data and stores it in a local SQLite database.
+// The application is driven by command-line options listed below.
 /* Possible command line arguments
- * help             Show this help message
- * setup            Initialise the database and create the tables
- * apikey           Set the PUBG API key
- * createseason     Create a new season in the database 
- * createsession    Create a new session for the current season  
- * editseason       Edit the current season
- * addmatch         Add a match to the current session
- * editmatch        Edit a match
- * movematch        Move a match to a different session 
- * listmatches      List all matches in the current session
- * deletematch      Delete a match from the current session
- * getmatches       Get recent matches for a player
+ * --help                                Show this help message
+ * --setup                               Initialise the database and create the tables
+ * --apikey <key>                        Set the PUBG API key
+ * --createseason <name>                 Create a new season in the database
+ * --createsession <name> <datetime>     Create a new session for the current season
+ * --editsession <sessionGuid> <newName> <newDateTime>  Edit a session
+ * --editseason <seasonGuid> <newName>   Edit the specified season
+ * --deletesession <sessionGuid>         Delete a session and all associated matches and data
+ * --addmatch <matchId> [matchName]      Add a match to the current session (matchName optional)
+ * --editmatch <matchId> <newMatchName>  Edit a match name
+ * --movematch <matchId> <sessionGuid>   Move a match to a different session
+ * --listmatches                         List all matches in the current session
+ * --listsessions                        List all sessions in the current season
+ * --listseasons                         List all seasons in the database
+ * --deletematch <matchId>               Delete a match from the current session
+ * --excludematch <matchId>              Mark a match as excluded (DoNotCount = true)
+ * --includematch <matchId>              Mark a match as included (DoNotCount = false)
+ * --getmatches <gamerTag>               Get recent matches for a player
+ * --setrandom <playerId>                Mark the specified player as random in the database
+ * --cleanup                             Delete players with no matches and clans with no players
  */
 
 // Process command line arguments
@@ -126,6 +130,123 @@ if (args.Length > 0)
 
                 season.CreateSeason(seasonName);
                 Console.WriteLine($"Season created: {seasonName}");
+                break;
+
+            case "--cleanup":
+                {
+                    // Remove players with no match stats and clans with no players
+                    var db = new PUBGCustomStatsContext(dbContextOptions);
+                    db.Database.EnsureCreated();
+
+                    // Remove matchbluezone entries with no match (old orphaned data, before foreign keys fixed)
+                    var matchBlueZonesToDelete = db.MatchBlueZone
+                        .Where(mbz => mbz.Match == null)
+                        .ToList();
+
+                    Console.WriteLine($"Found {matchBlueZonesToDelete.Count} orphaned matchbluezone entries.");
+                   /* if (matchBlueZonesToDelete.Count > 0)
+                    {
+                        foreach (var mbz in matchBlueZonesToDelete)
+                        {
+                            Console.WriteLine($"Deleting orphaned matchbluezone entry: {mbz.MatchBlueZoneGuid}");
+                            db.MatchBlueZone.Remove(mbz);
+                        }
+                        Console.WriteLine($"Deleted {matchBlueZonesToDelete.Count} orphaned matchbluezone entries.");
+                    }*/
+
+                    // Remove matchtimeline entries with no match (old orphaned data, before foreign keys fixed)
+                    var matchTimelineToDelete = db.MatchTimeline
+                        .Where(mt => mt.Match == null)
+                        .ToList();
+
+                    Console.WriteLine($"Found {matchTimelineToDelete.Count} orphaned matchtimeline entries.");
+                    /*if (matchTimelineToDelete.Count > 0)
+                    {
+                        foreach (var mt in matchTimelineToDelete)
+                        {
+                            Console.WriteLine($"Deleting orphaned matchtimeline entry: {mt.MatchTimelineGuid}");
+                            db.MatchTimeline.Remove(mt);
+                        }
+                        Console.WriteLine($"Deleted {matchTimelineToDelete.Count} orphaned matchtimeline entries.");
+                    }*/
+
+                    // Remove matchtimelineplayer entries with no matchtimeline (old orphaned data, before foreign keys fixed)
+                    var matchTimelinePlayerToDelete = db.MatchTimelinePlayer
+                        .Where(mtp => !db.MatchTimeline.Any(mt => mt.MatchTimelineGuid == mtp.MatchTimelineGuid))
+                        .ToList();  
+
+                    Console.WriteLine($"Found {matchTimelinePlayerToDelete.Count} orphaned matchtimelineplayer entries.");
+                    /*if (matchTimelinePlayerToDelete.Count > 0)
+                    {
+                        foreach (var mtp in matchTimelinePlayerToDelete)
+                        {           
+                            Console.WriteLine($"Deleting orphaned matchtimelineplayer entry: {mtp.MatchTimelinePlayerGuid}");
+                            db.MatchTimelinePlayer.Remove(mtp);
+                        }
+                        Console.WriteLine($"Deleted {matchTimelinePlayerToDelete.Count} orphaned matchtimelineplayer entries.");
+                    }*/
+
+
+                    // Find players that have no MatchPlayerStat entries
+                    var playersToDelete = db.Players
+                        .Where(p => !db.MatchPlayerStats.Any(mps => mps.PlayerGuid == p.PlayerGuid))
+                        .ToList();
+
+                    Console.WriteLine($"Found {playersToDelete.Count} players with no match stats.");
+                    if (playersToDelete.Count > 0)
+                    {
+                        foreach (var p in playersToDelete)
+                        {
+                            // CHeck for player records which should already be deleted
+                            var playerRecord = db.MatchPlayerStats.FirstOrDefault(pr => pr.PlayerGuid == p.PlayerGuid);
+                            if (playerRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchPlayerStats for match: {playerRecord.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelineRecord = db.MatchTimeline.FirstOrDefault(mt => mt.PlayerGuid == p.PlayerGuid);
+                            if (matchTimelineRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimeline for match: {matchTimelineRecord.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelineRecord2 = db.MatchTimeline.FirstOrDefault(mt => mt.SecondaryPlayerGuid == p.PlayerGuid);
+                            if (matchTimelineRecord2 != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimeline for match: {matchTimelineRecord2.MatchGuid}");
+                                continue;
+                            }
+                            var matchTimelinePlayerRecord = db.MatchTimelinePlayer.FirstOrDefault(mtp => mtp.PlayerGuid == p.PlayerGuid);
+                            if (matchTimelinePlayerRecord != null)
+                            {
+                                Console.WriteLine($"Skipping player: {p.PlayerName} ({p.PlayerGuid}) - as they have MatchTimelinePlayer for matchtimeline: {matchTimelinePlayerRecord.MatchTimelineGuid}");
+                                continue;
+                            }
+                            
+                            Console.WriteLine($"Deleting player: {p.PlayerName} ({p.PlayerGuid})");
+                            db.Players.Remove(p);
+                            db.SaveChanges();
+                        }
+                        Console.WriteLine($"Deleted {playersToDelete.Count} players.");
+                    }
+
+                    // Find clans that have no players
+                    var clansToDelete = db.Clans
+                        .Where(c => !db.Players.Any(p => p.ClanGuid == c.ClanGuid))
+                        .ToList();
+
+                    Console.WriteLine($"Found {clansToDelete.Count} clans with no players.");
+                    if (clansToDelete.Count > 0)
+                    {
+                        foreach (var c in clansToDelete)
+                        {
+                            Console.WriteLine($"Deleting clan: {c.ClanName} ({c.ClanGuid})");
+                            db.Clans.Remove(c);
+                        }
+                        db.SaveChanges();
+                        Console.WriteLine($"Deleted {clansToDelete.Count} clans.");
+                    }
+                }
                 break;
 
             case "--createsession":
@@ -304,8 +425,16 @@ if (args.Length > 0)
                 }
                 var deleteMatchId = args[1];
                 var deleteMatch = new Match(dbContextOptions, integrationService);
-                deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId));
-                Console.WriteLine($"Match deleted: {deleteMatchId}");
+                if (deleteMatch.DeleteMatch(Guid.Parse(deleteMatchId)))
+                {
+                    Console.WriteLine($"Match deleted: {deleteMatchId}");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Match not found: {deleteMatchId}");
+                    Console.ResetColor();
+                }
                 break;
 
             case "--excludematch":
@@ -369,8 +498,11 @@ if (args.Length > 0)
                 var moveMatchId = args[1];
                 var newSessionId = args[2];
                 var moveMatch = new Match(dbContextOptions, integrationService);
-                moveMatch.MoveMatch(Guid.Parse(moveMatchId), Guid.Parse(newSessionId));
-                Console.WriteLine($"Moved match {moveMatchId} to session {newSessionId}");
+                if (moveMatch.MoveMatch(Guid.Parse(moveMatchId), Guid.Parse(newSessionId)))
+                {
+                    Console.WriteLine($"Moved match {moveMatchId} to session {newSessionId}");
+                }
+
                 break;
             case "--listmatches":
                 // List all matches in the current session
@@ -459,6 +591,32 @@ if (args.Length > 0)
                 }
                 break;
 
+case "--setrandominteractive":
+                // Present a list of players with 1 match and ask if they are random, then set the flag in the database
+                var randomPlayerInteractive = new Player(dbContextOptions, integrationService);
+                var playersWithOneMatch = randomPlayerInteractive.GetPlayersWithNumMatch(1);
+                Console.WriteLine($"Found {playersWithOneMatch.Count()} players with only 1 match");
+                foreach (var p in playersWithOneMatch)
+                {
+                    Console.WriteLine($" - {p.PlayerName} ({p.PlayerGuid})");
+                    Console.Write("Is this player random? (Yes/No/Quit) ? ");
+                    var key = Console.ReadKey();
+                    Console.WriteLine();
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Y:
+                            randomPlayerInteractive.SetRandomFlag(p.PlayerName); 
+                            break;
+                        case ConsoleKey.N:
+                            continue;
+                        case ConsoleKey.Q:
+                            return;
+                        default:
+                            Console.WriteLine("Unknown response, skipping");
+                            break;
+                    }
+                }
+                break;
             case "--help":
                 DisplayHelp();
                 break;
@@ -485,7 +643,7 @@ void DisplayHelp()
     Console.WriteLine("  --apikey <key>                        Set the PUBG API key");
     Console.WriteLine("  --createseason <name>                 Create a new season in the database");
     Console.WriteLine("  --createsession <name> <datetime>     Create a new session for the current season. Format: \"yyyy-MM-dd HH:mm\"");
-    Console.WriteLine("  --editseason <name>                   Edit the current season");
+    Console.WriteLine("  --editseason <seasonGuid> <newName>   Edit the specified season");
     Console.WriteLine("  --editsession <sessionGuid> <newName> <newDateTime>  Edit a session. Format: \"yyyy-MM-dd HH:mm\"");
     Console.WriteLine("  --deletesession <sessionGuid>         Delete a session and all associated matches and data");
     Console.WriteLine("  --addmatch <matchId> [matchName]      Add a match to the current session. Match name is optional.");
@@ -494,8 +652,12 @@ void DisplayHelp()
     Console.WriteLine("  --listseasons                         List all seasons in the database");
     Console.WriteLine("  --listmatches                         List all matches in the current session");
     Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
+    Console.WriteLine("  --excludematch <matchId>              Mark a match as excluded (DoNotCount = true)");
+    Console.WriteLine("  --includematch <matchId>              Mark a match as included (DoNotCount = false)");
+    Console.WriteLine("  --movematch <matchId> <sessionGuid>   Move a match to a different session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
+    Console.WriteLine("  --cleanup                             Delete players with no matches and clans with no players");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");

@@ -31,6 +31,7 @@ namespace PUBGCustomStats.Data.Models
         public virtual Session? Session { get; set; } // Navigation property to the session
         public List<MatchPlayerStat>? MatchPlayerStats { get; set; } 
         public List<MatchTimeline>? MatchTimelines { get; set; }
+        public List<MatchBlueZone>? MatchBlueZones { get; set; }
         //public virtual MatchRawData? MatchRawData { get; set; } // Navigation property to the session
 
         public string MatchNameOrDefault()
