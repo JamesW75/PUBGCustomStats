@@ -1194,6 +1194,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Naros";
                 case "lumberyard":
                     return "Lumber Yard";
+                case "observatory":
+                    return "Observatory";
                 case "trainstation":
                     return "Train Station";
                 case "trika":
