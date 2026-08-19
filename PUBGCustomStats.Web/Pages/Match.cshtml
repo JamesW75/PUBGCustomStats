@@ -62,6 +62,9 @@
         <button class="nav-link active" id="match-log-tab" data-bs-toggle="tab" data-bs-target="#match-log" type="button" role="tab" aria-controls="match-log" aria-selected="true">Match Log</button>
     </li>
     <li class="nav-item" role="presentation">
+        <button class="nav-link" id="match-scores-tab" data-bs-toggle="tab" data-bs-target="#match-scores" type="button" role="tab" aria-controls="match-scores" aria-selected="false">Match Scores</button>
+    </li>
+    <li class="nav-item" role="presentation">
         <button class="nav-link" id="kill-matrix-tab" data-bs-toggle="tab" data-bs-target="#kill-matrix" type="button" role="tab" aria-controls="kill-matrix" aria-selected="false">Kill Matrix</button>
     </li>
 </ul>
@@ -762,6 +765,13 @@
         else
         {
         <p>Sorry, no match events available</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="match-scores" role="tabpanel" aria-labelledby="match-scores-tab" tabindex="0">
+        @if (Model.Match != null)
+        {
+            @await Component.InvokeAsync("MatchScores", new { matchGuid = Model.Match.MatchGuid })
         }
     </div>
 
