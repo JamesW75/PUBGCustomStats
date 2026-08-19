@@ -34,7 +34,9 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.MatchScores
 
             var matchGuids = matches.Select(match => match.MatchGuid).ToHashSet();
             var playerStats = await _context.MatchPlayerStats
-                .Where(stat => matchGuids.Contains(stat.MatchGuid))
+                .Where(stat => matchGuids.Contains(stat.MatchGuid)
+                    && stat.PUBGPlayerId != null
+                    && !stat.PUBGPlayerId.StartsWith("ai"))
                 .ToListAsync();
 
             var model = new MatchScoresViewModel
