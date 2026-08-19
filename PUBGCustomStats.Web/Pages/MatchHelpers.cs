@@ -19,6 +19,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Support Flare";
                 case "Carapackage_FlareGun_C":
                     return "Flare Gun";
+                case "Carepackage_Container_C":
+                    return "Helicopter Drop";
                 case "BP_BRDM_C":
                     return "BRDM";
                 case null:
@@ -688,13 +690,17 @@ namespace PUBGCustomStats.Web.Pages
                     return "6x Scope";
                 case "Item_Armor_C":
                     return "Level 3 Armor";
+                case "Item_JerryCan_C":
+                    return "Jerry Can";
                 case "Item_Head_G_01_Lv3_C":
                     return "Level 3 Helmet";
                 case "Item_Back_C":
+                case "Item_Back_B_08_Lv3_C":
                     return "Level 3 Backpack";
                 case "Item_Ghillie_01_C":
                 case "Item_Ghillie_02_C":
                 case "Item_Ghillie_03_C":
+                case "Item_Ghillie_05_C":
                 case "Item_Ghillie_07_C":
                     return "Ghillie Suit";
                 case "Item_Weapon_PackageFlare_C":
