@@ -8,6 +8,21 @@
 {
     <h1>@Model.Name</h1>
 }
+
+<ul class="nav nav-tabs mb-3" id="sessionTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="match-list-tab" data-bs-toggle="tab" data-bs-target="#match-list" type="button" role="tab" aria-controls="match-list" aria-selected="true">Match List</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="match-scores-tab" data-bs-toggle="tab" data-bs-target="#match-scores" type="button" role="tab" aria-controls="match-scores" aria-selected="false">Match Scores</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="kill-matrix-tab" data-bs-toggle="tab" data-bs-target="#kill-matrix" type="button" role="tab" aria-controls="kill-matrix" aria-selected="false">Kill Matrix</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="sessionTabContent">
+    <div class="tab-pane fade show active" id="match-list" role="tabpanel" aria-labelledby="match-list-tab" tabindex="0">
 <table class="table table-hover ">
     <thead class="table-light">
         <tr>
@@ -59,6 +74,7 @@
         }
     }
 </table>
+
 @if (Model.Table.Any())
 {
     @if (Model.Matches.Any(m => m.DoNotCount))
@@ -110,6 +126,9 @@
 {
     <p>Note: No matches from this session counted for overall totals.</p>
 }
+
+    </div>
+    <div class="tab-pane fade" id="match-scores" role="tabpanel" aria-labelledby="match-scores-tab" tabindex="0">
 @foreach (var match in Model.Matches.OrderBy(m => m.MatchStartTime))
 {
     var rowClass = "";
@@ -226,7 +245,17 @@
         }
     </tr>
 }
+
 </table>
 
 }
+
+    </div>
+    <div class="tab-pane fade" id="kill-matrix" role="tabpanel" aria-labelledby="kill-matrix-tab" tabindex="0">
+        @if (Model.SessionGuid.HasValue)
+        {
+            @await Component.InvokeAsync("KillMatrix", new { sessionGuid = Model.SessionGuid.Value })
+        }
+    </div>
+</div>
 
