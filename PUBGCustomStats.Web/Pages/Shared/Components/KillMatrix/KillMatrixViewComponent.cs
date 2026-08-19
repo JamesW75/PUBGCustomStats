@@ -23,6 +23,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
         {
             await _context.Database.EnsureCreatedAsync();
 
+            var includeDoNotCountMatch = matchGuid.HasValue;
             var selectedMatchGuids = matchGuids?.ToHashSet();
             if (matchGuid.HasValue)
             {
@@ -39,7 +40,8 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
             if (selectedMatchGuids != null)
             {
                 selectedMatchGuids = await _context.Matches
-                    .Where(m => selectedMatchGuids.Contains(m.MatchGuid) && m.DoNotCount != true)
+                    .Where(m => selectedMatchGuids.Contains(m.MatchGuid)
+                        && (includeDoNotCountMatch || m.DoNotCount != true))
                     .Select(m => m.MatchGuid)
                     .ToHashSetAsync();
             }
@@ -77,7 +79,9 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 .Include(mt => mt.Match)
                 .Where(mt => mt.EventType == "LogPlayerKillV2"
                     && mt.Match != null
-                    && mt.Match.DoNotCount != true);
+                    && (includeDoNotCountMatch && selectedMatchGuids != null
+                        ? selectedMatchGuids.Contains(mt.MatchGuid)
+                        : mt.Match.DoNotCount != true));
 
             if (selectedMatchGuids != null)
             {
