@@ -637,6 +637,7 @@ namespace PUBGCustomStats.Web.Pages
                     return "Sickle";
                 case "WeapStickyGrenade_C":
                     return "Sticky Bomb";
+                    case "WeapRPD_C": return "RPD";
                 case "WeapThompson_C": return "Tommy Gun";
                 case "WeapTurret_KillTruck_Main_C": return "Kill Truck Turret";
                 case "WeapUMP_C": return "UMP9";
@@ -697,6 +698,8 @@ namespace PUBGCustomStats.Web.Pages
                 case "Item_Back_C":
                 case "Item_Back_B_08_Lv3_C":
                     return "Level 3 Backpack";
+                    case "Item_EmergencyPickup_C":
+                    return "Emergency Pickup";
                 case "Item_Ghillie_01_C":
                 case "Item_Ghillie_02_C":
                 case "Item_Ghillie_03_C":
