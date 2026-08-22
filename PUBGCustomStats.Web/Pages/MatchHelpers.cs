@@ -329,6 +329,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Dirt Bike";
                 case "BP_DronePackage_Projectile_C":
                     return "Drone";
+                case "BP_StructDrop_C":
+                    return "Drop Structure";
                 case "BP_Urus_EP_C":
                     return "Lamborghini";
                 case "BP_Eragel_CargoShip01_C":
