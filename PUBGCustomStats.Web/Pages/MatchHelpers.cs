@@ -1141,6 +1141,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "neoxfactory, testtrack":
                     return "Neox Factory & Test Track";
                 case "stadium":
+                case "9thEventSpot,stadium":
                     return "Stadium";
                 case "testtrack":
                     return "Test Track";
