@@ -58,121 +58,70 @@ namespace PUBGCustomStats.Web.Pages
 
         public static string GetDamageDescription(string? damageCategory, string? damageReason)
         {
-            switch (damageCategory)
+            return damageCategory switch
             {
-                case "Damage_BlueZone":
-                    return "Blue Zone";
-                case "Damage_DropStructHit":
-                    return "Drop Structure";
-                case "Damage_CarePackageDropHit":
-                    return "Care Package Drop";
-                case "Damage_Drown":
-                    return "Drowning";
-                case "Damage_Explosion_C4":
-                    return "C4";
-                case "Damage_Explosion_Grenade":
-                    return "Grenade";
-                case "Damage_Explosion_JerryCan":
-                    return "Jerry Can";
-                case "Damage_Explosion_Mortar":
-                    return "Mortar";
-                case "Damage_Explosion_PanzerFaustBackBlast":
-                    return "Panzer Back Blast";
-                case "Damage_Explosion_PanzerFaustWarhead":
-                    return "Panzer";
-                case "Damage_Explosion_PanzerFaustWarheadVehicleArmorPenetration":
-                    return "Panzer Vehicle Penetration";
-                case "Damage_Explosion_RedZone":
-                    return "Red Zone";
-                case "Damage_Explosion_BlackZone":
-                    return "Black Zone";
-                case "Damage_Explosion_StickyBomb":
-                    return "Sticky Bomb";
-                case "Damage_Explosion_Vehicle":
-                    return "Vehicle Explosion";
-                case "Damage_Explosion_GasPump":
-                    return "Gas Pump Explosion";
-
-                case "Damage_Gun_Penetrate_BRDM":
-                case "Damage_Gun":
-                    return FormatDamageReason(damageReason);
-                case "Damage_Instant_Fall":
-                    return "Fall";
-                case "Damage_Lava":
-                    return "Lava";
-
-                case "Damage_Melee":
-                    return "Melee to " + SimplifyDamageReason(damageReason);
-                case "Damage_MeleeThrow":
-                    return "Melee Throw to " + SimplifyDamageReason(damageReason);
-                case "Damage_Molotov":
-                    return "Molotov";
-                case "Damage_Monster":
-                    return "Monster";
-                case "Damage_Punch":
-                    return SimplifyDamageReason(damageReason) + " Punch";
-                case "Damage_VehicleCrashHit":
-                    return "Vehicle Crash";
-                case "Damage_VehicleHit":
-                    return "Vehicle";
+                "Damage_BlueZone" => "Blue Zone",
+                "Damage_DropStructHit" => "Drop Structure",
+                "Damage_CarePackageDropHit" => "Care Package Drop",
+                "Damage_Drown" => "Drowning",
+                "Damage_Explosion_C4" => "C4",
+                "Damage_Explosion_Grenade" => "Grenade",
+                "Damage_Explosion_JerryCan" => "Jerry Can",
+                "Damage_Explosion_Mortar" => "Mortar",
+                "Damage_Explosion_PanzerFaustBackBlast" => "Panzer Back Blast",
+                "Damage_Explosion_PanzerFaustWarhead" => "Panzer",
+                "Damage_Explosion_PanzerFaustWarheadVehicleArmorPenetration" => "Panzer Vehicle Penetration",
+                "Damage_Explosion_RedZone" => "Red Zone",
+                "Damage_Explosion_BlackZone" => "Black Zone",
+                "Damage_Explosion_StickyBomb" => "Sticky Bomb",
+                "Damage_Explosion_Vehicle" => "Vehicle Explosion",
+                "Damage_Explosion_GasPump" => "Gas Pump Explosion",
+                "Damage_Gun_Penetrate_BRDM" or "Damage_Gun" => FormatDamageReason(damageReason),
+                "Damage_Instant_Fall" => "Fall",
+                "Damage_Lava" => "Lava",
+                "Damage_Melee" => "Melee to " + SimplifyDamageReason(damageReason),
+                "Damage_MeleeThrow" => "Melee Throw to " + SimplifyDamageReason(damageReason),
+                "Damage_Molotov" => "Molotov",
+                "Damage_Monster" => "Monster",
+                "Damage_Punch" => SimplifyDamageReason(damageReason) + " Punch",
+                "Damage_VehicleCrashHit" => "Vehicle Crash",
+                "Damage_VehicleHit" => "Vehicle",
                 /* return damageReason;*/
-                case "Damage_HelicopterHit":
-                    return "Helicopter";
-                case "Damage_Groggy":
-                case "Damage_DBNO":
-                    return "Bleeding out";
-                case "Damage_BlueZoneGrenade":
-                    return "BZ Grenade";
-                case "Damage_KillTruckTurret":
-                    return "Kill Truck Turret";
-                case null:
-                    return "Unknown";
-                default:
-                    return damageCategory + " " + damageReason;
-            }
+                "Damage_HelicopterHit" => "Helicopter",
+                "Damage_Groggy" or "Damage_DBNO" => "Bleeding out",
+                "Damage_BlueZoneGrenade" => "BZ Grenade",
+                "Damage_KillTruckTurret" => "Kill Truck Turret",
+                null => "Unknown",
+                _ => damageCategory + " " + damageReason,
+            };
         }
 
         public static string FormatDamageReason(string? damageReason)
         {
-            switch (damageReason)
+            return damageReason switch
             {
-                case "ArmShot":
-                    return "Arm Shot";
-                case "HeadShot":
-                    return "Head Shot";
-                case "LegShot":
-                    return "Leg Shot";
-                case "PelvisShot":
-                    return "Pelvis Shot";
-                case "TorsoShot":
-                    return "Torso Shot";
-                case null:
-                    return "";
-                default:
-                    return damageReason;
-            }
+                "ArmShot" => "Arm Shot",
+                "HeadShot" => "Head Shot",
+                "LegShot" => "Leg Shot",
+                "PelvisShot" => "Pelvis Shot",
+                "TorsoShot" => "Torso Shot",
+                null => "",
+                _ => damageReason,
+            };
         }
 
         public static string SimplifyDamageReason(string? damageReason)
         {
-            switch (damageReason)
+            return damageReason switch
             {
-                case "ArmShot":
-                    return "Arm";
-                case "HeadShot":
-                    return "Head";
-                case "LegShot":
-                    return "Leg";
-                case "PelvisShot":
-                    return "Pelvis";
-                case "TorsoShot":
-                    return "Torso";
-                case "None":
-                case null:
-                    return "";
-                default:
-                    return damageReason;
-            }
+                "ArmShot" => "Arm",
+                "HeadShot" => "Head",
+                "LegShot" => "Leg",
+                "PelvisShot" => "Pelvis",
+                "TorsoShot" => "Torso",
+                "None" or null => "",
+                _ => damageReason,
+            };
         }
 
         public static string GetWeaponDescription(string? damageCategory, string? damageReason)
@@ -248,7 +197,7 @@ namespace PUBGCustomStats.Web.Pages
             // Remove anything after _C
             if (weapon.Contains("_C_"))
             {
-                weapon = weapon.Substring(0, weapon.IndexOf("_C_") + 2);
+                weapon = weapon[..(weapon.IndexOf("_C_") + 2)];
             }
 
             // Lookup weapon from: https://github.com/pubg/api-assets/blob/master/dictionaries/telemetry/damageCauserName.json
@@ -829,17 +778,13 @@ namespace PUBGCustomStats.Web.Pages
         {
             // Weather list: https://github.com/pubg/api-assets/blob/master/enums/telemetry/weatherId.json
 
-            switch (weather)
+            return weather switch
             {
-                case "Snow_01":
-                    return "Snow";
-                case "Clear_02":
-                    return "Clear";
-                case "Sunset_a":
-                    return "Sunset";
-                default:
-                    return weather;
-            }
+                "Snow_01" => "Snow",
+                "Clear_02" => "Clear",
+                "Sunset_a" => "Sunset",
+                _ => weather,
+            };
         }
         public static string GetZoneDescription(string zone)
         {
