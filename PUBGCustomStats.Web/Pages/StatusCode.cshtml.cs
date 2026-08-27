@@ -7,7 +7,7 @@ namespace PUBGCustomStats.Web.Pages
     [IgnoreAntiforgeryToken]
     public class StatusCodeModel : PageModel
     {
-        public int StatusCode { get; set; }
+        public new int StatusCode { get; set; }
 
         public void OnGet(int statusCode)
         {
