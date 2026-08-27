@@ -19,6 +19,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Support Flare";
                 case "Carapackage_FlareGun_C":
                     return "Flare Gun";
+                case "Carepackage_Container_C":
+                    return "Helicopter Drop";
                 case "BP_BRDM_C":
                     return "BRDM";
                 case null:
@@ -635,6 +637,7 @@ namespace PUBGCustomStats.Web.Pages
                     return "Sickle";
                 case "WeapStickyGrenade_C":
                     return "Sticky Bomb";
+                    case "WeapRPD_C": return "RPD";
                 case "WeapThompson_C": return "Tommy Gun";
                 case "WeapTurret_KillTruck_Main_C": return "Kill Truck Turret";
                 case "WeapUMP_C": return "UMP9";
@@ -688,13 +691,19 @@ namespace PUBGCustomStats.Web.Pages
                     return "6x Scope";
                 case "Item_Armor_C":
                     return "Level 3 Armor";
+                case "Item_JerryCan_C":
+                    return "Jerry Can";
                 case "Item_Head_G_01_Lv3_C":
                     return "Level 3 Helmet";
                 case "Item_Back_C":
+                case "Item_Back_B_08_Lv3_C":
                     return "Level 3 Backpack";
+                    case "Item_EmergencyPickup_C":
+                    return "Emergency Pickup";
                 case "Item_Ghillie_01_C":
                 case "Item_Ghillie_02_C":
                 case "Item_Ghillie_03_C":
+                case "Item_Ghillie_05_C":
                 case "Item_Ghillie_07_C":
                     return "Ghillie Suit";
                 case "Item_Weapon_PackageFlare_C":
@@ -836,6 +845,8 @@ namespace PUBGCustomStats.Web.Pages
             switch (zone)
             {
                 // Sanhok Zones (Savage_Main)
+                case "Banana_01":
+                    return "Banana Farm";
                 case "bootcamp":
                     return "Bootcamp";
                 case "campalpha":
@@ -1132,6 +1143,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "neoxfactory, testtrack":
                     return "Neox Factory & Test Track";
                 case "stadium":
+                case "9thEventSpot,stadium":
                     return "Stadium";
                 case "testtrack":
                     return "Test Track";
@@ -1194,6 +1206,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Naros";
                 case "lumberyard":
                     return "Lumber Yard";
+                case "observatory":
+                    return "Observatory";
                 case "trainstation":
                     return "Train Station";
                 case "trika":

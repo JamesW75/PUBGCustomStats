@@ -103,7 +103,7 @@ Publishing
 ----------
 Web site has a reference to the library package ASPNetStatic, and can produce static HTML pages from your data. 
 
-Pass the output paramater followed by a path, eg `--output c:\PUBGCusoms`.
+Pass the output paramater followed by a path, eg `--output c:\PUBGCustoms`.
 
 ```
   --output <path>
