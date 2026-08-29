@@ -1187,6 +1187,7 @@ namespace PUBGCustomStats.Logic
                             //{
                             matchTimeline.DamageReason = telemetryEvent.damageReason;
                             matchTimeline.DamageCategory = telemetryEvent.damageTypeCategory;
+                            matchTimeline.Damage = telemetryEvent.damage;
                             matchTimeline.Distance = telemetryEvent.distance;
                             matchTimeline.Weapon = telemetryEvent.damageCauserName;
                             //}
