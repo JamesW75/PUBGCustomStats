@@ -143,9 +143,6 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                     : GetVictimLabel(timeline);
 
                 if (string.IsNullOrEmpty(victimLabel)
-                    || string.Equals(victimLabel, "BOT", StringComparison.OrdinalIgnoreCase)
-                    || (timeline.PlayerIsNPC.GetValueOrDefault()
-                        && timeline.PlayerAccountId?.StartsWith("ai", StringComparison.OrdinalIgnoreCase) == true)
                     || !counts.TryGetValue(killerGuid.Value, out var row))
                 {
                     continue;

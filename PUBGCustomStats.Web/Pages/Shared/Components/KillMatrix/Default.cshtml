@@ -83,7 +83,9 @@
         var topKillCounts = Model.Players
             .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
                 && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase))
-            .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row) ? row.Values : Enumerable.Empty<int>())
+            .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)).Select(kvp => kvp.Value)
+                : Enumerable.Empty<int>())
             .Where(count => count > 0)
             .Distinct()
             .OrderByDescending(count => count)

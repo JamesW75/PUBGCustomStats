@@ -139,7 +139,6 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
 
                 var victimLabel = GetVictimLabel(timeline);
                 if (string.IsNullOrEmpty(victimLabel)
-                    || string.Equals(victimLabel, "BOT", StringComparison.OrdinalIgnoreCase)
                     || !counts.TryGetValue(attackerGuid.Value, out var row))
                 {
                     continue;
