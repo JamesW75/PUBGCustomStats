@@ -792,6 +792,8 @@ namespace PUBGCustomStats.Web.Pages
             switch (zone)
             {
                 // Sanhok Zones (Savage_Main)
+                case "Banana_01":
+                    return "Banana Farm";
                 case "bootcamp":
                     return "Bootcamp";
                 case "campalpha":

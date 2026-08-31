@@ -48,6 +48,8 @@ allResources.Add(new PageResource("/index"));
 allResources.Add(new PageResource("/charts"));
 allResources.Add(new PageResource("/clans"));
 allResources.Add(new PageResource("/killmatrix"));
+allResources.Add(new PageResource("/knockmatrix"));
+allResources.Add(new PageResource("/damagematrix"));
 
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));

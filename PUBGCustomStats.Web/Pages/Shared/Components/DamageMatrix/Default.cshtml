@@ -1,15 +1,15 @@
-@model PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix.KillMatrixViewModel
+@model PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix.DamageMatrixViewModel
 
 <style>
-    .kill-matrix .kill-count { text-align: right; }
-    .kill-matrix .victim-header {
+    .damage-matrix .damage-count { text-align: right; }
+    .damage-matrix .victim-header {
         padding: 0.25rem 0.15rem;
         height: 160px;
         vertical-align: bottom;
         text-align: center;
         white-space: normal;
     }
-    .kill-matrix .victim-header > .rotated {
+    .damage-matrix .victim-header > .rotated {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
         display: inline-block;
@@ -17,7 +17,7 @@
         line-height: 1;
         padding: 0 0.25rem;
     }
-    .kill-matrix .corner-header {
+    .damage-matrix .corner-header {
         min-width: 200px;
         height: 160px;
         padding: 0.25rem 0.35rem;
@@ -26,7 +26,7 @@
         position: relative;
         background-color: transparent;
     }
-    .kill-matrix .corner-header::before {
+    .damage-matrix .corner-header::before {
         content: "";
         position: absolute;
         inset: 0;
@@ -34,7 +34,7 @@
         background: linear-gradient(to bottom left, transparent 49.6%, rgba(222, 226, 230, 0.95) 49.6%, rgba(222, 226, 230, 0.95) 50.4%, transparent 50.4%);
         z-index: 0;
     }
-    .kill-matrix .corner-player {
+    .damage-matrix .corner-player {
         display: block;
         position: absolute;
         left: 50%;
@@ -45,7 +45,7 @@
         line-height: 1.2;
         z-index: 1;
     }
-    .kill-matrix .corner-victim {
+    .damage-matrix .corner-victim {
         position: absolute;
         top: 0.25rem;
         right: 0.25rem;
@@ -55,32 +55,26 @@
         justify-content: center;
         z-index: 1;
     }
-    .kill-matrix .corner-victim > span {
+    .damage-matrix .corner-victim > span {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
         display: inline-block;
         white-space: nowrap;
         line-height: 1;
     }
-    .kill-matrix table th, .kill-matrix table td { vertical-align: middle; }
-    .kill-matrix td.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
-    .kill-matrix td.suicide-cell a { color: #fff !important; }
-    .kill-matrix td.bluezone-cell { background-color: #0d6efd !important; color: #fff !important; }
-    .kill-matrix td.bluezone-cell a { color: #fff !important; }
-    .kill-matrix td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
-    .kill-matrix td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
-    .kill-matrix td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
-    .kill-matrix .hover-row td, .kill-matrix .hover-col { background-color: #e6f7ff !important; }
-    .kill-matrix .hover-row td.top-kill-1, .kill-matrix .hover-col.top-kill-1 { background-color: #dc3545 !important; }
-    .kill-matrix .hover-row td.top-kill-2, .kill-matrix .hover-col.top-kill-2 { background-color: #fd7e14 !important; }
-    .kill-matrix .hover-row td.top-kill-3, .kill-matrix .hover-col.top-kill-3 { background-color: #ffc107 !important; }
-    .kill-matrix .hover-row td.suicide-cell, .kill-matrix .hover-col.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
-    .kill-matrix .hover-row td.suicide-cell a, .kill-matrix .hover-col.suicide-cell a { color: #fff !important; }
+    .damage-matrix table th, .damage-matrix table td { vertical-align: middle; }
+    .damage-matrix td.top-damage-1 { background-color: #dc3545 !important; color: #fff !important; }
+    .damage-matrix td.top-damage-2 { background-color: #fd7e14 !important; color: #fff !important; }
+    .damage-matrix td.top-damage-3 { background-color: #ffc107 !important; color: #212529 !important; }
+    .damage-matrix .hover-row td, .damage-matrix .hover-col { background-color: #e6f7ff !important; }
+    .damage-matrix .hover-row td.top-damage-1, .damage-matrix .hover-col.top-damage-1 { background-color: #dc3545 !important; }
+    .damage-matrix .hover-row td.top-damage-2, .damage-matrix .hover-col.top-damage-2 { background-color: #fd7e14 !important; }
+    .damage-matrix .hover-row td.top-damage-3, .damage-matrix .hover-col.top-damage-3 { background-color: #ffc107 !important; }
 </style>
 
-<div class="table-responsive kill-matrix">
+<div class="table-responsive damage-matrix">
     @{
-        var topKillCounts = Model.Players
+        var topDamageCounts = Model.Players
             .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
                 && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase))
             .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row) ? row.Values : Enumerable.Empty<int>())
@@ -126,12 +120,11 @@
                     {
                         var value = Model.Counts.TryGetValue(player.PlayerGuid, out var row)
                             && row.TryGetValue(victim, out var count) ? count : 0;
-                        var cellClasses = "text-end kill-count";
+                        var cellClasses = "text-end damage-count";
                         if (isBlueZoneRow) cellClasses += " bluezone-cell";
-                        if (Model.SuicideCells.Contains($"{player.PlayerGuid}:{victim}")) cellClasses += " suicide-cell";
-                        if (topKillCounts.Count > 0 && value == topKillCounts[0]) cellClasses += " top-kill-1";
-                        else if (topKillCounts.Count > 1 && value == topKillCounts[1]) cellClasses += " top-kill-2";
-                        else if (topKillCounts.Count > 2 && value == topKillCounts[2]) cellClasses += " top-kill-3";
+                        if (topDamageCounts.Count > 0 && value == topDamageCounts[0]) cellClasses += " top-damage-1";
+                        else if (topDamageCounts.Count > 1 && value == topDamageCounts[1]) cellClasses += " top-damage-2";
+                        else if (topDamageCounts.Count > 2 && value == topDamageCounts[2]) cellClasses += " top-damage-3";
                         <td class="@cellClasses">@value</td>
                     }
                 </tr>
@@ -142,7 +135,7 @@
 
 <script>
     (function () {
-        document.querySelectorAll('.kill-matrix table').forEach(function (table) {
+        document.querySelectorAll('.damage-matrix table').forEach(function (table) {
             table.querySelectorAll('thead th, tbody td').forEach(function (cell) {
                 cell.addEventListener('mouseenter', function () {
                     const index = this.cellIndex;

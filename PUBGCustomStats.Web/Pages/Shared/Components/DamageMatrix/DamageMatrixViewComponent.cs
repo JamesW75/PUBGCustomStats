@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using PUBGCustomStats.Data;
 using PUBGCustomStats.Data.Models;
 
-namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
+namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
 {
-    public class KillMatrixViewComponent : ViewComponent
+    public class DamageMatrixViewComponent : ViewComponent
     {
         private static readonly Guid BotGuid = new("00000000-0000-0000-0000-000000000001");
         private static readonly Guid BlueZoneGuid = new("00000000-0000-0000-0000-000000000002");
         private readonly PUBGCustomStatsContext _context;
 
-        public KillMatrixViewComponent(PUBGCustomStatsContext context)
+        public DamageMatrixViewComponent(PUBGCustomStatsContext context)
         {
             _context = context;
         }
@@ -77,8 +77,10 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 .Include(mt => mt.Player)
                 .Include(mt => mt.SecondaryPlayer)
                 .Include(mt => mt.Match)
-                .Where(mt => mt.EventType == "LogPlayerKillV2"
+                .Where(mt => mt.EventType == "LogPlayerTakeDamage"
                     && mt.Match != null
+                    && mt.SecondaryPlayerGuid.HasValue
+                    && mt.PlayerGuid.HasValue
                     && (includeDoNotCountMatch && selectedMatchGuids != null
                         ? selectedMatchGuids.Contains(mt.MatchGuid)
                         : mt.Match.DoNotCount != true));
@@ -127,26 +129,18 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 counts[player.PlayerGuid] = victims.ToDictionary(victim => victim, _ => 0);
             }
 
-            var suicideCells = new HashSet<string>();
             foreach (var timeline in timelines)
             {
-                var killerGuid = GetKillerGuid(timeline);
-                if (!killerGuid.HasValue)
+                var attackerGuid = timeline.SecondaryPlayerGuid;
+                if (!attackerGuid.HasValue)
                 {
                     continue;
                 }
 
-                var victimLabel = timeline.IsSuicide.GetValueOrDefault()
-                    && timeline.Player != null
-                    && !string.IsNullOrEmpty(timeline.Player.PlayerName)
-                    ? timeline.Player.PlayerName
-                    : GetVictimLabel(timeline);
-
+                var victimLabel = GetVictimLabel(timeline);
                 if (string.IsNullOrEmpty(victimLabel)
                     || string.Equals(victimLabel, "BOT", StringComparison.OrdinalIgnoreCase)
-                    || (timeline.PlayerIsNPC.GetValueOrDefault()
-                        && timeline.PlayerAccountId?.StartsWith("ai", StringComparison.OrdinalIgnoreCase) == true)
-                    || !counts.TryGetValue(killerGuid.Value, out var row))
+                    || !counts.TryGetValue(attackerGuid.Value, out var row))
                 {
                     continue;
                 }
@@ -156,49 +150,17 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                     row[victimLabel] = 0;
                 }
 
-                row[victimLabel]++;
-                if (timeline.IsSuicide.GetValueOrDefault())
-                {
-                    suicideCells.Add($"{killerGuid}:{victimLabel}");
-                }
+                row[victimLabel] += (int)Math.Round(timeline.Damage.GetValueOrDefault(0), MidpointRounding.AwayFromZero);
             }
 
-            var model = new KillMatrixViewModel
+            var model = new DamageMatrixViewModel
             {
                 Players = players,
                 Victims = victims,
-                Counts = counts,
-                SuicideCells = suicideCells
+                Counts = counts
             };
 
             return View(model);
-        }
-
-        private static Guid? GetKillerGuid(MatchTimeline timeline)
-        {
-            if (timeline.SecondaryPlayerGuid.HasValue)
-            {
-                return timeline.SecondaryPlayerGuid.Value;
-            }
-
-            if (timeline.SecondaryPlayerIsNPC.GetValueOrDefault()
-                && !string.IsNullOrEmpty(timeline.SecondaryPlayerAccountId)
-                && timeline.SecondaryPlayerAccountId.StartsWith("ai"))
-            {
-                return BotGuid;
-            }
-
-            if (timeline.IsSuicide.GetValueOrDefault() && timeline.PlayerGuid.HasValue)
-            {
-                return timeline.PlayerGuid.Value;
-            }
-
-            if (timeline.DamageCategory == "Damage_BlueZone")
-            {
-                return BlueZoneGuid;
-            }
-
-            return null;
         }
 
         private static string GetVictimLabel(MatchTimeline timeline)
@@ -219,7 +181,6 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
 
             if (string.IsNullOrEmpty(playerId))
             {
-                if (timeline.IsSuicide.GetValueOrDefault()) return "Suicide";
                 return timeline.DamageCategory switch
                 {
                     "Damage_BlueZone" => "Blue Zone",
@@ -236,11 +197,10 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
         }
     }
 
-    public sealed class KillMatrixViewModel
+    public sealed class DamageMatrixViewModel
     {
         public required List<Player> Players { get; init; }
         public required List<string> Victims { get; init; }
         public required Dictionary<Guid, Dictionary<string, int>> Counts { get; init; }
-        public required HashSet<string> SuicideCells { get; init; }
     }
 }
