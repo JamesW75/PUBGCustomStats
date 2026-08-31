@@ -737,6 +737,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "Item_Attach_Weapon_Upper_CQBSS_C":
                     return "8x Scope";
                 case "Item_Weapon_PackageFlare_nonDest_C":
+                case "Item_Weapon_PackageFlare_summerland_C":
                     return "Package Flare";
                 case "Item_Boost_AdrenalineSyringe_C":
                     return "Adrenaline Syringe";
@@ -762,6 +763,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Grenade";
                 case "Item_Weapon_BluezoneGrenade_C":
                     return "BZ Grenade";
+                case "Item_SpareTire_C":
+                    return "Spare Tire";
                 default:
                     Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                     return weapon;
