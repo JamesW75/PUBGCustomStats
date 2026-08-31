@@ -665,10 +665,11 @@ static void DisplayHelp()
     Console.WriteLine("  --movematch <matchId> <sessionGuid>   Move a match to a different session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
-    Console.WriteLine("  --reparseallmatches                  Reprocess telemetry for every saved match in the database");
+    Console.WriteLine("  --setrandominteractive                Interactively mark players as random");
+    Console.WriteLine("  --reparseallmatches                   Reprocess telemetry for every saved match in the database");
     Console.WriteLine("  --cleanup                             Delete players with no matches and clans with no players");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");
 
-}
+}   

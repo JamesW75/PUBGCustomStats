@@ -713,6 +713,14 @@ namespace PUBGCustomStats.Web.Pages
                     return "Grenade";
                 case "Item_Weapon_BluezoneGrenade_C":
                     return "BZ Grenade";
+                case "Item_Attach_Weapon_Muzzle_AR_MuzzleBrake_C":
+                    return "Muzzle Brake";
+                case "Item_Attach_Weapon_Upper_DotSight_01_C":
+                    return "Red Dot";
+                case "Item_Attach_Weapon_Muzzle_Suppressor_Large_C":
+                    return "Suppressor";
+                case "Item_Attach_Weapon_Muzzle_Compensator_Large_C":
+                    return "Compensator";
                 default:
                     Console.WriteLine($"Unknown weapon/vehicle/item/thing: {weapon}");
                     return weapon;
