@@ -55,7 +55,7 @@ if (args.Length > 0)
     optionsBuilder.UseSqlite(connectionString);
     var dbContextOptions = optionsBuilder.Options;
 
-    if (args[0].ToLower() == "--setup")
+    if (args[0].Equals("--setup", StringComparison.CurrentCultureIgnoreCase))
     {
         // Create the database and tables
         var dbContext = new PUBGCustomStatsContext(dbContextOptions);
@@ -82,7 +82,7 @@ if (args.Length > 0)
         }
 
     }
-    else if (args[0].ToLower() == "--apikey")
+    else if (args[0].Equals("--apikey", StringComparison.CurrentCultureIgnoreCase))
     {
         // Set the API key
         if (args.Length < 2)
@@ -343,7 +343,7 @@ if (args.Length > 0)
                 Console.WriteLine($"   =====================================|==================|==================");
                 foreach (var s in sessions)
                 {
-                    Console.WriteLine($" - {s.SessionGuid} | {s.StartDateTime.GetValueOrDefault(DateTime.MinValue).ToString("yyyy-MM-dd HH:mm")} | {s.SessionName}");
+                    Console.WriteLine($" - {s.SessionGuid} | {s.StartDateTime.GetValueOrDefault(DateTime.MinValue):yyyy-MM-dd HH:mm} | {s.SessionName}");
                 }
                 break;
 
@@ -515,7 +515,7 @@ if (args.Length > 0)
                 Console.WriteLine($"   =====================================|==================|==================");
                 foreach (var m in matches)
                 {
-                    Console.WriteLine($" - {m.MatchGuid} | {m.StartTime.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-dd HH:mm")} | {m.MatchName}");
+                    Console.WriteLine($" - {m.MatchGuid} | {m.StartTime.GetValueOrDefault().ToLocalTime():yyyy-MM-dd HH:mm} | {m.MatchName}");
                 }
                 break;
 
@@ -642,7 +642,7 @@ else
 
     DisplayHelp();
 }
-void DisplayHelp()
+static void DisplayHelp()
 {
     Console.WriteLine("Usage: PUBGCustomStats [command] <parameter>");
     Console.WriteLine("Options:");
@@ -665,10 +665,11 @@ void DisplayHelp()
     Console.WriteLine("  --movematch <matchId> <sessionGuid>   Move a match to a different session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
-    Console.WriteLine("  --reparseallmatches                  Reprocess telemetry for every saved match in the database");
+    Console.WriteLine("  --setrandominteractive                Interactively mark players as random");
+    Console.WriteLine("  --reparseallmatches                   Reprocess telemetry for every saved match in the database");
     Console.WriteLine("  --cleanup                             Delete players with no matches and clans with no players");
     Console.WriteLine("  --help                                Display this help message");
     Console.WriteLine();
     Console.WriteLine("If a name contains spaces, enclose it in quotes. For example: --createsession \"My Session\" \"2024-06-01 14:30\"");
 
-}
+}   
