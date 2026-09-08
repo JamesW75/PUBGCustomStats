@@ -949,6 +949,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "holstonmeadows,Holston Meadows":
                 case "holstonmeadows":
                     return "Holston Meadows";
+                case "lipton":
                 case "lipton, Ripton":
                     return "Ripton";
                 case "lodge":

@@ -95,13 +95,13 @@
             foreach (var evt in Model.MatchTimeline.OrderBy(e => e.EventTimestamp))
             {
                 var timeStamp = (evt.EventTimestamp - firstEvent);
-                var descripion = "";
+                var description = "";
                 bool skip = false;
 
                 switch (evt.EventType)
                 {
                     case "LogMatchStart":
-                        descripion = "🏳️ Match Start";
+                        description = "🏳️ Match Start";
 
                         break;
 
@@ -109,13 +109,13 @@
                         switch (evt?.IsGame)
                         {
                             case 0.0m:
-                                descripion = "⌚ Waiting for Players";
+                                description = "⌚ Waiting for Players";
                                 break;
                             case 0.1m:
-                                descripion = "🛫 On Plane";
+                                description = "🛫 On Plane";
                                 break;
                             case 0.5m:
-                                descripion = "🏳️ Starting";
+                                description = "🏳️ Starting";
                                 break;
                             case 1:
                             case 2:
@@ -127,7 +127,7 @@
                             case 8:
                             case 9:
                             case 10:
-                                descripion = "🔵 Phase #" + evt.Phase + " Blue Zone shrinking";
+                                description = "🔵 Phase #" + evt.Phase + " Blue Zone shrinking";
                                 break;
                             case 1.5m:
                             case 2.5m:
@@ -139,17 +139,17 @@
                             case 8.5m:
                             case 9.5m:
                             case 10.5m:
-                                descripion = "🔵 Phase #" + evt.Phase + " starts";
+                                description = "🔵 Phase #" + evt.Phase + " starts";
                                 if (Model.Match != null)
                                 {
                                     if (Model.Match.NoFireUntilPhase.HasValue && Model.Match.NoFireUntilPhase == evt.Phase)
                                     {
-                                        descripion += ". Commence firing.";
+                                        description += ". Commence firing.";
                                     }
                                 }
                                 break;
                             default:
-                                descripion = "❓ Unknown";
+                                description = "❓ Unknown";
                                 break;
                         }
                         break;
@@ -165,7 +165,7 @@
                             }
                             else
                             {
-                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " killed by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                description = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " killed by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                             }
                         }
                         else
@@ -178,7 +178,7 @@
                             else
                             {
 
-                                descripion = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " died from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                description = "☠️ " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " died from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                             }
                         }
 
@@ -206,14 +206,14 @@
                                     // skip, when it is melee
                                     break;
                                 default:
-                                    descripion += " with " + weapon;
+                                    description += " with " + weapon;
                                     break;
                             }
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
 
                         if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
@@ -242,12 +242,12 @@
                                 }
                             }
 
-                            descripion += ". Assist from " + playerList;
+                            description += ". Assist from " + playerList;
                         }
 
                         if (evt.IndividualRanking != null && evt.IndividualRanking > 0)
                         {
-                            descripion += ". Individual ranking " + MatchHelpers.GetRanking(evt.IndividualRanking.Value);
+                            description += ". Individual ranking " + MatchHelpers.GetRanking(evt.IndividualRanking.Value);
                         }
 
                         break;
@@ -264,11 +264,11 @@
                             {
                                 if (evt.PlayerGuid == evt.SecondaryPlayerGuid)
                                 {
-                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked themself by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                    description = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked themself by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                                 }
                                 else
                                 {
-                                    descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                    description = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " from " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                                 }
                             }
                         }
@@ -281,7 +281,7 @@
                             }
                             else
                             {
-                                descripion = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                description = "💤 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " knocked by " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                             }
                         }
 
@@ -306,20 +306,20 @@
                                     // skip, when it is melee, or throwable
                                     break;
                                 default:
-                                    descripion += " with " + weapon;
+                                    description += " with " + weapon;
                                     break;
                             }
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
 
                         /*
                         if (evt.DBNOId.HasValue)
                         {
-                            descripion += " (Knock #" + evt.DBNOId.Value + ")";
+                            description += " (Knock #" + evt.DBNOId.Value + ")";
                             }
                         */
                         break;
@@ -336,36 +336,36 @@
                             {
                                 if (evt.SecondaryPlayerAccountId == evt.PlayerAccountId)
                                 {
-                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " self revived";
+                                    description = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " self revived";
                                 }
                                 else
                                 {
-                                    descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived by " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
+                                    description = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived by " + (evt.SecondaryPlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.SecondaryPlayerAccountId) : evt.SecondaryPlayer?.PlayerName);
                                 }
                             }
                         }
                         else
                         {
-                            descripion = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived";
+                            description = "🩺 " + (evt.PlayerIsNPC.GetValueOrDefault() ? MatchHelpers.GetNPCName(evt.PlayerAccountId) : evt.Player?.PlayerName) + " revived";
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
                     case "LogPlayerUseFlareGun":
-                        descripion = "🎆 " + evt.Player?.PlayerName + " used Flare Gun";
+                        description = "🎆 " + evt.Player?.PlayerName + " used Flare Gun";
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
                     case "LogMatchEnd":
-                        descripion = "🏁 Match Ended.";
+                        description = "🏁 Match Ended.";
 
                         if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
                         {
@@ -386,7 +386,7 @@
                                 }
                             }
 
-                            descripion += " Winner(s) " + playerList + ".";
+                            description += " Winner(s) " + playerList + ".";
                         }
 
                         matchEnded = true;
@@ -400,20 +400,20 @@
                         }
                         if (evt.PlayerIsNPC.GetValueOrDefault())
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
+                            description = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
                         }
                         else if (evt.PlayerGuid == null)
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
+                            description = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
                         }
                         else
                         {
-                            descripion = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
+                            description = "🛞 " + wheel + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
                         }
 
                         if (!string.IsNullOrEmpty(evt.Zone))
                         {
-                            descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                            description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                         }
                         break;
 
@@ -425,44 +425,44 @@
                         }
                         if (evt.PlayerIsNPC.GetValueOrDefault())
                         {
-                            descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
+                            description = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + MatchHelpers.GetNPCName(evt.PlayerAccountId);
                         }
                         else if (evt.PlayerGuid == null)
                         {
                             if (evt.Vehicle == evt.DamageReason)
                             {
-                                descripion = "🚗 " + vehicle + " self exploded.";
+                                description = "🚗 " + vehicle + " self exploded.";
                             }
                             else
                             {
-                                descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
+                                description = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason);
                             }
                         }
                         else
                             {
-                                descripion = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
+                                description = "🚗 " + vehicle + " Destroyed by " + MatchHelpers.GetWeaponDescription(evt.DamageCategory, evt.DamageReason) + " from " + evt.Player?.PlayerName;
                             }
 
                             if (!string.IsNullOrEmpty(evt.Zone))
                             {
-                                descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                             }
                             break;
 
                     case "LogEmPickupLiftOff":
                                 if (evt.PlayerGuid == null)
                                 {
-                                    descripion = "🛫 Emergency Pickup Called";
+                                    description = "🛫 Emergency Pickup Called";
                                 }
                                 else
                                 {
-                                    descripion = "🛫 " + evt.Player?.PlayerName + " called Emergency Pickup";
+                                    description = "🛫 " + evt.Player?.PlayerName + " called Emergency Pickup";
                                 }
                                 if (!string.IsNullOrEmpty(evt.Zone))
                                 {
-                                    descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                    description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                                 }
-                                descripion += ".";
+                                description += ".";
 
                                 if (evt.MatchTimelinePlayers != null && evt.MatchTimelinePlayers.Any())
                                 {
@@ -483,7 +483,7 @@
                                         }
                                     }
 
-                                    descripion += " Carrying " + playerList + ".";
+                                    description += " Carrying " + playerList + ".";
                                 }
                                 break;
 
@@ -497,22 +497,22 @@
                                     switch (evt.Status)
                                     {
                                         case "BodyCarry_Start_Carrier":
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " started carrying player";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " started carrying player";
                                             break;
                                         case "BodyCarry_Start_Carried":
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " is being carried";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " is being carried";
                                             break;
                                         case "BodyCarry_End_Carrier":
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " stopped carrying player";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " stopped carrying player";
                                             break;
                                         case "BodyCarry_End_Carried":
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " is no longer being carried";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " is no longer being carried";
                                             break;
                                         case "BodyCarry_Died_Carrier":
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " carrier died";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " carrier died";
                                             break;
                                         default:
-                                            descripion = "🏋️ " + evt.Player?.PlayerName + " carrying player/being carried";
+                                            description = "🏋️ " + evt.Player?.PlayerName + " carrying player/being carried";
                                             break;
                                     }
                                 }
@@ -520,37 +520,37 @@
                                 break;
 
                             case "LogCarePackageSpawn":
-                                descripion = "📦 ";
+                                description = "📦 ";
                                 if (evt.DamageCategory != null)
                                 {
-                                    descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
+                                    description += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
                                 }
-                                descripion += " Care Package Dropping";
+                                description += " Care Package Dropping";
                                 if (evt.Weapon != null)
                                 {
-                                    descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                    description += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                                 }
                                 break;
 
                             case "LogCarePackageLand":
-                                descripion = "📦 ";
+                                description = "📦 ";
                                 if (evt.DamageCategory != null)
                                 {
-                                    descripion += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
+                                    description += MatchHelpers.GetCarePackageDescription(evt.DamageCategory);
                                 }
-                                descripion += " Care Package Landed";
+                                description += " Care Package Landed";
                                 if (evt.Weapon != null)
                                 {
-                                    descripion += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                    description += ". Containing " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                                 }
                                 break;
 
                             case "LogRedZoneEnded":
-                                descripion = "🔴 Red Zone Ended";
+                                description = "🔴 Red Zone Ended";
                                 break;
 
                             case "LogBlackZoneEnded":
-                                descripion = "🟣 Black Zone Ended";
+                                description = "🟣 Black Zone Ended";
                                 break;
 
                             case "LogPlayerRedeploy":
@@ -560,7 +560,7 @@
                                 }
                                 else
                                 {
-                                    descripion = "🪂 " + evt.Player?.PlayerName + " redeployed";
+                                    description = "🪂 " + evt.Player?.PlayerName + " redeployed";
                                 }
                                 break;
 
@@ -571,7 +571,7 @@
                                 }
                                 else
                                 {
-                                    descripion = "🪂 " + evt.Player?.PlayerName + " started redeploy";
+                                    description = "🪂 " + evt.Player?.PlayerName + " started redeploy";
                                 }
                                 break;
 
@@ -582,13 +582,13 @@
                                 }
                                 else
                                 {
-                                    descripion = "🪂 " + evt.Player?.PlayerName + " landed";
+                                    description = "🪂 " + evt.Player?.PlayerName + " landed";
                                     if (!string.IsNullOrEmpty(evt.Zone))
                                     {
-                                        descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                        description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
 
                                     }
-                                    descripion += " (Parachuted " + evt.Distance?.ToString("N0") + "m)";
+                                    description += " (Parachuted " + evt.Distance?.ToString("N0") + "m)";
                                 }
                                 break;
 
@@ -599,8 +599,8 @@
                                 }
                                 else
                                 {
-                                    descripion = "🧱 " + evt.Player?.PlayerName + " destroyed wall";
-                                    descripion += " with " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                    description = "🧱 " + evt.Player?.PlayerName + " destroyed wall";
+                                    description += " with " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                                 }
                                 break;
 
@@ -608,11 +608,11 @@
                                 switch (evt.Vehicle)
                                 {
                                     case "BP_EmergencyPickupVehicle_C":
-                                        descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Emergency Pickup";
+                                        description = "🛬 " + evt.Player?.PlayerName + " jumped from Emergency Pickup";
                                         break;
 
                                     case "RedeployAircraft_Tiger_C":
-                                        descripion = "🛬 " + evt.Player?.PlayerName + " jumped from Redeploy Aircraft";
+                                        description = "🛬 " + evt.Player?.PlayerName + " jumped from Redeploy Aircraft";
                                         break;
 
                                     default:
@@ -625,20 +625,21 @@
                                 switch (evt.Weapon)
                                 {
                                     case "Item_BTSecretRoom_Key_C": // Erangal - Secreate Basement Key
-                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Basement Key";
+                                    case "Item_Desert_Key_C":
+                                        description = "🔑 " + evt.Player?.PlayerName + " used Secret Basement Key";
                                         break;
 
                                     case "Item_Tiger_Key_C": // Taego - Secret Key
-                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Secret Key";
+                                        description = "🔑 " + evt.Player?.PlayerName + " used Secret Key";
                                         break;
 
                                     case "Item_DihorOtok_Key_C": // Vikendi - Security Key
                                     case "Item_Secuity_Keycard_C": // Deston - Security Key
-                                        descripion = "🔑 " + evt.Player?.PlayerName + " used Security Key";
+                                        description = "🔑 " + evt.Player?.PlayerName + " used Security Key";
                                         break;
 
                                     case "Item_Bluechip_C":
-                                        descripion = "🗼 " + evt.Player?.PlayerName + " used Blue Chip Tower";
+                                        description = "🗼 " + evt.Player?.PlayerName + " used Blue Chip Tower";
                                         break;
                                     default:
                                         skip = true;
@@ -647,25 +648,25 @@
 
                                 if (!string.IsNullOrEmpty(evt.Zone) && !skip)
                                 {
-                                    descripion += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
+                                    description += " in " + MatchHelpers.GetZoneDescription(evt.Zone);
                                 }
-                                descripion += ".";
+                                description += ".";
                                 break;
 
                             case "LogObjectInteraction":
                                 switch (evt.DamageCategory)
                                 {
                                     case "VendingMachine":
-                                        descripion = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + MatchHelpers.GetWeaponDescription(evt.Weapon);
+                                        description = "🎰 " + evt.Player?.PlayerName + " used Vending Machine. Returned " + MatchHelpers.GetWeaponDescription(evt.Weapon);
                                         break;
                                     case "FuelPuddle":
                                         switch (evt.DamageReason)
                                         {
                                             case "Ignite":
-                                                descripion = "⛽ " + evt.Player?.PlayerName + " ignited Fuel Puddle";
+                                                description = "⛽ " + evt.Player?.PlayerName + " ignited Fuel Puddle";
                                                 break;
                                             default:
-                                                descripion = "⛽ " + evt.Player?.PlayerName + " " + evt.DamageReason + " Fuel Puddle";
+                                                description = "⛽ " + evt.Player?.PlayerName + " " + evt.DamageReason + " Fuel Puddle";
                                                 break;
                                         }
 
@@ -678,7 +679,7 @@
                             case "LogPlayerAttack":
                                 // emp, unil NoFireUntilPhase has been reached.
                                 skip = true;
-                                //descripion = evt.Player.PlayerName + " attacked with " + evt.Weapon;
+                                //description = evt.Player.PlayerName + " attacked with " + evt.Weapon;
                                 break;
 
                             case "LogPlayerTakeDamage":
@@ -705,13 +706,13 @@
                                             }
                                             else
                                             {
-                                                descripion = "🚷 " + evt.Player?.PlayerName + " took damage from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
+                                                description = "🚷 " + evt.Player?.PlayerName + " took damage from " + MatchHelpers.GetDamageDescription(evt.DamageCategory, evt.DamageReason) + " by " + evt.SecondaryPlayer.PlayerName;
                                             }
                                         }
                                         else
                                         {
                                             skip = true; // Skip environmental/blue zone/crash
-                                                         //descripion = evt.Player.PlayerName + " took damage from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
+                                                         //description = evt.Player.PlayerName + " took damage from " + GetDamageDescription(evt.DamageCategory, evt.DamageReason);
                                         }
                                     }
                                 }
@@ -722,11 +723,11 @@
                                 {
                                     if (evt.Player != null)
                                     {
-                                        descripion = "🚪 " + evt.Player?.PlayerName + " logged out.";
+                                        description = "🚪 " + evt.Player?.PlayerName + " logged out.";
                                     }
                                     else
                                     {
-                                        descripion = "🚪 Unknown Player logged out.";
+                                        description = "🚪 Unknown Player logged out.";
                                     }
                                 }
                                 else
@@ -741,10 +742,10 @@
                                 switch (evt.Weapon)
                                 {
                                     case "Item_Weapon_PackageFlare_C":
-                                        descripion = "🎆 " + evt.Player?.PlayerName + " used Package Flare";
+                                        description = "🎆 " + evt.Player?.PlayerName + " used Package Flare";
                                         break;
                                     case "Item_Weapon_CoverStructDropHandFlare_C":
-                                        descripion = "🎆 " + evt.Player?.PlayerName + " used Cover Flare";
+                                        description = "🎆 " + evt.Player?.PlayerName + " used Cover Flare";
                                         break;
                                     default:
                                         skip = true;
@@ -761,7 +762,7 @@
                             {
                                 <tr>
                                     <td>@timeStamp.ToString("mm':'ss'.'ff")</td>
-                                    <td> @descripion</td>
+                                    <td> @description</td>
                                 </tr>
                             }
                         }
