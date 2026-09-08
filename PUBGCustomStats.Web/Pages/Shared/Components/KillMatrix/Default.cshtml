@@ -2,6 +2,7 @@
 
 <style>
     .kill-matrix .kill-count { text-align: right; }
+                        var isBotColumn = string.Equals(victim, "BOT", StringComparison.OrdinalIgnoreCase);
     .kill-matrix .victim-header {
         padding: 0.25rem 0.15rem;
         height: 160px;
@@ -76,6 +77,9 @@
     .kill-matrix .hover-row td.top-kill-3, .kill-matrix .hover-col.top-kill-3 { background-color: #ffc107 !important; }
     .kill-matrix .hover-row td.suicide-cell, .kill-matrix .hover-col.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
     .kill-matrix .hover-row td.suicide-cell a, .kill-matrix .hover-col.suicide-cell a { color: #fff !important; }
+    .kill-matrix .bot-header, .kill-matrix .bot-cell,
+    .kill-matrix .hover-row td.bot-cell, .kill-matrix .hover-col.bot-cell { background-color: #adb5bd !important; color: #212529 !important; }
+    .kill-matrix .bot-cell a { color: #212529 !important; }
 </style>
 
 <div class="table-responsive kill-matrix">
@@ -103,7 +107,8 @@
                 </th>
                 @foreach (var victim in Model.Victims)
                 {
-                    <th class="victim-header"><div class="rotated">@victim</div></th>
+                    var isBotColumn = string.Equals(victim, "BOT", StringComparison.OrdinalIgnoreCase);
+                    <th class="victim-header@(isBotColumn ? " bot-header" : "")"><div class="rotated">@victim</div></th>
                 }
             </tr>
         </thead>
@@ -111,11 +116,12 @@
             @foreach (var player in Model.Players)
             {
                 var playerName = player.PlayerName ?? string.Empty;
+                var isBotRow = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase);
                 var isBlueZoneRow = string.Equals(playerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
-                var isNonPlayerLink = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                var isNonPlayerLink = isBotRow
                     || isBlueZoneRow;
                 <tr>
-                    <td class="text-nowrap">
+                    <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? " bluezone-cell" : "")">
                         @if (isNonPlayerLink)
                         {
                             var routeName = isBlueZoneRow ? "BlueZone" : playerName;
@@ -128,9 +134,11 @@
                     </td>
                     @foreach (var victim in Model.Victims)
                     {
+                        var isBotColumn = string.Equals(victim, "BOT", StringComparison.OrdinalIgnoreCase);
                         var value = Model.Counts.TryGetValue(player.PlayerGuid, out var row)
                             && row.TryGetValue(victim, out var count) ? count : 0;
                         var cellClasses = "text-end kill-count";
+                        if (isBotRow || isBotColumn) cellClasses += " bot-cell";
                         if (isBlueZoneRow) cellClasses += " bluezone-cell";
                         if (Model.SuicideCells.Contains($"{player.PlayerGuid}:{victim}")) cellClasses += " suicide-cell";
                         if (topKillCounts.Count > 0 && value == topKillCounts[0]) cellClasses += " top-kill-1";
