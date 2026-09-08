@@ -594,10 +594,17 @@ if (args.Length > 0)
 
             case "--setrandominteractive":
                 // Present a list of players with 1 match and ask if they are random, then set the flag in the database
+                var randomMatchCount = 1;
+                if (args.Length >= 2 && (!int.TryParse(args[1], out randomMatchCount) || randomMatchCount < 1))
+                {
+                    Console.WriteLine("Error: Match count must be a positive integer.");
+                    return;
+                }
+
                 var randomPlayerInteractive = new Player(dbContextOptions, integrationService);
-                var playersWithOneMatch = randomPlayerInteractive.GetPlayersWithNumMatch(1);
-                Console.WriteLine($"Found {playersWithOneMatch.Count()} players with only 1 match");
-                foreach (var p in playersWithOneMatch)
+                var playersWithMatchCount = randomPlayerInteractive.GetPlayersWithNumMatch(randomMatchCount);
+                Console.WriteLine($"Found {playersWithMatchCount.Count()} players with {randomMatchCount} or fewer matches");
+                foreach (var p in playersWithMatchCount)
                 {
                     Console.WriteLine($" - {p.PlayerName} ({p.PlayerGuid})");
                     Console.Write("Is this player random? (Yes/No/Quit) ? ");
@@ -665,7 +672,7 @@ static void DisplayHelp()
     Console.WriteLine("  --movematch <matchId> <sessionGuid>   Move a match to a different session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");
-    Console.WriteLine("  --setrandominteractive                Interactively mark players as random");
+    Console.WriteLine("  --setrandominteractive [matchCount]    Interactively mark players as random (default: 1)");
     Console.WriteLine("  --reparseallmatches                   Reprocess telemetry for every saved match in the database");
     Console.WriteLine("  --cleanup                             Delete players with no matches and clans with no players");
     Console.WriteLine("  --help                                Display this help message");
