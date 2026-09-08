@@ -46,7 +46,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                     .ToHashSetAsync();
             }
 
-            var includeRandomPlayers = matchGuid.HasValue;
+            var includeRandomPlayers = matchGuid.HasValue || sessionGuid.HasValue;
             var playersQuery = _context.Players.Where(p => includeRandomPlayers || p.IsRandom != true);
             if (selectedMatchGuids != null)
             {
@@ -131,7 +131,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
 
             foreach (var timeline in timelines)
             {
-                var attackerGuid = timeline.SecondaryPlayerGuid;
+                var attackerGuid = GetAttackerGuid(timeline);
                 if (!attackerGuid.HasValue)
                 {
                     continue;
@@ -160,6 +160,28 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
             };
 
             return View(model);
+        }
+
+        private static Guid? GetAttackerGuid(MatchTimeline timeline)
+        {
+            if (timeline.SecondaryPlayerGuid.HasValue)
+            {
+                return timeline.SecondaryPlayerGuid.Value;
+            }
+
+            if (timeline.SecondaryPlayerIsNPC.GetValueOrDefault()
+                && !string.IsNullOrEmpty(timeline.SecondaryPlayerAccountId)
+                && timeline.SecondaryPlayerAccountId.StartsWith("ai", StringComparison.OrdinalIgnoreCase))
+            {
+                return BotGuid;
+            }
+
+            if (timeline.DamageCategory == "Damage_BlueZone")
+            {
+                return BlueZoneGuid;
+            }
+
+            return null;
         }
 
         private static string GetVictimLabel(MatchTimeline timeline)

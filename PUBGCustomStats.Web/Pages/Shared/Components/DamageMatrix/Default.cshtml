@@ -78,7 +78,9 @@
             .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
                 && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase))
             .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
-                ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)).Select(kvp => kvp.Value)
+                ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase))
+                    .Select(kvp => kvp.Value)
                 : Enumerable.Empty<int>())
             .Where(count => count > 0)
             .Distinct()
@@ -135,6 +137,10 @@
     </table>
 </div>
 
+Top Damage Count: @topDamageCounts.Count<br />
+1: @topDamageCounts[0]<br />
+2: @topDamageCounts[1]<br />
+3: @topDamageCounts[2]<br />
 <script>
     (function () {
         document.querySelectorAll('.damage-matrix table').forEach(function (table) {

@@ -46,7 +46,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KnockMatrix
                     .ToHashSetAsync();
             }
 
-            var includeRandomPlayers = matchGuid.HasValue;
+            var includeRandomPlayers = matchGuid.HasValue || sessionGuid.HasValue;
             var playersQuery = _context.Players.Where(p => includeRandomPlayers || p.IsRandom != true);
             if (selectedMatchGuids != null)
             {
