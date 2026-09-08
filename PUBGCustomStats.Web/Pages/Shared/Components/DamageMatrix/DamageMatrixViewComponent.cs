@@ -79,8 +79,6 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                 .Include(mt => mt.Match)
                 .Where(mt => mt.EventType == "LogPlayerTakeDamage"
                     && mt.Match != null
-                    && mt.SecondaryPlayerGuid.HasValue
-                    && mt.PlayerGuid.HasValue
                     && (includeDoNotCountMatch && selectedMatchGuids != null
                         ? selectedMatchGuids.Contains(mt.MatchGuid)
                         : mt.Match.DoNotCount != true));
