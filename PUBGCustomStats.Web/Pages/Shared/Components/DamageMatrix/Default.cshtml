@@ -197,9 +197,12 @@
                             var cellClasses = "text-end damage-count";
                             if (isBotRow || isBotColumn) cellClasses += " bot-cell";
                             if (isBlueZoneRow) cellClasses += " bluezone-cell";
-                            if (topDamageCounts.Count > 0 && value == topDamageCounts[0]) cellClasses += " top-damage-1";
-                            else if (topDamageCounts.Count > 1 && value == topDamageCounts[1]) cellClasses += " top-damage-2";
-                            else if (topDamageCounts.Count > 2 && value == topDamageCounts[2]) cellClasses += " top-damage-3";
+                            if (!isBotRow && !isBotColumn && !isBlueZoneRow)
+                            {
+                                if (topDamageCounts.Count > 0 && value == topDamageCounts[0]) cellClasses += " top-damage-1";
+                                else if (topDamageCounts.Count > 1 && value == topDamageCounts[1]) cellClasses += " top-damage-2";
+                                else if (topDamageCounts.Count > 2 && value == topDamageCounts[2]) cellClasses += " top-damage-3";
+                            }
                             <td class="@cellClasses">@value</td>
                         }
                     </tr>
