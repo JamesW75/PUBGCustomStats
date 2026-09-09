@@ -3,16 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using PUBGCustomStats.Data;
 using PUBGCustomStats.Data.Models;
 
-namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
+namespace PUBGCustomStats.Web.Pages.Shared.Components.KnockMatrix
 {
-    public class KillMatrixViewComponent : ViewComponent
+    public class KnockMatrixViewComponent : ViewComponent
     {
         private static readonly Guid BotGuid = new("00000000-0000-0000-0000-000000000001");
         private static readonly Guid BlueZoneGuid = new("00000000-0000-0000-0000-000000000002");
         private static readonly Guid RedZoneGuid = new("00000000-0000-0000-0000-000000000003");
         private readonly PUBGCustomStatsContext _context;
 
-        public KillMatrixViewComponent(PUBGCustomStatsContext context)
+        public KnockMatrixViewComponent(PUBGCustomStatsContext context)
         {
             _context = context;
         }
@@ -83,7 +83,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 .Include(mt => mt.Player)
                 .Include(mt => mt.SecondaryPlayer)
                 .Include(mt => mt.Match)
-                .Where(mt => mt.EventType == "LogPlayerKillV2"
+                .Where(mt => mt.EventType == "LogPlayerMakeGroggy"
                     && mt.Match != null
                     && (includeDoNotCountMatch && selectedMatchGuids != null
                         ? selectedMatchGuids.Contains(mt.MatchGuid)
@@ -167,7 +167,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 }
             }
 
-            var model = new KillMatrixViewModel
+            var model = new KnockMatrixViewModel
             {
                 Players = players,
                 Victims = victims,
@@ -245,7 +245,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
         }
     }
 
-    public sealed class KillMatrixViewModel
+    public sealed class KnockMatrixViewModel
     {
         public required List<Player> Players { get; init; }
         public required List<string> Victims { get; init; }

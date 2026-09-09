@@ -11,6 +11,10 @@
     "--getmatches JimTheHawk": {
       "commandName": "Project",
       "commandLineArgs": "--getmatches JimTheHawk"
+    },
+    "--addmatch 4d0e2a73-efac-495c-85bf-43a0fccfb846": {
+      "commandName": "Project",
+      "commandLineArgs": "--addmatch 4d0e2a73-efac-495c-85bf-43a0fccfb846"
     }
   }
 }

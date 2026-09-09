@@ -41,12 +41,15 @@ allResources.Add(new PageResource("/nonplayer/Suicide") { OutFile = "nonplayer/s
 allResources.Add(new PageResource("/nonplayer/Guard") { OutFile = "nonplayer/guard.html" });
 allResources.Add(new PageResource("/nonplayer/Commander") { OutFile = "nonplayer/commander.html" });
 allResources.Add(new PageResource("/nonplayer/Lava") { OutFile = "nonplayer/lava.html" });
+allResources.Add(new PageResource("/nonplayer/KillTruck") { OutFile = "nonplayer/killtruck.html" });
 
 allResources.Add(new PageResource("/"));
 allResources.Add(new PageResource("/index"));
 allResources.Add(new PageResource("/charts"));
 allResources.Add(new PageResource("/clans"));
 allResources.Add(new PageResource("/killmatrix"));
+allResources.Add(new PageResource("/knockmatrix"));
+allResources.Add(new PageResource("/damagematrix"));
 
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));

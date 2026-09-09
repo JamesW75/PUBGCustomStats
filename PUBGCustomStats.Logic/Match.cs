@@ -92,6 +92,40 @@ namespace PUBGCustomStats.Logic
         {
             return [.. DbContext.Matches];
         }
+
+        public void ReparseAllMatches()
+        {
+            var matches = DbContext.Matches.ToList();
+            if (matches.Count == 0)
+            {
+                Console.WriteLine("No matches found in the database to reparse.");
+                return;
+            }
+
+            foreach (var match in matches)
+            {
+                Console.WriteLine($"Reparsing telemetry for match: {match.MatchGuid} ({match.MatchName ?? "unnamed"})");
+
+                var telemetryFilePath = Path.Combine(BaseTelemetryStoragePath, match.MatchGuid.ToString() + ".json");
+                if (File.Exists(telemetryFilePath))
+                {
+                    var telemetryRawData = File.ReadAllText(telemetryFilePath);
+                    ParseTelemetry(match.MatchGuid, telemetryRawData);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(match.TelemetryUrl))
+                {
+                    var telemetryData = _integrationService.GetTelemetry(match.TelemetryUrl);
+                    File.WriteAllText(telemetryFilePath, telemetryData.Result);
+                    ParseTelemetry(match.MatchGuid, telemetryData.Result);
+                    continue;
+                }
+
+                Console.WriteLine($"No telemetry file or URL available for match: {match.MatchGuid}");
+            }
+        }
+
         public void EditMatch(Guid matchGuid, string newMatchName)
         {
             var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
@@ -1187,6 +1221,7 @@ namespace PUBGCustomStats.Logic
                             //{
                             matchTimeline.DamageReason = telemetryEvent.damageReason;
                             matchTimeline.DamageCategory = telemetryEvent.damageTypeCategory;
+                            matchTimeline.Damage = telemetryEvent.damage;
                             matchTimeline.Distance = telemetryEvent.distance;
                             matchTimeline.Weapon = telemetryEvent.damageCauserName;
                             //}

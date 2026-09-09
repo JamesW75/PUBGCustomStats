@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
 using PUBGCustomStats.Data.Models;
 
 namespace PUBGCustomStats.Data
@@ -8,7 +9,8 @@ namespace PUBGCustomStats.Data
         public PUBGCustomStatsContext(DbContextOptions<PUBGCustomStatsContext> options)
             : base(options)
         {
-
+            Database.EnsureCreated();
+            EnsureMatchTimelineColumns();
         }
 
 
@@ -91,6 +93,37 @@ namespace PUBGCustomStats.Data
                 .WithOne(m => m.MatchRawData)
                 .HasForeignKey<MatchRawData>(mrd => mrd.MatchGuid);
             */
+        }
+
+        private void EnsureMatchTimelineColumns()
+        {
+            var connection = Database.GetDbConnection();
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+            }
+
+            using var command = connection.CreateCommand();
+            command.CommandText = "PRAGMA table_info('MatchTimeline');";
+
+            using var reader = command.ExecuteReader();
+            var hasDamageColumn = false;
+            while (reader.Read())
+            {
+                var columnName = reader.GetString(1);
+                if (string.Equals(columnName, "Damage", StringComparison.OrdinalIgnoreCase))
+                {
+                    hasDamageColumn = true;
+                    break;
+                }
+            }
+
+            if (!hasDamageColumn)
+            {
+                using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText = "ALTER TABLE MatchTimeline ADD COLUMN Damage REAL;";
+                alterCommand.ExecuteNonQuery();
+            }
         }
 
         // Define DbSet properties for your entities
