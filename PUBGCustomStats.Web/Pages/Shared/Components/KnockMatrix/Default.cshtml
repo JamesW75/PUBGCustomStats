@@ -68,8 +68,12 @@
     .knock-matrix td.suicide-cell a { color: #fff !important; }
     .knock-matrix td.bluezone-cell { background-color: #0d6efd !important; color: #fff !important; }
     .knock-matrix td.bluezone-cell a { color: #fff !important; }
+    .knock-matrix td.bluezone-cell.zero-zone { background-color: #dfeeff !important; color: #212529 !important; }
+    .knock-matrix td.bluezone-cell.zero-zone a { color: #212529 !important; }
     .knock-matrix td.redzone-cell { background-color: #dc3545 !important; color: #fff !important; }
     .knock-matrix td.redzone-cell a { color: #fff !important; }
+    .knock-matrix td.redzone-cell.zero-zone { background-color: #f8d7da !important; color: #212529 !important; }
+    .knock-matrix td.redzone-cell.zero-zone a { color: #212529 !important; }
     .knock-matrix td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
     .knock-matrix td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
     .knock-matrix td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
@@ -123,9 +127,11 @@
                 var isBotRow = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase);
                 var isBlueZoneRow = string.Equals(playerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
                 var isRedZoneRow = string.Equals(playerName, "Red Zone", StringComparison.OrdinalIgnoreCase);
+                var isZeroBlueZoneRow = isBlueZoneRow && Model.Players.All(p => !Model.Counts.TryGetValue(p.PlayerGuid, out var row) || row.All(kvp => !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase) || kvp.Value == 0));
+                var isZeroRedZoneRow = isRedZoneRow && Model.Players.All(p => !Model.Counts.TryGetValue(p.PlayerGuid, out var row) || row.All(kvp => !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase) || kvp.Value == 0));
                 var isNonPlayerLink = isBotRow || isBlueZoneRow || isRedZoneRow;
                 <tr>
-                    <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? " bluezone-cell" : "")@(isRedZoneRow ? " redzone-cell" : "")">
+                    <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? (isZeroBlueZoneRow ? " bluezone-cell zero-zone" : " bluezone-cell") : "")@(isRedZoneRow ? (isZeroRedZoneRow ? " redzone-cell zero-zone" : " redzone-cell") : "")">
                         @if (isNonPlayerLink)
                         {
                             var routeName = isBlueZoneRow ? "BlueZone" : isRedZoneRow ? "RedZone" : playerName;
@@ -139,14 +145,16 @@
                     @foreach (var victim in Model.Victims)
                     {
                         var isBotColumn = string.Equals(victim, "BOT", StringComparison.OrdinalIgnoreCase);
+                        var isBlueZoneColumn = string.Equals(victim, "Blue Zone", StringComparison.OrdinalIgnoreCase);
                         var isRedZoneColumn = string.Equals(victim, "Red Zone", StringComparison.OrdinalIgnoreCase);
                         var value = Model.Counts.TryGetValue(player.PlayerGuid, out var row)
                             && row.TryGetValue(victim, out var count) ? count : 0;
                         var cellClasses = "text-end knock-count";
                         if (isBotRow || isBotColumn) cellClasses += " bot-cell";
-                        if (isBlueZoneRow) cellClasses += " bluezone-cell";
-                        if (isRedZoneRow) cellClasses += " redzone-cell";
-                        if (isRedZoneColumn) cellClasses += " redzone-cell";
+                        if (isBlueZoneRow) cellClasses += value == 0 ? " bluezone-cell zero-zone" : " bluezone-cell";
+                        if (isRedZoneRow) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
+                        if (isBlueZoneColumn) cellClasses += value == 0 ? " bluezone-cell zero-zone" : " bluezone-cell";
+                        if (isRedZoneColumn) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
                         if (Model.SuicideCells.Contains($"{player.PlayerGuid}:{victim}")) cellClasses += " suicide-cell";
                         if (!isBotRow && !isBotColumn && !isBlueZoneRow && !isRedZoneRow)
                         {
