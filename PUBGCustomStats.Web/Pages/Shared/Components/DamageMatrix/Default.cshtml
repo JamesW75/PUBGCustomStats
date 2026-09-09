@@ -102,6 +102,15 @@
         color: #fff !important;
     }
 
+    .damage-matrix td.redzone-cell {
+        background-color: #dc3545 !important;
+        color: #fff !important;
+    }
+
+    .damage-matrix td.redzone-cell a {
+        color: #fff !important;
+    }
+
     .damage-matrix .hover-row td,
     .damage-matrix .hover-col {
         background-color: #e6f7ff !important;
@@ -139,10 +148,12 @@
     @{
         var topDamageCounts = Model.Players
             .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase))
+                && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
             .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
                 ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
-                    && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase))
+                    && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase))
                     .Select(kvp => kvp.Value)
                 : Enumerable.Empty<int>())
             .Where(count => count > 0)
@@ -175,13 +186,13 @@
                     var playerName = player.PlayerName ?? string.Empty;
                     var isBotRow = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase);
                     var isBlueZoneRow = string.Equals(playerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
-                    var isNonPlayerLink = isBotRow
-                        || isBlueZoneRow;
+                    var isRedZoneRow = string.Equals(playerName, "Red Zone", StringComparison.OrdinalIgnoreCase);
+                    var isNonPlayerLink = isBotRow || isBlueZoneRow || isRedZoneRow;
                     <tr>
-                        <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? " bluezone-cell" : "")">
+                        <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? " bluezone-cell" : "")@(isRedZoneRow ? " redzone-cell" : "")">
                             @if (isNonPlayerLink)
                             {
-                                var routeName = isBlueZoneRow ? "BlueZone" : playerName;
+                                var routeName = isBlueZoneRow ? "BlueZone" : isRedZoneRow ? "RedZone" : playerName;
                                 <a asp-page="/NonPlayer" asp-route-name="@routeName">@player.PlayerName</a>
                             }
                             else
@@ -192,12 +203,15 @@
                         @foreach (var victim in Model.Victims)
                         {
                             var isBotColumn = string.Equals(victim, "BOT", StringComparison.OrdinalIgnoreCase);
+                            var isRedZoneColumn = string.Equals(victim, "Red Zone", StringComparison.OrdinalIgnoreCase);
                             var value = Model.Counts.TryGetValue(player.PlayerGuid, out var row)
                                 && row.TryGetValue(victim, out var count) ? count : 0;
                             var cellClasses = "text-end damage-count";
                             if (isBotRow || isBotColumn) cellClasses += " bot-cell";
                             if (isBlueZoneRow) cellClasses += " bluezone-cell";
-                            if (!isBotRow && !isBotColumn && !isBlueZoneRow)
+                            if (isRedZoneRow) cellClasses += " redzone-cell";
+                            if (isRedZoneColumn) cellClasses += " redzone-cell";
+                            if (!isBotRow && !isBotColumn && !isBlueZoneRow && !isRedZoneRow)
                             {
                                 if (topDamageCounts.Count > 0 && value == topDamageCounts[0]) cellClasses += " top-damage-1";
                                 else if (topDamageCounts.Count > 1 && value == topDamageCounts[1]) cellClasses += " top-damage-2";

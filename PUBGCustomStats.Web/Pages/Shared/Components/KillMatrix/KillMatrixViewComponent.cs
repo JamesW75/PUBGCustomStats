@@ -9,6 +9,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
     {
         private static readonly Guid BotGuid = new("00000000-0000-0000-0000-000000000001");
         private static readonly Guid BlueZoneGuid = new("00000000-0000-0000-0000-000000000002");
+        private static readonly Guid RedZoneGuid = new("00000000-0000-0000-0000-000000000003");
         private readonly PUBGCustomStatsContext _context;
 
         public KillMatrixViewComponent(PUBGCustomStatsContext context)
@@ -73,6 +74,11 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 players.Add(new Player { PlayerGuid = BlueZoneGuid, PlayerName = "Blue Zone" });
             }
 
+            if (!players.Any(p => p.PlayerGuid == RedZoneGuid))
+            {
+                players.Add(new Player { PlayerGuid = RedZoneGuid, PlayerName = "Red Zone" });
+            }
+
             var timelinesQuery = _context.MatchTimeline
                 .Include(mt => mt.Player)
                 .Include(mt => mt.SecondaryPlayer)
@@ -115,7 +121,8 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
             }
 
             var victims = victimLabels.ToList();
-            victims.RemoveAll(v => string.Equals(v, "Blue Zone", StringComparison.OrdinalIgnoreCase));
+            victims.RemoveAll(v => string.Equals(v, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(v, "Red Zone", StringComparison.OrdinalIgnoreCase));
             if (victims.Remove("BOT"))
             {
                 victims.Add("BOT");
@@ -195,6 +202,11 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                 return BlueZoneGuid;
             }
 
+            if (timeline.DamageCategory == "Damage_Explosion_RedZone")
+            {
+                return RedZoneGuid;
+            }
+
             return null;
         }
 
@@ -222,7 +234,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
                     "Damage_BlueZone" => "Blue Zone",
                     "Damage_Drown" => "Drowning",
                     "Damage_Explosion_JerryCan" => "JerryCan",
-                    "Damage_Explosion_RedZone" => "RedZone",
+                    "Damage_Explosion_RedZone" => "Red Zone",
                     "Damage_Explosion_BlackZone" => "BlackZone",
                     "Damage_HelicopterHit" => "Helicopter",
                     _ => timeline.DamageCategory ?? "Unknown"
