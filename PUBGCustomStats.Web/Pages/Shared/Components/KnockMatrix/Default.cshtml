@@ -74,12 +74,20 @@
     .knock-matrix td.redzone-cell a { color: #fff !important; }
     .knock-matrix td.redzone-cell.zero-zone { background-color: #f8d7da !important; color: #212529 !important; }
     .knock-matrix td.redzone-cell.zero-zone a { color: #212529 !important; }
-    .knock-matrix td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
-    .knock-matrix td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
-    .knock-matrix td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
-    .knock-matrix td.top-kill-4 { background-color: #ffca2c !important; color: #212529 !important; }
-    .knock-matrix td.top-kill-5 { background-color: #ffe066 !important; color: #212529 !important; }
-    .knock-matrix td.top-kill-6 { background-color: #f6d365 !important; color: #212529 !important; }
+    .knock-matrix td.self-hit-cell { background-color: #000000 !important; color: #fff !important; }
+    .knock-matrix td.self-hit-cell a { color: #fff !important; }
+    .knock-matrix td.top-kill-1,
+    .knock-summary td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
+    .knock-matrix td.top-kill-2,
+    .knock-summary td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
+    .knock-matrix td.top-kill-3,
+    .knock-summary td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
+    .knock-matrix td.top-kill-4,
+    .knock-summary td.top-kill-4 { background-color: #ffca2c !important; color: #212529 !important; }
+    .knock-matrix td.top-kill-5,
+    .knock-summary td.top-kill-5 { background-color: #ffe066 !important; color: #212529 !important; }
+    .knock-matrix td.top-kill-6,
+    .knock-summary td.top-kill-6 { background-color: #f6d365 !important; color: #212529 !important; }
     .knock-matrix .hover-row td, .knock-matrix .hover-col { background-color: #e6f7ff !important; }
     .knock-matrix .hover-row td.top-kill-1, .knock-matrix .hover-col.top-kill-1 { background-color: #dc3545 !important; }
     .knock-matrix .hover-row td.top-kill-2, .knock-matrix .hover-col.top-kill-2 { background-color: #fd7e14 !important; }
@@ -87,6 +95,7 @@
     .knock-matrix .hover-row td.top-kill-4, .knock-matrix .hover-col.top-kill-4 { background-color: #ffca2c !important; }
     .knock-matrix .hover-row td.top-kill-5, .knock-matrix .hover-col.top-kill-5 { background-color: #ffe066 !important; }
     .knock-matrix .hover-row td.top-kill-6, .knock-matrix .hover-col.top-kill-6 { background-color: #f6d365 !important; }
+    .knock-matrix .hover-row td.self-hit-cell, .knock-matrix .hover-col.self-hit-cell { background-color: #000000 !important; color: #fff !important; }
     .knock-matrix .hover-row td.suicide-cell, .knock-matrix .hover-col.suicide-cell { background-color: #343a40 !important; color: #fff !important; }
     .knock-matrix .hover-row td.suicide-cell a, .knock-matrix .hover-col.suicide-cell a { color: #fff !important; }
     .knock-matrix .bot-header, .knock-matrix .bot-cell,
@@ -161,6 +170,10 @@
                         if (isRedZoneRow) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
                         if (isBlueZoneColumn) cellClasses += value == 0 ? " bluezone-cell zero-zone" : " bluezone-cell";
                         if (isRedZoneColumn) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
+                        if (value != 0 && string.Equals(player.PlayerName, victim, StringComparison.OrdinalIgnoreCase))
+                        {
+                            cellClasses += " self-hit-cell";
+                        }
                         if (Model.SuicideCells.Contains($"{player.PlayerGuid}:{victim}")) cellClasses += " suicide-cell";
                         if (!isBotRow && !isBotColumn && !isBlueZoneRow && !isRedZoneRow)
                         {
@@ -172,6 +185,80 @@
                         }
                         <td class="@cellClasses">@value</td>
                     }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4 knock-summary">
+    <h5>Top Knock Scores</h5>
+    <table class="table table-sm table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Player</th>
+                <th>Victim</th>
+                <th>Knocks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var topKnockRankValues = Model.Players == null
+                    ? new List<int>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => kvp.Value)
+                            : Enumerable.Empty<int>())
+                        .Distinct()
+                        .OrderByDescending(value => value)
+                        .Take(6)
+                        .ToList();
+
+                var topKnockCutoff = topKnockRankValues.Count > 0 ? topKnockRankValues.Last() : 0;
+
+                var topKnockEntries = Model.Players == null
+                    ? new List<(string Player, string Victim, int Value)>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => (Player: player.PlayerName ?? string.Empty, Victim: kvp.Key, Value: kvp.Value))
+                            : Enumerable.Empty<(string Player, string Victim, int Value)>())
+                        .Where(entry => topKnockCutoff == 0 || entry.Value >= topKnockCutoff)
+                        .OrderByDescending(entry => entry.Value)
+                        .ThenBy(entry => entry.Player)
+                        .ThenBy(entry => entry.Victim)
+                        .ToList();
+            }
+            @if (topKnockEntries.Count > 0)
+            {
+                foreach (var item in topKnockEntries)
+                {
+                    var rankIndex = topKnockRankValues.IndexOf(item.Value);
+                    var cellClass = rankIndex >= 0 ? $"top-kill-{Math.Min(rankIndex + 1, 6)}" : "top-kill-6";
+                    <tr>
+                        <td>@item.Player</td>
+                        <td>@item.Victim</td>
+                        <td class="@cellClass">@item.Value</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">No knock entries.</td>
                 </tr>
             }
         </tbody>

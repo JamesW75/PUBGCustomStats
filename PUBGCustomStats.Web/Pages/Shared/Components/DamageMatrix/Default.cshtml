@@ -78,52 +78,62 @@
         vertical-align: middle;
     }
 
-    .damage-matrix td.top-damage-1 {
+    .damage-matrix td.top-damage-1,
+    .damage-summary td.top-damage-1 {
         background-color: #dc3545 !important;
         color: #fff !important;
     }
 
-    .damage-matrix td.top-damage-2 {
+    .damage-matrix td.top-damage-2,
+    .damage-summary td.top-damage-2 {
         background-color: #fd7e14 !important;
         color: #fff !important;
     }
 
-    .damage-matrix td.top-damage-3 {
+    .damage-matrix td.top-damage-3,
+    .damage-summary td.top-damage-3 {
         background-color: #ffc107 !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-4 {
+    .damage-matrix td.top-damage-4,
+    .damage-summary td.top-damage-4 {
         background-color: #ffca2c !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-5 {
+    .damage-matrix td.top-damage-5,
+    .damage-summary td.top-damage-5 {
         background-color: #ffe066 !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-6 {
+    .damage-matrix td.top-damage-6,
+    .damage-summary td.top-damage-6 {
         background-color: #f6d365 !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-7 {
+    .damage-matrix td.top-damage-7,
+    .damage-summary td.top-damage-7 {
         background-color: #7dd3fc !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-8 {
+    .damage-matrix td.top-damage-8,
+    .damage-summary td.top-damage-8 {
         background-color: #a5b4fc !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-9 {
+    .damage-matrix td.top-damage-9,
+    .damage-summary td.top-damage-9 {
         background-color: #c4b5fd !important;
         color: #212529 !important;
     }
 
-    .damage-matrix td.top-damage-10 {
+    .damage-matrix td.top-damage-10,
+    .damage-summary td.top-damage-10 {
         background-color: #f9a8d4 !important;
         color: #212529 !important;
     }
@@ -164,6 +174,15 @@
         color: #212529 !important;
     }
 
+    .damage-matrix td.self-hit-cell {
+        background-color: #000000 !important;
+        color: #fff !important;
+    }
+
+    .damage-matrix td.self-hit-cell a {
+        color: #fff !important;
+    }
+
     .damage-matrix .hover-row td,
     .damage-matrix .hover-col {
         background-color: #e6f7ff !important;
@@ -197,6 +216,12 @@
     .damage-matrix .hover-row td.top-damage-6,
     .damage-matrix .hover-col.top-damage-6 {
         background-color: #f6d365 !important;
+    }
+
+    .damage-matrix .hover-row td.self-hit-cell,
+    .damage-matrix .hover-col.self-hit-cell {
+        background-color: #000000 !important;
+        color: #fff !important;
     }
 
     .damage-matrix .bot-header,
@@ -283,6 +308,10 @@
                             if (isRedZoneRow) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
                             if (isBlueZoneColumn) cellClasses += value == 0 ? " bluezone-cell zero-zone" : " bluezone-cell";
                             if (isRedZoneColumn) cellClasses += value == 0 ? " redzone-cell zero-zone" : " redzone-cell";
+                            if (value != 0 && string.Equals(player.PlayerName, victim, StringComparison.OrdinalIgnoreCase))
+                            {
+                                cellClasses += " self-hit-cell";
+                            }
                             if (!isBotRow && !isBotColumn && !isBlueZoneRow && !isRedZoneRow)
                             {
                                 var topDamageIndex = topDamageCounts.IndexOf(value);
@@ -295,6 +324,80 @@
                         }
                     </tr>
                 }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4 damage-summary">
+    <h5>Top Damage Scores</h5>
+    <table class="table table-sm table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Player</th>
+                <th>Victim</th>
+                <th>Damage</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var topDamageRankValues = Model.Players == null
+                    ? new List<int>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => kvp.Value)
+                            : Enumerable.Empty<int>())
+                        .Distinct()
+                        .OrderByDescending(value => value)
+                        .Take(6)
+                        .ToList();
+
+                var topDamageCutoff = topDamageRankValues.Count > 0 ? topDamageRankValues.Last() : 0;
+
+                var topDamageEntries = Model.Players == null
+                    ? new List<(string Player, string Victim, int Value)>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => (Player: player.PlayerName ?? string.Empty, Victim: kvp.Key, Value: kvp.Value))
+                            : Enumerable.Empty<(string Player, string Victim, int Value)>())
+                        .Where(entry => topDamageCutoff == 0 || entry.Value >= topDamageCutoff)
+                        .OrderByDescending(entry => entry.Value)
+                        .ThenBy(entry => entry.Player)
+                        .ThenBy(entry => entry.Victim)
+                        .ToList();
+            }
+            @if (topDamageEntries.Count > 0)
+            {
+                foreach (var item in topDamageEntries)
+                {
+                    var rankIndex = topDamageRankValues.IndexOf(item.Value);
+                    var cellClass = rankIndex >= 0 ? $"top-damage-{Math.Min(rankIndex + 1, 6)}" : "top-damage-6";
+                    <tr>
+                        <td>@item.Player</td>
+                        <td>@item.Victim</td>
+                        <td class="@cellClass">@item.Value</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">No damage entries.</td>
+                </tr>
             }
         </tbody>
     </table>

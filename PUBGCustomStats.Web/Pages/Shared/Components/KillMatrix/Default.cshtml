@@ -74,12 +74,18 @@
     .kill-matrix td.redzone-cell a { color: #fff !important; }
     .kill-matrix td.redzone-cell.zero-zone { background-color: #f8d7da !important; color: #212529 !important; }
     .kill-matrix td.redzone-cell.zero-zone a { color: #212529 !important; }
-    .kill-matrix td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
-    .kill-matrix td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
-    .kill-matrix td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
-    .kill-matrix td.top-kill-4 { background-color: #ffca2c !important; color: #212529 !important; }
-    .kill-matrix td.top-kill-5 { background-color: #ffe066 !important; color: #212529 !important; }
-    .kill-matrix td.top-kill-6 { background-color: #f6d365 !important; color: #212529 !important; }
+    .kill-matrix td.top-kill-1,
+    .kill-summary td.top-kill-1 { background-color: #dc3545 !important; color: #fff !important; }
+    .kill-matrix td.top-kill-2,
+    .kill-summary td.top-kill-2 { background-color: #fd7e14 !important; color: #fff !important; }
+    .kill-matrix td.top-kill-3,
+    .kill-summary td.top-kill-3 { background-color: #ffc107 !important; color: #212529 !important; }
+    .kill-matrix td.top-kill-4,
+    .kill-summary td.top-kill-4 { background-color: #ffca2c !important; color: #212529 !important; }
+    .kill-matrix td.top-kill-5,
+    .kill-summary td.top-kill-5 { background-color: #ffe066 !important; color: #212529 !important; }
+    .kill-matrix td.top-kill-6,
+    .kill-summary td.top-kill-6 { background-color: #f6d365 !important; color: #212529 !important; }
     .kill-matrix .hover-row td, .kill-matrix .hover-col { background-color: #e6f7ff !important; }
     .kill-matrix .hover-row td.top-kill-1, .kill-matrix .hover-col.top-kill-1 { background-color: #dc3545 !important; }
     .kill-matrix .hover-row td.top-kill-2, .kill-matrix .hover-col.top-kill-2 { background-color: #fd7e14 !important; }
@@ -172,6 +178,80 @@
                         }
                         <td class="@cellClasses">@value</td>
                     }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4 kill-summary">
+    <h5>Top Kill Scores</h5>
+    <table class="table table-sm table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Player</th>
+                <th>Victim</th>
+                <th>Kills</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var topKillRankValues = Model.Players == null
+                    ? new List<int>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => kvp.Value)
+                            : Enumerable.Empty<int>())
+                        .Distinct()
+                        .OrderByDescending(value => value)
+                        .Take(6)
+                        .ToList();
+
+                var topKillCutoff = topKillRankValues.Count > 0 ? topKillRankValues.Last() : 0;
+
+                var topKillEntries = Model.Players == null
+                    ? new List<(string Player, string Victim, int Value)>()
+                    : Model.Players
+                        .Where(player => !string.Equals(player.PlayerName, "BOT", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(player.PlayerName, "Red Zone", StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(player => Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            ? row.Where(kvp => !string.Equals(kvp.Key, "BOT", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase)
+                                && !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase)
+                                && kvp.Value > 0)
+                                .Select(kvp => (Player: player.PlayerName ?? string.Empty, Victim: kvp.Key, Value: kvp.Value))
+                            : Enumerable.Empty<(string Player, string Victim, int Value)>())
+                        .Where(entry => topKillCutoff == 0 || entry.Value >= topKillCutoff)
+                        .OrderByDescending(entry => entry.Value)
+                        .ThenBy(entry => entry.Player)
+                        .ThenBy(entry => entry.Victim)
+                        .ToList();
+            }
+            @if (topKillEntries.Count > 0)
+            {
+                foreach (var item in topKillEntries)
+                {
+                    var rankIndex = topKillRankValues.IndexOf(item.Value);
+                    var cellClass = rankIndex >= 0 ? $"top-kill-{Math.Min(rankIndex + 1, 6)}" : "top-kill-6";
+                    <tr>
+                        <td>@item.Player</td>
+                        <td>@item.Victim</td>
+                        <td class="@cellClass">@item.Value</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">No kill entries.</td>
                 </tr>
             }
         </tbody>
