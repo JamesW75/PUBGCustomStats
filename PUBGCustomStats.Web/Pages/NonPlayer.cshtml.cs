@@ -271,6 +271,7 @@ namespace PUBGCustomStats.Web.Pages
                     {
                         matchTimelinesAsPlayer.Add(playerId, new PlayerStats
                         {
+                            PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid,
                             PlayerName = playerName,
                             KillCount = 0,
                             KnockCount = 0
@@ -343,6 +344,7 @@ namespace PUBGCustomStats.Web.Pages
                     {
                         matchTimelinesAsKiller.Add(playerId, new PlayerStats
                         {
+                            PlayerGuid = timeline.Player?.PlayerGuid,
                             PlayerName = playerName,
                             KillCount = 0,
                             KnockCount = 0
@@ -392,6 +394,7 @@ namespace PUBGCustomStats.Web.Pages
 
     public class PlayerStats
     {
+        public Guid? PlayerGuid { get; set; }
         public string PlayerName { get; set; } = string.Empty;
         public int KillCount { get; set; }
         public int KnockCount { get; set; }
