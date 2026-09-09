@@ -54,8 +54,6 @@ allResources.Add(new PageResource("/damagematrix"));
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));
 allResources.Add(new CssResource("/PUBGCustomStats.Web.styles.css"));
-allResources.Add(new JsResource("/lib/jquery/dist/jquery.min.js"));
-allResources.Add(new JsResource("/lib/bootstrap/dist/js/bootstrap.bundle.min.js"));
 allResources.Add(new JsResource("/js/site.js"));
 allResources.Add(new BinResource("/favicon.ico"));
 allResources.Add(new BinResource("/favicon-96x96.png"));
