@@ -24,3 +24,12 @@ body {
 .italic-row {
   font-style: italic;
 }
+
+/* Ensure dropdown items remain white when using dropdown-menu-dark (override CDN changes) */
+.dropdown-menu.dropdown-menu-dark .dropdown-item,
+.dropdown-menu.dropdown-menu-dark .dropdown-item:focus,
+.dropdown-menu.dropdown-menu-dark .dropdown-item:hover,
+.dropdown-menu.dropdown-menu-dark .dropdown-item:active {
+  color: #fff !important;
+  background-color: transparent;
+}

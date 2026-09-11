@@ -14,7 +14,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/bootstrap-table.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PUBGCustomStats.Web.styles.css" asp-append-version="true" />
@@ -85,6 +85,16 @@
                                 <i class="fs-4 bi-house"></i> <span data-feather="grid"></span> <span class="ms-1 d-none d-md-inline">Kill Matrix</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/KnockMatrix" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="grid"></span> <span class="ms-1 d-none d-md-inline">Knock Matrix</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/DamageMatrix" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="grid"></span> <span class="ms-1 d-none d-md-inline">Damage Matrix</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -96,12 +106,12 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - PUBGCustomStats.Web - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            PUBGCustomStats &copy; 2025 - <a href="https://github.com/JamesW75/PUBGCustomStats" target="_blank">JamesW75</a> - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script>

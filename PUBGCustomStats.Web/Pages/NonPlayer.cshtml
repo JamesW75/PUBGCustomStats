@@ -71,7 +71,35 @@
                             <span title="Bled Out">&#129656;</span>
                             break;
                     }
-                    @playerKilled.PlayerName
+                    @{
+                        var killsLinkHref = playerKilled.PlayerGuid != null
+                            ? $"/Player/{playerKilled.PlayerGuid}"
+                            : playerKilled.PlayerName switch
+                            {
+                                "BOT" => "/NonPlayer/BOT",
+                                "Guard" => "/NonPlayer/Guard",
+                                "Commander" => "/NonPlayer/Commander",
+                                "Blue Zone" => "/NonPlayer/BlueZone",
+                                "Red Zone" => "/NonPlayer/RedZone",
+                                "Black Zone" => "/NonPlayer/BlackZone",
+                                "Bear" => "/NonPlayer/Bear",
+                                "Drowning" => "/NonPlayer/Drowning",
+                                "Jerry Can" => "/NonPlayer/JerryCan",
+                                "Helicopter Hit" => "/NonPlayer/Helicopter",
+                                "Suicide" => "/NonPlayer/Suicide",
+                                "Bleed" => "/NonPlayer/Bleed",
+                                "KillTruck" => "/NonPlayer/KillTruck",
+                                _ => null
+                            };
+                    }
+                    @if (!string.IsNullOrEmpty(killsLinkHref))
+                    {
+                        <a href="@killsLinkHref">@playerKilled.PlayerName</a>
+                    }
+                    else
+                    {
+                        @playerKilled.PlayerName
+                    }
                 </td>
                 <td class="text-end">@playerKilled.KillCount</td>
                 <td class="text-end">@playerKilled.KnockCount </td>
@@ -152,7 +180,35 @@
                                 <span title="Kill Truck">&#128737;&#65039;</span>
                                 break;
                     }
-                    @playerKilled.PlayerName
+                    @{
+                        var killedByLinkHref = playerKilled.PlayerGuid != null
+                            ? $"/Player/{playerKilled.PlayerGuid}"
+                            : playerKilled.PlayerName switch
+                            {
+                                "BOT" => "/NonPlayer/BOT",
+                                "Guard" => "/NonPlayer/Guard",
+                                "Commander" => "/NonPlayer/Commander",
+                                "Blue Zone" => "/NonPlayer/BlueZone",
+                                "Red Zone" => "/NonPlayer/RedZone",
+                                "Black Zone" => "/NonPlayer/BlackZone",
+                                "Bear" => "/NonPlayer/Bear",
+                                "Drowning" => "/NonPlayer/Drowning",
+                                "Jerry Can" => "/NonPlayer/JerryCan",
+                                "Helicopter Hit" => "/NonPlayer/Helicopter",
+                                "Suicide" => "/NonPlayer/Suicide",
+                                "Bleed" => "/NonPlayer/Bleed",
+                                "KillTruck" => "/NonPlayer/KillTruck",
+                                _ => null
+                            };
+                    }
+                    @if (!string.IsNullOrEmpty(killedByLinkHref))
+                    {
+                        <a href="@killedByLinkHref">@playerKilled.PlayerName</a>
+                    }
+                    else
+                    {
+                        @playerKilled.PlayerName
+                    }
                 </td>
                 <td class="text-end">@playerKilled.KillCount</td>
                 <td class="text-end">@playerKilled.KnockCount </td>

@@ -134,7 +134,7 @@ namespace PUBGCustomStats.Logic
         public IEnumerable<Data.Models.Player> GetPlayersWithNumMatch(int numMatches)
         {
             return DbContext.Players
-                .Where(p => p.MatchPlayerStats != null && p.MatchPlayerStats.Count() == numMatches && (p.IsRandom == null || p.IsRandom == false))
+                .Where(p => p.MatchPlayerStats != null && p.MatchPlayerStats.Count() <= numMatches && (p.IsRandom == null || p.IsRandom == false))
                 .ToList();
         }
 

@@ -41,18 +41,19 @@ allResources.Add(new PageResource("/nonplayer/Suicide") { OutFile = "nonplayer/s
 allResources.Add(new PageResource("/nonplayer/Guard") { OutFile = "nonplayer/guard.html" });
 allResources.Add(new PageResource("/nonplayer/Commander") { OutFile = "nonplayer/commander.html" });
 allResources.Add(new PageResource("/nonplayer/Lava") { OutFile = "nonplayer/lava.html" });
+allResources.Add(new PageResource("/nonplayer/KillTruck") { OutFile = "nonplayer/killtruck.html" });
 
 allResources.Add(new PageResource("/"));
 allResources.Add(new PageResource("/index"));
 allResources.Add(new PageResource("/charts"));
 allResources.Add(new PageResource("/clans"));
 allResources.Add(new PageResource("/killmatrix"));
+allResources.Add(new PageResource("/knockmatrix"));
+allResources.Add(new PageResource("/damagematrix"));
 
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));
 allResources.Add(new CssResource("/PUBGCustomStats.Web.styles.css"));
-allResources.Add(new JsResource("/lib/jquery/dist/jquery.min.js"));
-allResources.Add(new JsResource("/lib/bootstrap/dist/js/bootstrap.bundle.min.js"));
 allResources.Add(new JsResource("/js/site.js"));
 allResources.Add(new BinResource("/favicon.ico"));
 allResources.Add(new BinResource("/favicon-96x96.png"));
