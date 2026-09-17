@@ -259,6 +259,8 @@ namespace PUBGCustomStats.Web.Pages
                 case "BP_Blanc_C":
                 case "BP_Blanc_Esports_C":
                     return "Coupe SUV";
+                case "BP_CarePackageDrop_Bluechip_C":
+                    return "Care Package Drop";
                 case "BP_Carrera_LGD_C":
                     return "Carrera";
                 case "BP_Cayenne_EP_C":
@@ -271,6 +273,8 @@ namespace PUBGCustomStats.Web.Pages
                 case "BP_CoupeRB_C":
                     return "Coupe RB";
                 case "BP_DesertTslGasPump_C":
+                case "BP_Baltic_GasPump_C":
+                case "BP_Tiger_GasStationB_Gaspump_C":
                     return "Gas Pump";
                 case "BP_DO_Circle_Train_Merged_C":
                 case "BP_DO_Line_Train_Dino_Merged_C":
@@ -390,6 +394,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Van";
                 case "BP_Vantage_EP_C":
                     return "Vantage";
+                case "BP_VK_Train_A_B_C":
+                    return "Train";
                 case "BattleRoyaleModeController_Chimera_C":
                 case "BattleRoyaleModeController_Def_C":
                 case "BattleRoyaleModeController_Desert_C":
@@ -401,6 +407,7 @@ namespace PUBGCustomStats.Web.Pages
                 case "BattleRoyaleModeController_Tiger_C":
                     return "Bluezone";
                 case "BlackZoneController_Def_C":
+                case "BlackZoneBombingField_Def_C":
                     return "Blackzone";
                 case "Bluezonebomb_EffectActor_C":
                     return "Bluezone Grenade";
@@ -640,6 +647,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Panzerfaust";
                 case "Item_Ammo_762mm_C":
                     return "7.62mm Ammo";
+                case "Item_Attach_Weapon_Upper_Scope3x_C":
+                    return "3x Scope";
                 case "Item_Attach_Weapon_Upper_Scope6x_C":
                     return "6x Scope";
                 case "Item_Armor_C":
