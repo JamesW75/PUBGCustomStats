@@ -73,6 +73,9 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="damage-matrix-tab" data-bs-toggle="tab" data-bs-target="#damage-matrix" type="button" role="tab" aria-controls="damage-matrix" aria-selected="false">Damage Matrix</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="weapon-matrix-tab" data-bs-toggle="tab" data-bs-target="#weapon-matrix" type="button" role="tab" aria-controls="weapon-matrix" aria-selected="false">Weapon Matrix</button>
+    </li>
 </ul>
 
 <div class="tab-content" id="matchTabContent">
@@ -204,6 +207,7 @@
                                 case "C4":
                                 case "Drowning":
                                 case "None":
+                                case "Care Package Drop":
                                     // skip, when it is melee
                                     break;
                                 default:
@@ -304,6 +308,7 @@
                                 case "C4":
                                 case "Drowning":
                                 case "None":
+                                case "Care Package Drop":
                                     // skip, when it is melee, or throwable
                                     break;
                                 default:
@@ -802,6 +807,13 @@
         @if (Model.Match != null)
         {
             @await Component.InvokeAsync("DamageMatrix", new { matchGuid = Model.Match.MatchGuid })
+        }
+    </div>
+
+    <div class="tab-pane fade" id="weapon-matrix" role="tabpanel" aria-labelledby="weapon-matrix-tab" tabindex="0">
+        @if (Model.Match != null)
+        {
+            @await Component.InvokeAsync("WeaponMatrix", new { matchGuid = Model.Match.MatchGuid })
         }
     </div>
     </div>

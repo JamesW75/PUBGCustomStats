@@ -25,6 +25,9 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="damage-matrix-tab" data-bs-toggle="tab" data-bs-target="#damage-matrix" type="button" role="tab" aria-controls="damage-matrix" aria-selected="false">Damage Matrix</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="weapon-matrix-tab" data-bs-toggle="tab" data-bs-target="#weapon-matrix" type="button" role="tab" aria-controls="weapon-matrix" aria-selected="false">Weapon Matrix</button>
+    </li>
 </ul>
 
 <div class="tab-content" id="sessionTabContent">
@@ -136,6 +139,13 @@
         @if (Model.SessionGuid.HasValue)
         {
             @await Component.InvokeAsync("DamageMatrix", new { sessionGuid = Model.SessionGuid.Value })
+        }
+    </div>
+
+    <div class="tab-pane fade" id="weapon-matrix" role="tabpanel" aria-labelledby="weapon-matrix-tab" tabindex="0">
+        @if (Model.SessionGuid.HasValue)
+        {
+            @await Component.InvokeAsync("WeaponMatrix", new { sessionGuid = Model.SessionGuid.Value })
         }
     </div>
 </div>
