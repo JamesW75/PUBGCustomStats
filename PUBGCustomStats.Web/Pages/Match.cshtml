@@ -14,7 +14,7 @@
     </p>
 }
 
-<table class="table table-sm table-bordered">
+<table class="table table-sm">
     <thead class="table-light">
         <tr>
             <th>Session</th>
@@ -29,7 +29,7 @@
             <th>Perspective</th>
         </tr>
     </thead>
-    <tbody class="table-group-divider">
+    <tbody>
         <tr>
             <td>
                 @if (Model.Match?.Session != null && Model.Match.SessionGuid.HasValue)
@@ -87,7 +87,7 @@
                 <th>Event</th>
             </tr>
         </thead>
-        <tbody class="table-group-divider">
+        <tbody>
         @{
             var firstEvent = Model.MatchTimeline.First().EventTimestamp;
 
@@ -112,7 +112,8 @@
                                 description = "⌚ Waiting for Players";
                                 break;
                             case 0.1m:
-                                description = "🛫 On Plane";
+                                //description = "🛫 On Plane";
+                                description = "🔵 Phase #1 starts";
                                 break;
                             case 0.5m:
                                 description = "🏳️ Starting";
