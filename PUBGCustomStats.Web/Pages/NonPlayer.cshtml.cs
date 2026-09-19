@@ -96,6 +96,21 @@ namespace PUBGCustomStats.Web.Pages
                     DisplayKilledBy = true;
                     break;
 
+                case "CarePackageDrop":
+                case "Care Package Drop":
+                    matchTimelinesKiller = _context.MatchTimeline
+                    .Where(mt => mt.DamageCategory == "Damage_CarePackageDropHit" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Include(mt => mt.Player)
+                    .ToList();
+                    break;
+
+                case "Train":
+                    matchTimelinesKiller = _context.MatchTimeline
+                    .Where(mt => mt.Weapon != null && mt.Weapon.Contains("Train") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Include(mt => mt.Player)
+                    .ToList();
+                    break;
+
                 case "BlueZone":
                     matchTimelinesKiller = _context.MatchTimeline
                     .Where(mt => mt.DamageCategory == "Damage_BlueZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))

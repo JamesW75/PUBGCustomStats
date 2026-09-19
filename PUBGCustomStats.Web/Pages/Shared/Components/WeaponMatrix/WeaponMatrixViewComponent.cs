@@ -87,6 +87,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.WeaponMatrix
                 .Where(weapon => !string.IsNullOrWhiteSpace(weapon))
                 .Select(weapon => MatchHelpers.GetWeaponDescription(weapon))
                 .Where(weapon => !string.IsNullOrWhiteSpace(weapon))
+                .Where(weapon => !IsNonPlayerWeapon(weapon))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(weapon => weapon, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -105,7 +106,7 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.WeaponMatrix
                 }
 
                 var weaponName = MatchHelpers.GetWeaponDescription(timeline.Weapon);
-                if (string.IsNullOrWhiteSpace(weaponName))
+                if (string.IsNullOrWhiteSpace(weaponName) || IsNonPlayerWeapon(weaponName))
                 {
                     continue;
                 }
@@ -146,6 +147,24 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.WeaponMatrix
             };
 
             return View(model);
+        }
+
+        private static bool IsNonPlayerWeapon(string? weaponName)
+        {
+            if (string.IsNullOrWhiteSpace(weaponName))
+            {
+                return false;
+            }
+
+            return weaponName.Equals("Train", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Bear", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Lava", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Blue Zone", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Bluezone", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("BOT", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Care Package Drop", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Red Zone", StringComparison.OrdinalIgnoreCase)
+                || weaponName.Equals("Redzone", StringComparison.OrdinalIgnoreCase);
         }
 
         private static Guid? GetKillerGuid(MatchTimeline timeline)

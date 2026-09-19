@@ -128,6 +128,8 @@ namespace PUBGCustomStats.Web.Pages
         {
             switch (damageCategory)
             {
+                case "Damage_BlueZone":
+                    return "Blue Zone";
                 case "Damage_DropStructHit":
                     return "Structure Drop";
                 case "Damage_CarePackageDropHit":
