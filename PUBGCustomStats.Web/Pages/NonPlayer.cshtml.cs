@@ -99,35 +99,35 @@ namespace PUBGCustomStats.Web.Pages
                 case "CarePackageDrop":
                 case "Care Package Drop":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_CarePackageDropHit" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_CarePackageDropHit" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "Train":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.Weapon != null && mt.Weapon.Contains("Train") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.Weapon != null && mt.Weapon.Contains("Train") && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "BlueZone":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_BlueZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_BlueZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "RedZone":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_Explosion_RedZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_Explosion_RedZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "BlackZone":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_Explosion_BlackZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_Explosion_BlackZone" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
@@ -135,21 +135,21 @@ namespace PUBGCustomStats.Web.Pages
 
                 case "Helicopter":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_HelicopterHit" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_HelicopterHit" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "Drowning":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_Drown" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_Drown" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "JerryCan":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_Explosion_JerryCan" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_Explosion_JerryCan" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
@@ -157,22 +157,22 @@ namespace PUBGCustomStats.Web.Pages
 
                 case "Suicide":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.IsSuicide == true && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.IsSuicide == true && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
                     break;
 
                 case "Lava":
                     matchTimelinesKiller = _context.MatchTimeline
-                    .Where(mt => mt.DamageCategory == "Damage_Lava" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                    .Where(mt => mt.DamageCategory == "Damage_Lava" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                     .Include(mt => mt.Player)
                     .ToList();
-                    
-                    return;
+
+                    break;
 
                 case "KillTruck":
                     matchTimelinesKiller = _context.MatchTimeline
-                        .Where(mt => mt.DamageCategory == "Damage_KillTruckTurret" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2"))
+                        .Where(mt => mt.DamageCategory == "Damage_KillTruckTurret" && (mt.EventType == "LogPlayerMakeGroggy" || mt.EventType == "LogPlayerKillV2" || mt.EventType == "LogPlayerTakeDamage"))
                         .Include(mt => mt.Player)
                         .ToList();
                     break;
@@ -289,7 +289,9 @@ namespace PUBGCustomStats.Web.Pages
                             PlayerGuid = timeline.SecondaryPlayer?.PlayerGuid,
                             PlayerName = playerName,
                             KillCount = 0,
-                            KnockCount = 0
+                            KnockCount = 0,
+                            Damage = 0,
+                            DamageOther = 0
                         });
                     }
 
@@ -297,7 +299,21 @@ namespace PUBGCustomStats.Web.Pages
 
                     if (match != null)
                     {
-                        if (timeline.EventType == "LogPlayerMakeGroggy")
+                        var damageAmount = timeline.Damage ?? 0D;
+                                                
+                        if (timeline.EventType == "LogPlayerTakeDamage")
+                        {
+
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsPlayer[playerId].DamageOther += damageAmount;
+                            }
+                            else
+                            {
+                                matchTimelinesAsPlayer[playerId].Damage += damageAmount;
+                            }
+                        }
+                        else if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
                             if (match.DoNotCount.GetValueOrDefault())
                             {
@@ -362,19 +378,32 @@ namespace PUBGCustomStats.Web.Pages
                             PlayerGuid = timeline.Player?.PlayerGuid,
                             PlayerName = playerName,
                             KillCount = 0,
-                            KnockCount = 0
+                            KnockCount = 0,
+                            Damage = 0,
+                            DamageOther = 0
                         });
                     }
 
                     var match = _context.Matches.FirstOrDefault(m => m.MatchGuid == timeline.MatchGuid);
                     if (match != null)
                     {
-                        if (timeline.EventType == "LogPlayerMakeGroggy")
+                        var damageAmount = timeline.Damage ?? 0D;
+                        if (timeline.EventType == "LogPlayerTakeDamage")
+                        {
+                            if (match.DoNotCount.GetValueOrDefault())
+                            {
+                                matchTimelinesAsKiller[playerId].DamageOther += damageAmount;
+                            }
+                            else
+                            {
+                                matchTimelinesAsKiller[playerId].Damage += damageAmount;
+                            }
+                        }
+                        else if (timeline.EventType == "LogPlayerMakeGroggy")
                         {
                             if (match.DoNotCount.GetValueOrDefault())
                             {
                                 matchTimelinesAsKiller[playerId].KnockCountOther++;
-
                             }
                             else
                             {
@@ -396,10 +425,23 @@ namespace PUBGCustomStats.Web.Pages
                 }
             }
 
-            PlayerKills = matchTimelinesAsKiller.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
+            PlayerKills = matchTimelinesAsKiller.Values
+                .OrderByDescending(ps => ps.KillCount)
+                .ThenByDescending(ps => ps.KnockCount)
+                .ThenByDescending(ps => ps.Damage)
+                .ThenByDescending(ps => ps.KillCountOther)
+                .ThenByDescending(ps => ps.KnockCountOther)
+                .ToList();
+
             if (DisplayKilledBy)
             {
-                PlayerKilledBy = matchTimelinesAsPlayer.Values.OrderByDescending(ps => ps.KillCount).ThenByDescending(ps => ps.KnockCount).ThenByDescending(ps => ps.KillCountOther).ThenByDescending(ps => ps.KnockCountOther).ToList();
+                PlayerKilledBy = matchTimelinesAsPlayer.Values
+                    .OrderByDescending(ps => ps.KillCount)
+                    .ThenByDescending(ps => ps.KnockCount)
+                    .ThenByDescending(ps => ps.Damage)
+                    .ThenByDescending(ps => ps.KillCountOther)
+                    .ThenByDescending(ps => ps.KnockCountOther)
+                    .ToList();
             }
         }
     }
@@ -413,9 +455,11 @@ namespace PUBGCustomStats.Web.Pages
         public string PlayerName { get; set; } = string.Empty;
         public int KillCount { get; set; }
         public int KnockCount { get; set; }
+        public double Damage { get; set; }
 
         public int KillCountOther { get; set; }
         public int KnockCountOther { get; set; }
+        public double DamageOther { get; set; }
         /*   public int MatchesPlayed { get; set; }
            public int Wins { get; set; }
            public int Kills { get; set; }*/
