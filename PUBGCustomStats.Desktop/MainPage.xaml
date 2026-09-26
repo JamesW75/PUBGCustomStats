@@ -141,8 +141,8 @@
                     <Label Text="Map:" Grid.Row="4" VerticalOptions="Center" x:Name="EditorMapNameLabel" IsVisible="False" />
                     <Label x:Name="EditorMapLabel" Grid.Row="4" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
 
-                    <Label Text="DoNotCount:" Grid.Row="5" VerticalOptions="Center" />
-                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" />
+                    <Label x:Name="EditorDoNotCountLabel" Text="Do Not Count:" Grid.Row="5" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
 
                     <Button Text="Save" Grid.Row="6" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
                 </Grid>

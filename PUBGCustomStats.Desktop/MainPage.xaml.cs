@@ -283,7 +283,18 @@ namespace PUBGCustomStats.Desktop
                 dateEntry?.Text = string.Empty;
                 if (dateEntry != null) dateEntry.IsVisible = true;
                 if (dateLabel != null) dateLabel.IsVisible = false;
-                doNotCount?.IsVisible = false;
+                // Show switch to set season-level DoNotCount
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null)
+                {
+                    doNotCountLabel.Text = "Do Not Count:";
+                    doNotCountLabel.IsVisible = true;
+                }
+                if (doNotCount != null)
+                {
+                    doNotCount.IsVisible = true;
+                    doNotCount.IsToggled = item.Season.DoNotCount;
+                }
                 var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
                 var mapLabel = GetControl<Label>("EditorMapLabel");
                 if (mapNameLabel != null)
@@ -332,7 +343,10 @@ namespace PUBGCustomStats.Desktop
                 dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
                 if (dateEntry != null) dateEntry.IsVisible = true;
                 if (dateLabel != null) dateLabel.IsVisible = false;
-                doNotCount?.IsVisible = false;
+                // hide DoNotCount controls for sessions
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null) doNotCountLabel.IsVisible = false;
+                if (doNotCount != null) doNotCount.IsVisible = false;
                 var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
                 var mapLabel = GetControl<Label>("EditorMapLabel");
                 if (mapNameLabel != null)
@@ -426,6 +440,13 @@ namespace PUBGCustomStats.Desktop
                 }
                 doNotCount?.IsVisible = true;
                 doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
+                // Ensure the DoNotCount label is visible for matches
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null)
+                {
+                    doNotCountLabel.Text = "Do Not Count:";
+                    doNotCountLabel.IsVisible = true;
+                }
                 browser?.Source = "http://localhost:5209/";
                 var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
                 var mapLabel = GetControl<Label>("EditorMapLabel");
@@ -470,6 +491,18 @@ namespace PUBGCustomStats.Desktop
                 {
                     var newName = nameEntry?.Text ?? string.Empty;
                     seasonLogic.EditSeason(_selectedSeason.Season.SeasonGuid, newName);
+                    // If the season DoNotCount switch is visible, persist the season-level DoNotCount flag
+                    var doNotCountSwitch = GetControl<Switch>("EditorDoNotCountSwitch");
+                    var toggled = doNotCountSwitch?.IsToggled ?? false;
+                    if (doNotCountSwitch != null && doNotCountSwitch.IsVisible)
+                    {
+                        var seasonEntity = seasonLogic.DbContext.Seasons.FirstOrDefault(s => s.SeasonGuid == _selectedSeason.Season.SeasonGuid);
+                        if (seasonEntity != null)
+                        {
+                            seasonEntity.DoNotCount = toggled;
+                            seasonLogic.DbContext.SaveChanges();
+                        }
+                    }
                 }
                 else if (_selectedSession != null)
                 {
