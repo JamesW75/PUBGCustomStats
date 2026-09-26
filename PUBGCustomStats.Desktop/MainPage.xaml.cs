@@ -344,7 +344,11 @@ namespace PUBGCustomStats.Desktop
                     mapLabel.Text = string.Empty;
                     mapLabel.IsVisible = false;
                 }
-                browser?.Source = "http://localhost:5209/";
+                if (browser != null)
+                {
+                    var guid = item.Session.SessionGuid.ToString();
+                    browser.Source = $"http://localhost:5209/session?sessionGuid={Uri.EscapeDataString(guid)}";
+                }
 
                 // refresh view so editor selection is visible
                 SeasonsView.ItemsSource = null;
@@ -433,6 +437,12 @@ namespace PUBGCustomStats.Desktop
                 if (mapNameLabel != null)
                 {
                     mapNameLabel.IsVisible = true;
+                }
+                // Navigate browser to the match page for the selected match
+                if (browser != null)
+                {
+                    var guid = item.Match.MatchGuid.ToString();
+                    browser.Source = $"http://localhost:5209/match?matchGuid={Uri.EscapeDataString(guid)}";
                 }
             }
         }
