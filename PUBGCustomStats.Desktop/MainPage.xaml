@@ -122,29 +122,26 @@
             <!-- Editor area -->
             <Border Padding="12" BackgroundColor="#FFFFFF" Grid.Row="0">
                 <!-- Two-column grid for editor details (Label / Value) -->
-                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
-                    <Label Text="Editor" FontAttributes="Bold" Grid.ColumnSpan="2" />
+                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Label x:Name="EditorHeadingLabel" Text="Editor" FontAttributes="Bold" Grid.ColumnSpan="2" />
 
-                    <Label Text="Type:" Grid.Row="1" VerticalOptions="Center" />
-                    <Label x:Name="EditorTypeLabel" Text="(none)" Grid.Row="1" Grid.Column="1" VerticalOptions="Center" />
+                    <Label Text="Name:" Grid.Row="1" VerticalOptions="Center" />
+                    <Entry x:Name="EditorNameEntry" Grid.Row="1" Grid.Column="1" />
 
-                    <Label Text="Name:" Grid.Row="2" VerticalOptions="Center" />
-                    <Entry x:Name="EditorNameEntry" Grid.Row="2" Grid.Column="1" />
-
-                    <Label Text="Date:" Grid.Row="3" VerticalOptions="Center" />
+                    <Label Text="Date:" Grid.Row="2" VerticalOptions="Center" />
                     <!-- Editable entry used for seasons/sessions -->
-                    <Entry x:Name="EditorDateEntry" Grid.Row="3" Grid.Column="1" Placeholder="yyyy-MM-dd HH:mm" />
+                    <Entry x:Name="EditorDateEntry" Grid.Row="2" Grid.Column="1" Placeholder="yyyy-MM-dd HH:mm" />
                     <!-- Read-only label used for matches (local time) -->
-                    <Label x:Name="EditorDateLabel" Grid.Row="3" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
+                    <Label x:Name="EditorDateLabel" Grid.Row="2" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
 
                     <!-- Map row: label in column 0, value in column 1. Both start hidden and are toggled in code-behind. -->
-                    <Label Text="Map:" Grid.Row="4" VerticalOptions="Center" x:Name="EditorMapNameLabel" IsVisible="False" />
-                    <Label x:Name="EditorMapLabel" Grid.Row="4" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
+                    <Label Text="Map:" Grid.Row="3" VerticalOptions="Center" x:Name="EditorMapNameLabel" IsVisible="False" />
+                    <Label x:Name="EditorMapLabel" Grid.Row="3" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
 
-                    <Label x:Name="EditorDoNotCountLabel" Text="Do Not Count:" Grid.Row="5" VerticalOptions="Center" IsVisible="False" />
-                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+                    <Label x:Name="EditorDoNotCountLabel" Text="Do Not Count:" Grid.Row="4" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="4" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
 
-                    <Button Text="Save" Grid.Row="6" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
+                    <Button Text="Save" Grid.Row="5" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
                 </Grid>
             </Border>
 

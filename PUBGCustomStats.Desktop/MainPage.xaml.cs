@@ -270,14 +270,14 @@ namespace PUBGCustomStats.Desktop
                 _selectedSession = null;
                 _selectedMatch = null;
 
-                var typeLabel = GetControl<Label>("EditorTypeLabel");
+                var heading = GetControl<Label>("EditorHeadingLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                typeLabel?.Text = "Season";
+                heading?.Text = "Season Editor";
                 nameEntry?.Text = item.Season.SeasonName;
                 // For seasons: show editable date entry (empty) and hide read-only date label
                 dateEntry?.Text = string.Empty;
@@ -330,14 +330,14 @@ namespace PUBGCustomStats.Desktop
                 _selectedSession = item;
                 _selectedMatch = null;
 
-                var typeLabel = GetControl<Label>("EditorTypeLabel");
+                var heading = GetControl<Label>("EditorHeadingLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                typeLabel?.Text = "Session";
+                heading?.Text = "Session Editor";
                 nameEntry?.Text = item.Session.SessionName;
                 // For sessions: show editable date entry and hide read-only date label
                 dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
@@ -419,14 +419,14 @@ namespace PUBGCustomStats.Desktop
                 _selectedSession = null;
                 _selectedMatch = item;
 
-                var typeLabel = GetControl<Label>("EditorTypeLabel");
+                var heading = GetControl<Label>("EditorHeadingLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
-                typeLabel?.Text = "Match";
+                heading?.Text = "Match Editor";
                 nameEntry?.Text = item.Match.MatchName;
                 // For matches: display read-only local time and hide editable entry
                 if (dateLabel != null)
