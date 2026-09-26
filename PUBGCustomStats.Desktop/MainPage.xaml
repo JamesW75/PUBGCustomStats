@@ -121,30 +121,28 @@
         <Grid Grid.Column="1" RowDefinitions="Auto,*">
             <!-- Editor area -->
             <Border Padding="12" BackgroundColor="#FFFFFF" Grid.Row="0">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Editor" FontAttributes="Bold" />
-                    <StackLayout Orientation="Horizontal" Spacing="8">
-                        <Label Text="Type:" VerticalOptions="Center" />
-                        <Label x:Name="EditorTypeLabel" Text="(none)" VerticalOptions="Center" />
-                    </StackLayout>
+                <!-- Two-column grid for editor details (Label / Value) -->
+                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Label Text="Editor" FontAttributes="Bold" Grid.ColumnSpan="2" />
 
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                        <Label Text="Name:" VerticalOptions="Center" />
-                        <Entry x:Name="EditorNameEntry" Grid.Column="1" />
-                    </Grid>
+                    <Label Text="Type:" Grid.Row="1" VerticalOptions="Center" />
+                    <Label x:Name="EditorTypeLabel" Text="(none)" Grid.Row="1" Grid.Column="1" VerticalOptions="Center" />
 
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                        <Label Text="Date:" VerticalOptions="Center" />
-                        <Entry x:Name="EditorDateEntry" Grid.Column="1" Placeholder="yyyy-MM-dd HH:mm" />
-                    </Grid>
+                    <Label Text="Name:" Grid.Row="2" VerticalOptions="Center" />
+                    <Entry x:Name="EditorNameEntry" Grid.Row="2" Grid.Column="1" />
 
-                    <StackLayout Orientation="Horizontal" Spacing="8">
-                        <Label Text="DoNotCount:" VerticalOptions="Center" />
-                        <Switch x:Name="EditorDoNotCountSwitch" HorizontalOptions="Start" />
-                    </StackLayout>
+                    <Label Text="Date:" Grid.Row="3" VerticalOptions="Center" />
+                    <Entry x:Name="EditorDateEntry" Grid.Row="3" Grid.Column="1" Placeholder="yyyy-MM-dd HH:mm" />
 
-                    <Button Text="Save" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
-                </VerticalStackLayout>
+                    <!-- Map row: label in column 0, value in column 1. Both start hidden and are toggled in code-behind. -->
+                    <Label Text="Map:" Grid.Row="4" VerticalOptions="Center" x:Name="EditorMapNameLabel" IsVisible="False" />
+                    <Label x:Name="EditorMapLabel" Grid.Row="4" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
+
+                    <Label Text="DoNotCount:" Grid.Row="5" VerticalOptions="Center" />
+                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" />
+
+                    <Button Text="Save" Grid.Row="6" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
+                </Grid>
             </Border>
 
             <!-- Browser area -->

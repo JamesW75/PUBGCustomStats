@@ -280,6 +280,17 @@ namespace PUBGCustomStats.Desktop
                 nameEntry?.Text = item.Season.SeasonName;
                 dateEntry?.Text = string.Empty;
                 doNotCount?.IsVisible = false;
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = false;
+                }
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = string.Empty;
+                    mapLabel.IsVisible = false;
+                }
                 browser?.Source = "http://localhost:5209/";
 
                 // refresh view so selection/editor state is visible
@@ -314,6 +325,17 @@ namespace PUBGCustomStats.Desktop
                 nameEntry?.Text = item.Session.SessionName;
                 dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
                 doNotCount?.IsVisible = false;
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = false;
+                }
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = string.Empty;
+                    mapLabel.IsVisible = false;
+                }
                 browser?.Source = "http://localhost:5209/";
 
                 // refresh view so editor selection is visible
@@ -383,6 +405,17 @@ namespace PUBGCustomStats.Desktop
                 doNotCount?.IsVisible = true;
                 doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
                 browser?.Source = "http://localhost:5209/";
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = item.Match.Map ?? string.Empty;
+                    mapLabel.IsVisible = true;
+                }
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = true;
+                }
             }
         }
 
