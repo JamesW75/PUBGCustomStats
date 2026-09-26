@@ -273,12 +273,16 @@ namespace PUBGCustomStats.Desktop
                 var typeLabel = GetControl<Label>("EditorTypeLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
                 typeLabel?.Text = "Season";
                 nameEntry?.Text = item.Season.SeasonName;
+                // For seasons: show editable date entry (empty) and hide read-only date label
                 dateEntry?.Text = string.Empty;
+                if (dateEntry != null) dateEntry.IsVisible = true;
+                if (dateLabel != null) dateLabel.IsVisible = false;
                 doNotCount?.IsVisible = false;
                 var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
                 var mapLabel = GetControl<Label>("EditorMapLabel");
@@ -318,12 +322,16 @@ namespace PUBGCustomStats.Desktop
                 var typeLabel = GetControl<Label>("EditorTypeLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
                 typeLabel?.Text = "Session";
                 nameEntry?.Text = item.Session.SessionName;
+                // For sessions: show editable date entry and hide read-only date label
                 dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
+                if (dateEntry != null) dateEntry.IsVisible = true;
+                if (dateLabel != null) dateLabel.IsVisible = false;
                 doNotCount?.IsVisible = false;
                 var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
                 var mapLabel = GetControl<Label>("EditorMapLabel");
@@ -396,12 +404,22 @@ namespace PUBGCustomStats.Desktop
                 var typeLabel = GetControl<Label>("EditorTypeLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
                 typeLabel?.Text = "Match";
                 nameEntry?.Text = item.Match.MatchName;
-                dateEntry?.Text = item.Match.StartTime.HasValue ? item.Match.StartTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
+                // For matches: display read-only local time and hide editable entry
+                if (dateLabel != null)
+                {
+                    dateLabel.Text = item.Match.StartTime.HasValue ? item.Match.StartTime.Value.ToLocalTime().ToString("g") : string.Empty;
+                    dateLabel.IsVisible = true;
+                }
+                if (dateEntry != null)
+                {
+                    dateEntry.IsVisible = false;
+                }
                 doNotCount?.IsVisible = true;
                 doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
                 browser?.Source = "http://localhost:5209/";
