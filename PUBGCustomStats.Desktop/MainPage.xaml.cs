@@ -90,7 +90,7 @@ namespace PUBGCustomStats.Desktop
             await DisplayAlert("Add Match", "Add Match clicked", "OK");
         }
         private string? _connectionString;
-        private System.Collections.Generic.List<PUBGCustomStats.Desktop.ViewModels.SeasonItem>? _seasonItems;
+        private System.Collections.ObjectModel.ObservableCollection<PUBGCustomStats.Desktop.ViewModels.SeasonItem>? _seasonItems;
         private PUBGCustomStats.Desktop.ViewModels.SeasonItem? _selectedSeason;
         private PUBGCustomStats.Desktop.ViewModels.SessionItem? _selectedSession;
         private PUBGCustomStats.Desktop.ViewModels.MatchItem? _selectedMatch;
@@ -211,7 +211,7 @@ namespace PUBGCustomStats.Desktop
 
                 var seasons = seasonLogic.ListSeasons();
                 
-                var seasonItems = new System.Collections.Generic.List<PUBGCustomStats.Desktop.ViewModels.SeasonItem>();
+                var seasonItems = new System.Collections.ObjectModel.ObservableCollection<PUBGCustomStats.Desktop.ViewModels.SeasonItem>();
                 foreach (var s in seasons)
                 {
                     var seasonItem = new PUBGCustomStats.Desktop.ViewModels.SeasonItem { Season = s };
@@ -308,9 +308,31 @@ namespace PUBGCustomStats.Desktop
                 }
                 browser?.Source = "http://localhost:5209/";
 
-                // refresh view so selection/editor state is visible
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // update selection state so UI can reflect it via bindings
+                ClearSelection();
+                item.IsSelected = true;
+            }
+        }
+
+        // Clear selection flags on all view model items
+        private void ClearSelection()
+        {
+            if (_seasonItems == null)
+                return;
+
+            foreach (var s in _seasonItems)
+            {
+                s.IsSelected = false;
+                if (s.Sessions == null)
+                    continue;
+                foreach (var sess in s.Sessions)
+                {
+                    sess.IsSelected = false;
+                    if (sess.Matches == null)
+                        continue;
+                    foreach (var m in sess.Matches)
+                        m.IsSelected = false;
+                }
             }
         }
 
@@ -364,9 +386,9 @@ namespace PUBGCustomStats.Desktop
                     browser.Source = $"http://localhost:5209/session?sessionGuid={Uri.EscapeDataString(guid)}";
                 }
 
-                // refresh view so editor selection is visible
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // update selection state so UI can reflect it via bindings
+                ClearSelection();
+                item.IsSelected = true;
             }
         }
 
@@ -376,8 +398,7 @@ namespace PUBGCustomStats.Desktop
             if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SeasonItem item)
             {
                 item.IsExpanded = true;
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
             }
         }
 
@@ -386,8 +407,7 @@ namespace PUBGCustomStats.Desktop
             if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SeasonItem item)
             {
                 item.IsExpanded = false;
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
             }
         }
 
@@ -396,8 +416,7 @@ namespace PUBGCustomStats.Desktop
             if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
             {
                 item.IsExpanded = true;
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
             }
         }
 
@@ -406,8 +425,7 @@ namespace PUBGCustomStats.Desktop
             if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
             {
                 item.IsExpanded = false;
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
             }
         }
 
@@ -418,6 +436,26 @@ namespace PUBGCustomStats.Desktop
                 _selectedSeason = null;
                 _selectedSession = null;
                 _selectedMatch = item;
+
+                // update selection state in the view models instead of forcing a full CollectionView reload
+                ClearSelection();
+                item.IsSelected = true;
+                // mark parent session and season selected/expanded so the tree shows context
+                if (_seasonItems != null)
+                {
+                    foreach (var s in _seasonItems)
+                    {
+                        var parentSession = s.Sessions.FirstOrDefault(ss => ss.Matches.Contains(item));
+                        if (parentSession != null)
+                        {
+                            parentSession.IsSelected = true;
+                            parentSession.IsExpanded = true;
+                            s.IsSelected = true;
+                            s.IsExpanded = true;
+                            break;
+                        }
+                    }
+                }
 
                 var heading = GetControl<Label>("EditorHeadingLabel");
                 var nameEntry = GetControl<Entry>("EditorNameEntry");
@@ -525,9 +563,8 @@ namespace PUBGCustomStats.Desktop
 
                 // refresh
                 LoadSeasons();
-                // ensure UI tree reloads in case the ItemsSource didn't update
-                SeasonsView.ItemsSource = null;
-                SeasonsView.ItemsSource = _seasonItems;
+                // LoadSeasons sets the ItemsSource; use model notifications rather than forcing a reload
+                ClearSelection();
             }
             catch (Exception ex)
             {
