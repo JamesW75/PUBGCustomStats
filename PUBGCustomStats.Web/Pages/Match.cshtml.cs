@@ -40,6 +40,7 @@ namespace PUBGCustomStats.Web.Pages
             {
                 MatchPlayerStats = _context.MatchPlayerStats
                     .Where(mps => mps.MatchGuid == Match.MatchGuid)
+                    .Include(mps => mps.Player)
                     .OrderByDescending(mps => mps.Kills)
                     .ThenByDescending(mps => mps.DamageDealt)
                     .ToList();
