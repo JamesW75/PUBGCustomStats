@@ -5,6 +5,16 @@
     var code = Model.StatusCode;
 }
 
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? (Model.StatusCode == 404 ? "Page not found" : $"Error {Model.StatusCode}"))" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
+}
+
 <div class="container mt-5">
     <h1 class="display-4">@((code == 404) ? "Page not found" : $"Error {code}")</h1>
     @if (code == 404)

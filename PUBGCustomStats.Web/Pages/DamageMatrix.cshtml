@@ -2,6 +2,17 @@
 @model PUBGCustomStats.Web.Pages.DamageMatrixModel
 @{
     ViewData["Title"] = "Damage Matrix";
+    ViewData["Description"] = "The Damage Matrix shows the amount of damage each player has dealt to every other player in the custom matches.";
+}
+
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
 }
 
 @await Component.InvokeAsync("DamageMatrix")
