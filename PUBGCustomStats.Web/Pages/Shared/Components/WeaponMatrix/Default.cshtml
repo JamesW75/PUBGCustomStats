@@ -1,0 +1,129 @@
+@model PUBGCustomStats.Web.Pages.Shared.Components.WeaponMatrix.WeaponMatrixViewModel
+
+<style>
+    .weapon-matrix .weapon-header {
+        min-width: 82px;
+        padding: 0.2rem 0.12rem;
+        text-align: center;
+        white-space: normal;
+        vertical-align: bottom;
+    }
+    .weapon-matrix .weapon-header > .rotated {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        display: inline-block;
+        white-space: nowrap;
+        line-height: 1;
+        padding: 0 0.25rem;
+    }
+    .weapon-matrix .corner-header {
+        min-width: 140px;
+        height: 150px;
+        padding: 0.15rem 0.2rem;
+        text-align: center;
+        vertical-align: bottom;
+        position: relative;
+        background-color: transparent;
+    }
+    .weapon-matrix .corner-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(to bottom left, transparent 49.6%, rgba(222, 226, 230, 0.95) 49.6%, rgba(222, 226, 230, 0.95) 50.4%, transparent 50.4%);
+        z-index: 0;
+    }
+    .weapon-matrix .corner-player {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 0.25rem;
+        transform: translateX(-50%);
+        font-weight: 600;
+        white-space: nowrap;
+        line-height: 1.2;
+        z-index: 1;
+    }
+    .weapon-matrix .corner-weapon {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        bottom: 1.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+    .weapon-matrix .corner-weapon > span {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        display: inline-block;
+        white-space: nowrap;
+        line-height: 1;
+    }
+    .weapon-matrix td,
+    .weapon-matrix th {
+        vertical-align: middle;
+    }
+    .weapon-matrix .weapon-cell {
+        min-width: 82px;
+        padding: 0.15rem 0.2rem;
+        line-height: 1.15;
+        text-align: center;
+    }
+    .weapon-matrix .weapon-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 0.08rem;
+        font-size: 0.72rem;
+        white-space: nowrap;
+    }
+    .weapon-matrix .weapon-stat strong {
+        font-size: 0.8rem;
+    }
+    .weapon-matrix .weapon-stat .muted {
+        color: #6c757d;
+    }
+</style>
+
+<div class="table-responsive weapon-matrix">
+    <table class="table table-sm table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="corner-header">
+                    <span class="corner-player">Player</span>
+                    <span class="corner-weapon"><span>Weapon</span></span>
+                </th>
+                @foreach (var weapon in Model.Weapons)
+                {
+                    <th class="weapon-header"><div class="rotated">@weapon</div></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <td class="text-nowrap">
+                        <a asp-page="/Player" asp-route-playerGuid="@player.PlayerGuid">@player.PlayerName</a>
+                    </td>
+                    @foreach (var weapon in Model.Weapons)
+                    {
+                        var cell = Model.Counts.TryGetValue(player.PlayerGuid, out var row)
+                            && row.TryGetValue(weapon, out var stats)
+                            ? stats
+                            : new PUBGCustomStats.Web.Pages.Shared.Components.WeaponMatrix.WeaponCellStats();
+
+                        <td class="weapon-cell">
+                            <div class="weapon-stat">
+                                <span><strong>K</strong> @cell.Kills</span>
+                                <span><strong>KO</strong> @cell.Knocks</span>
+                                <span><strong>DMG</strong> @cell.Damage</span>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

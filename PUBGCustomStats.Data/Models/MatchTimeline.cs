@@ -22,6 +22,7 @@ namespace PUBGCustomStats.Data.Models
         public string? DamageReason { get; set; } // Reason for damage (e.g., "Headshot", "Explosion")
         public string? DamageCategory { get; set; } // Category of damage (e.g., "Physical", "Fire")
         public double? Damage { get; set; } // Total damage dealt in the event (if applicable)
+        public double? Health { get; set; } // Health value of the player at the time of the event (if applicable)
         public string? Weapon { get; set; } // Weapon used (if applicable)
         public double? Distance { get; set; } // Distance of the kill (if applicable)
         public int? Phase { get; set; } // Phase of the match (if applicable)

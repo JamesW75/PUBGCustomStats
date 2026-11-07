@@ -35,6 +35,8 @@ allResources.Add(new PageResource("/nonplayer/BlackZone") { OutFile = "nonplayer
 allResources.Add(new PageResource("/nonplayer/BOT") { OutFile = "nonplayer/bot.html" });
 allResources.Add(new PageResource("/nonplayer/Helicopter") { OutFile = "nonplayer/helicopter.html" });
 allResources.Add(new PageResource("/nonplayer/Bear") { OutFile = "nonplayer/bear.html" });
+allResources.Add(new PageResource("/nonplayer/CarePackageDrop") { OutFile = "nonplayer/carepackagedrop.html" });
+allResources.Add(new PageResource("/nonplayer/Train") { OutFile = "nonplayer/train.html" });
 allResources.Add(new PageResource("/nonplayer/Drowning") { OutFile = "nonplayer/drowning.html" });
 allResources.Add(new PageResource("/nonplayer/JerryCan") { OutFile = "nonplayer/jerrycan.html" });
 allResources.Add(new PageResource("/nonplayer/Suicide") { OutFile = "nonplayer/suicide.html" });
@@ -50,6 +52,7 @@ allResources.Add(new PageResource("/clans"));
 allResources.Add(new PageResource("/killmatrix"));
 allResources.Add(new PageResource("/knockmatrix"));
 allResources.Add(new PageResource("/damagematrix"));
+allResources.Add(new PageResource("/weaponmatrix"));
 
 allResources.Add(new CssResource("/css/site.css"));
 allResources.Add(new CssResource("/lib/bootstrap/dist/css/bootstrap.min.css"));
