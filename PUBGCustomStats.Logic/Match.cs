@@ -1216,6 +1216,7 @@ namespace PUBGCustomStats.Logic
 
                                     matchTimeline.PlayerIsNPC = true;
                                 }
+                                matchTimeline.Health = telemetryEvent.victim?.health;
                             }
                             //if (telemetryEvent.killerDamageInfo != null)
                             //{
@@ -1234,6 +1235,53 @@ namespace PUBGCustomStats.Logic
                             eventProcessed = true;
                             break;
 
+                        case "LogHeal":
+                            /*
+                                "character":  {Character},
+                                "item":       {Item},
+                                "healamount": number
+                             */
+                            matchTimeline.PlayerAccountId = telemetryEvent.character?.accountId;
+                            if (!string.IsNullOrEmpty(matchTimeline.PlayerAccountId))
+                            {
+                                if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
+                                {
+                                    matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
+                                }
+                                else
+                                {
+                                    matchTimeline.PlayerIsNPC = true;
+                                }
+                            }
+                            matchTimeline.Weapon = telemetryEvent.item?.itemId;
+                            matchTimeline.DamageCategory = telemetryEvent.item?.category;
+                            matchTimeline.DamageReason = telemetryEvent.item?.subCategory;
+                            matchTimeline.Health = telemetryEvent.character?.health;
+
+                            eventProcessed = true;
+                            break;
+
+                        case "LogPlayerPosition":
+
+                            matchTimeline.PlayerAccountId = telemetryEvent.character?.accountId;
+                            if (!string.IsNullOrEmpty(matchTimeline.PlayerAccountId))
+                            {
+                                if (!matchTimeline.PlayerAccountId.StartsWith("ai.") && !matchTimeline.PlayerAccountId.StartsWith("Monster."))
+                                {
+                                    matchTimeline.PlayerGuid = player.LookupPlayer(matchTimeline.PlayerAccountId);
+                                }
+                                else
+                                {
+                                    matchTimeline.PlayerIsNPC = true;
+                                }
+                            }
+                            if (telemetryEvent.character?.zone != null && telemetryEvent.character.zone.Length > 0)
+                            {
+                                matchTimeline.Zone = ArrayToCsv(telemetryEvent.character.zone);
+                            }
+                            matchTimeline.Health = telemetryEvent.character?.health;
+                            eventProcessed = true;
+                            break;
                         case "LogPlayerLogout":
                             matchTimeline.PlayerAccountId = telemetryEvent.accountId;
 
@@ -1268,7 +1316,6 @@ namespace PUBGCustomStats.Logic
                         case "LogMatchDefinition":
                         case "LogPlayerLogin":
                         case "LogPlayerCreate":
-                        case "LogPlayerPosition":
                         case "LogVaultStart":
                         case "LogItemEquip":
                         case "LogItemDetach":
@@ -1287,7 +1334,6 @@ namespace PUBGCustomStats.Logic
                         case "LogItemPickupFromCustomPackage":
                         case "LogVehicleRide":
                         case "LogVehicleDamage":
-                        case "LogHeal":
                         case "LogItemPutToVehicleTrunk":
                         case "LogItemPickupFromVehicleTrunk":
                         case "LogPlayerDestroyProp":

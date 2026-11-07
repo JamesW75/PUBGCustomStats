@@ -2,6 +2,17 @@
 @model SessionModel
 @{
     ViewData["Title"] = "Session " + Model.StartDate;
+    ViewData["Description"] = "The session page shows the match list, match scores, kill matrix, knock matrix, and damage matrix for the custom matches played in this session.";
+}
+
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
 }
 
 @if (!string.IsNullOrEmpty(Model.Name))
@@ -24,6 +35,9 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="damage-matrix-tab" data-bs-toggle="tab" data-bs-target="#damage-matrix" type="button" role="tab" aria-controls="damage-matrix" aria-selected="false">Damage Matrix</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="weapon-matrix-tab" data-bs-toggle="tab" data-bs-target="#weapon-matrix" type="button" role="tab" aria-controls="weapon-matrix" aria-selected="false">Weapon Matrix</button>
     </li>
 </ul>
 
@@ -136,6 +150,13 @@
         @if (Model.SessionGuid.HasValue)
         {
             @await Component.InvokeAsync("DamageMatrix", new { sessionGuid = Model.SessionGuid.Value })
+        }
+    </div>
+
+    <div class="tab-pane fade" id="weapon-matrix" role="tabpanel" aria-labelledby="weapon-matrix-tab" tabindex="0">
+        @if (Model.SessionGuid.HasValue)
+        {
+            @await Component.InvokeAsync("WeaponMatrix", new { sessionGuid = Model.SessionGuid.Value })
         }
     </div>
 </div>

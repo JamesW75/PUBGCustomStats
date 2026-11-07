@@ -1,6 +1,17 @@
 ﻿@page
 @{
     ViewData["Title"] = "Non-Player & Environmental Kills";
+    ViewData["Description"] = "The Non-Player & Environmental Kills page shows the number of kills and knockdowns each player has against non-player entities and environmental hazards in the custom matches.";
+}
+
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
 }
 
 <div class="row gx-4 gy-4">
@@ -24,12 +35,14 @@
     <div class="col-12 col-md-4">
         <h4>Other Death Types</h4>
         <ul>
-            <li><span title="Helicopter Hit">&#128641;</span> <a href="NonPlayer/Helicopter">Helicopter</a></li>
+            <li><span title="Care Package Drop">&#128230;</span> <a href="NonPlayer/CarePackageDrop">Care Package Drop</a></li>
             <li><span title="Drowning">&#128705;</span> <a href="NonPlayer/Drowning">Drowning</a></li>
+            <li><span title="Helicopter Hit">&#128641;</span> <a href="NonPlayer/Helicopter">Helicopter</a></li>
             <li><span title="Jerry Can">&#9981;</span> <a href="NonPlayer/JerryCan">Jerry Can</a></li>
-            <li><span title="Suicide">&#128128;</span> <a href="NonPlayer/Suicide">Suicide</a></li>
             <li><span title="Lava">&#9832;&#65039;</span> <a href="NonPlayer/Lava">Lava</a></li>
             <li><span title="Kill Truck">&#128737;&#65039;</span> <a href="NonPlayer/KillTruck">Kill Truck Turret</a></li>
+            <li><span title="Suicide">&#128128;</span> <a href="NonPlayer/Suicide">Suicide</a></li>
+            <li><span title="Train">&#128646;</span> <a href="NonPlayer/Train">Train</a></li>
         </ul>
     </div>
 </div>

@@ -26,6 +26,21 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    @if (IsSectionDefined("Head"))
+    {
+        @RenderSection("Head", required: false)
+    }
+    else
+    {
+        <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+        <meta property="og:description" content="@(ViewData["Description"] ?? "PUBG match statistics and analytics")" />
+        <meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}{Context.Request.QueryString}")" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+        <meta property="og:site_name" content="PUBGCustomStats" />
+        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}{Context.Request.QueryString}")" />
+    }
 </head>
 <body>
     <header>
@@ -93,6 +108,11 @@
                         <li class="nav-item">
                             <a href="/DamageMatrix" class="nav-link align-middle px-0">
                                 <i class="fs-4 bi-house"></i> <span data-feather="grid"></span> <span class="ms-1 d-none d-md-inline">Damage Matrix</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/WeaponMatrix" class="nav-link align-middle px-0">
+                                <i class="fs-4 bi-house"></i> <span data-feather="crosshair"></span> <span class="ms-1 d-none d-md-inline">Weapon Matrix</span>
                             </a>
                         </li>
                     </ul>

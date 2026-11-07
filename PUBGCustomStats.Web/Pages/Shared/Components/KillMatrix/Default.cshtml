@@ -139,14 +139,26 @@
                 var isBotRow = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase);
                 var isBlueZoneRow = string.Equals(playerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
                 var isRedZoneRow = string.Equals(playerName, "Red Zone", StringComparison.OrdinalIgnoreCase);
+                var isSpecialZeroRow = new[] { "Care Package Drop", "Train", "Bear", "Lava" }
+                    .Any(name => string.Equals(playerName, name, StringComparison.OrdinalIgnoreCase))
+                    && Model.Counts.TryGetValue(player.PlayerGuid, out var specialZeroRow)
+                    && specialZeroRow.Values.All(value => value == 0);
                 var isZeroBlueZoneRow = isBlueZoneRow && Model.Players.All(p => !Model.Counts.TryGetValue(p.PlayerGuid, out var row) || row.All(kvp => !string.Equals(kvp.Key, "Blue Zone", StringComparison.OrdinalIgnoreCase) || kvp.Value == 0));
                 var isZeroRedZoneRow = isRedZoneRow && Model.Players.All(p => !Model.Counts.TryGetValue(p.PlayerGuid, out var row) || row.All(kvp => !string.Equals(kvp.Key, "Red Zone", StringComparison.OrdinalIgnoreCase) || kvp.Value == 0));
-                var isNonPlayerLink = isBotRow || isBlueZoneRow || isRedZoneRow;
+                var isCarePackageDropRow = string.Equals(playerName, "Care Package Drop", StringComparison.OrdinalIgnoreCase);
+                var isTrainRow = string.Equals(playerName, "Train", StringComparison.OrdinalIgnoreCase);
+                var isBearRow = string.Equals(playerName, "Bear", StringComparison.OrdinalIgnoreCase);
+                var isLavaRow = string.Equals(playerName, "Lava", StringComparison.OrdinalIgnoreCase);
+                var isNonPlayerLink = isBotRow || isBlueZoneRow || isRedZoneRow || isCarePackageDropRow || isTrainRow || isBearRow || isLavaRow;
+                if (isSpecialZeroRow)
+                {
+                    continue;
+                }
                 <tr>
                     <td class="text-nowrap@(isBotRow ? " bot-cell" : "")@(isBlueZoneRow ? (isZeroBlueZoneRow ? " bluezone-cell zero-zone" : " bluezone-cell") : "")@(isRedZoneRow ? (isZeroRedZoneRow ? " redzone-cell zero-zone" : " redzone-cell") : "")">
                         @if (isNonPlayerLink)
                         {
-                            var routeName = isBlueZoneRow ? "BlueZone" : isRedZoneRow ? "RedZone" : playerName;
+                            var routeName = isBlueZoneRow ? "BlueZone" : isRedZoneRow ? "RedZone" : isCarePackageDropRow ? "CarePackageDrop" : isTrainRow ? "Train" : isBearRow ? "Bear" : isLavaRow ? "Lava" : playerName;
                             <a asp-page="/NonPlayer" asp-route-name="@routeName">@player.PlayerName</a>
                         }
                         else
