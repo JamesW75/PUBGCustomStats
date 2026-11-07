@@ -275,6 +275,7 @@ namespace PUBGCustomStats.Desktop
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                HideMatchDisplaySettings();
                 var browser = GetControl<WebView>("BrowserView");
 
                 heading?.Text = "Season Editor";
@@ -357,6 +358,7 @@ namespace PUBGCustomStats.Desktop
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                HideMatchDisplaySettings();
                 var browser = GetControl<WebView>("BrowserView");
 
                 heading?.Text = "Session Editor";
@@ -462,6 +464,9 @@ namespace PUBGCustomStats.Desktop
                 var dateEntry = GetControl<Entry>("EditorDateEntry");
                 var dateLabel = GetControl<Label>("EditorDateLabel");
                 var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                var showKnockMatrix = GetControl<Switch>("EditorShowKnockMatrixSwitch");
+                var showWeaponMatrix = GetControl<Switch>("EditorShowWeaponMatrixSwitch");
+                var showVitalSigns = GetControl<Switch>("EditorShowVitalSignsSwitch");
                 var browser = GetControl<WebView>("BrowserView");
 
                 heading?.Text = "Match Editor";
@@ -478,6 +483,10 @@ namespace PUBGCustomStats.Desktop
                 }
                 doNotCount?.IsVisible = true;
                 doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
+                ShowMatchDisplaySettings(item.Match);
+                showKnockMatrix?.IsToggled = item.Match.ShowKnockMatrix.GetValueOrDefault(true);
+                showWeaponMatrix?.IsToggled = item.Match.ShowWeaponMatrix.GetValueOrDefault(true);
+                showVitalSigns?.IsToggled = item.Match.ShowVitalSigns.GetValueOrDefault(true);
                 // Ensure the DoNotCount label is visible for matches
                 var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
                 if (doNotCountLabel != null)
@@ -559,6 +568,11 @@ namespace PUBGCustomStats.Desktop
                     // set DoNotCount based on switch
                     var toggled = doNotCount?.IsToggled ?? false;
                     matchLogic.IncludeExcludeMatch(_selectedMatch.Match.MatchGuid, !toggled);
+                    matchLogic.SetDisplaySettings(
+                        _selectedMatch.Match.MatchGuid,
+                        GetControl<Switch>("EditorShowKnockMatrixSwitch")?.IsToggled ?? true,
+                        GetControl<Switch>("EditorShowWeaponMatrixSwitch")?.IsToggled ?? true,
+                        GetControl<Switch>("EditorShowVitalSignsSwitch")?.IsToggled ?? true);
                 }
 
                 // refresh
@@ -569,6 +583,24 @@ namespace PUBGCustomStats.Desktop
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to save edits: {ex.Message}");
+            }
+        }
+
+        private void HideMatchDisplaySettings()
+        {
+            foreach (var name in new[] { "EditorShowKnockMatrixLabel", "EditorShowKnockMatrixSwitch", "EditorShowWeaponMatrixLabel", "EditorShowWeaponMatrixSwitch", "EditorShowVitalSignsLabel", "EditorShowVitalSignsSwitch" })
+            {
+                if (GetControl<VisualElement>(name) is { } control)
+                    control.IsVisible = false;
+            }
+        }
+
+        private void ShowMatchDisplaySettings(PUBGCustomStats.Data.Models.Match match)
+        {
+            foreach (var name in new[] { "EditorShowKnockMatrixLabel", "EditorShowKnockMatrixSwitch", "EditorShowWeaponMatrixLabel", "EditorShowWeaponMatrixSwitch", "EditorShowVitalSignsLabel", "EditorShowVitalSignsSwitch" })
+            {
+                if (GetControl<VisualElement>(name) is { } control)
+                    control.IsVisible = true;
             }
         }
     }

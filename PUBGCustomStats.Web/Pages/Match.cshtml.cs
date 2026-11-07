@@ -11,6 +11,9 @@ namespace PUBGCustomStats.Web.Pages
         public Data.Models.Match? Match { get; set; }
         public List<Data.Models.MatchPlayerStat>? MatchPlayerStats { get; set; }
         public List<Data.Models.MatchTimeline>? MatchTimeline { get; set; }
+        public bool ShowKnockMatrix => Match?.ShowKnockMatrix.GetValueOrDefault(true) ?? true;
+        public bool ShowWeaponMatrix => Match?.ShowWeaponMatrix.GetValueOrDefault(true) ?? true;
+        public bool ShowVitalSigns => Match?.ShowVitalSigns.GetValueOrDefault(true) ?? true;
 
         private readonly PUBGCustomStatsContext _context;
 

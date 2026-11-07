@@ -137,7 +137,7 @@
             <!-- Editor area -->
             <Border Padding="12" BackgroundColor="#FFFFFF" Grid.Row="0">
                 <!-- Two-column grid for editor details (Label / Value) -->
-                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
                     <Label x:Name="EditorHeadingLabel" Text="Editor" FontAttributes="Bold" Grid.ColumnSpan="2" />
 
                     <Label Text="Name:" Grid.Row="1" VerticalOptions="Center" />
@@ -156,7 +156,16 @@
                     <Label x:Name="EditorDoNotCountLabel" Text="Do Not Count:" Grid.Row="4" VerticalOptions="Center" IsVisible="False" />
                     <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="4" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
 
-                    <Button Text="Save" Grid.Row="5" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
+                    <Label x:Name="EditorShowKnockMatrixLabel" Text="Show Knock Matrix:" Grid.Row="5" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowKnockMatrixSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Label x:Name="EditorShowWeaponMatrixLabel" Text="Show Weapon Matrix:" Grid.Row="6" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowWeaponMatrixSwitch" Grid.Row="6" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Label x:Name="EditorShowVitalSignsLabel" Text="Show Vital Signs:" Grid.Row="7" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowVitalSignsSwitch" Grid.Row="7" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Button Text="Save" Grid.Row="8" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
                 </Grid>
             </Border>
 
