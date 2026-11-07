@@ -26,6 +26,9 @@ namespace PUBGCustomStats.Data.Models
         public string? GameMode { get; set; } // Optional: Store the game mode (e.g., Normal, Ranked)
         public string? Perspective { get; set; } // Optional: Store the perspective (e.g., FPP, TPP)
         public bool? DoNotCount { get; set; } // Optional: Flag to indicate if the match should not be counted in stats
+        public bool? ShowKnockMatrix { get; set; }
+        public bool? ShowWeaponMatrix { get; set; }
+        public bool? ShowVitalSigns { get; set; }
         public string? Weather { get; set; }
         public string? BlueZoneSettings { get; set; }
         public virtual Session? Session { get; set; } // Navigation property to the session

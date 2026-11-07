@@ -78,18 +78,27 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="kill-matrix-tab" data-bs-toggle="tab" data-bs-target="#kill-matrix" type="button" role="tab" aria-controls="kill-matrix" aria-selected="false">Kill Matrix</button>
     </li>
+    @if (Model.ShowKnockMatrix)
+    {
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="knock-matrix-tab" data-bs-toggle="tab" data-bs-target="#knock-matrix" type="button" role="tab" aria-controls="knock-matrix" aria-selected="false">Knock Matrix</button>
     </li>
+    }
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="damage-matrix-tab" data-bs-toggle="tab" data-bs-target="#damage-matrix" type="button" role="tab" aria-controls="damage-matrix" aria-selected="false">Damage Matrix</button>
     </li>
+    @if (Model.ShowWeaponMatrix)
+    {
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="weapon-matrix-tab" data-bs-toggle="tab" data-bs-target="#weapon-matrix" type="button" role="tab" aria-controls="weapon-matrix" aria-selected="false">Weapon Matrix</button>
     </li>
+    }
+    @if (Model.ShowVitalSigns)
+    {
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="vital-signs-tab" data-bs-toggle="tab" data-bs-target="#vital-signs" type="button" role="tab" aria-controls="vital-signs" aria-selected="false">Vital Signs</button>
     </li>
+    }
 </ul>
 
 <div class="tab-content" id="matchTabContent">
@@ -795,6 +804,8 @@
         <p>Sorry, no match events available</p>
         }
     </div>
+    @if (Model.ShowVitalSigns)
+    {
     <div class="tab-pane fade" id="vital-signs" role="tabpanel" aria-labelledby="vital-signs-tab" tabindex="0">
         <div class="row">
             <div class="col-md-12">
@@ -803,8 +814,11 @@
             </div>
         </div>
     </div>
+    }
 
 @section Scripts {
+    @if (Model.ShowVitalSigns)
+    {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         (function(){
@@ -873,6 +887,7 @@
             }
         })();
     </script>
+    }
 }
     <div class="tab-pane fade" id="match-scores" role="tabpanel" aria-labelledby="match-scores-tab" tabindex="0">
         @if (Model.Match != null)
@@ -888,12 +903,15 @@
         }
     </div>
 
+    @if (Model.ShowKnockMatrix)
+    {
     <div class="tab-pane fade" id="knock-matrix" role="tabpanel" aria-labelledby="knock-matrix-tab" tabindex="0">
         @if (Model.Match != null)
         {
             @await Component.InvokeAsync("KnockMatrix", new { matchGuid = Model.Match.MatchGuid })
         }
     </div>
+    }
 
     <div class="tab-pane fade" id="damage-matrix" role="tabpanel" aria-labelledby="damage-matrix-tab" tabindex="0">
         @if (Model.Match != null)
@@ -902,11 +920,14 @@
         }
     </div>
 
+    @if (Model.ShowWeaponMatrix)
+    {
     <div class="tab-pane fade" id="weapon-matrix" role="tabpanel" aria-labelledby="weapon-matrix-tab" tabindex="0">
         @if (Model.Match != null)
         {
             @await Component.InvokeAsync("WeaponMatrix", new { matchGuid = Model.Match.MatchGuid })
         }
     </div>
+    }
     </div>
 
