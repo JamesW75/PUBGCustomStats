@@ -1,6 +1,17 @@
 ﻿@page
 @{
     ViewData["Title"] = "Non-Player & Environmental Kills";
+    ViewData["Description"] = "The Non-Player & Environmental Kills page shows the number of kills and knockdowns each player has against non-player entities and environmental hazards in the custom matches.";
+}
+
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
 }
 
 <div class="row gx-4 gy-4">

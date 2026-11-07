@@ -2,6 +2,17 @@
 @model SessionModel
 @{
     ViewData["Title"] = "Session " + Model.StartDate;
+    ViewData["Description"] = "The session page shows the match list, match scores, kill matrix, knock matrix, and damage matrix for the custom matches played in this session.";
+}
+
+@section Head {
+    <meta property="og:title" content="@(ViewData["Title"] ?? "PUBGCustomStats")" />
+    <meta property="og:description" content="@(System.Text.RegularExpressions.Regex.Replace(Convert.ToString(ViewData["Description"]) ?? "", "<.*?>", ""))" />
+    <meta property="og:url" content="@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@(Url.Content("~/favicon-96x96.png"))" />
+    <meta property="og:site_name" content="PUBGCustomStats" />
+    <meta name="twitter:card" content="summary" />
 }
 
 @if (!string.IsNullOrEmpty(Model.Name))

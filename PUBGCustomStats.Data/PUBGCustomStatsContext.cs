@@ -108,13 +108,17 @@ namespace PUBGCustomStats.Data
 
             using var reader = command.ExecuteReader();
             var hasDamageColumn = false;
+            var hasHealthColumn = false;
             while (reader.Read())
             {
                 var columnName = reader.GetString(1);
                 if (string.Equals(columnName, "Damage", StringComparison.OrdinalIgnoreCase))
                 {
                     hasDamageColumn = true;
-                    break;
+                }
+                else if (string.Equals(columnName, "Health", StringComparison.OrdinalIgnoreCase))
+                {
+                    hasHealthColumn = true;
                 }
             }
 
@@ -122,6 +126,13 @@ namespace PUBGCustomStats.Data
             {
                 using var alterCommand = connection.CreateCommand();
                 alterCommand.CommandText = "ALTER TABLE MatchTimeline ADD COLUMN Damage REAL;";
+                alterCommand.ExecuteNonQuery();
+            }
+
+            if (!hasHealthColumn)
+            {
+                using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText = "ALTER TABLE MatchTimeline ADD COLUMN Health REAL;";
                 alterCommand.ExecuteNonQuery();
             }
         }

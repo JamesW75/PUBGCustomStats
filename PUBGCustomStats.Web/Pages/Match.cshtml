@@ -2,6 +2,17 @@
 @model PUBGCustomStats.Web.Pages.MatchModel
 @{
     ViewData["Title"] = Model.Match?.MatchNameOrDefault();
+    ViewData["Description"] = Model.Match?.MatchDescription;
+}
+
+@section Head {
+    <meta property='og:title' content='@ViewData["Title"]' />
+    <meta property='og:description' content='@System.Text.RegularExpressions.Regex.Replace(Model.Match?.MatchDescription ?? "", "<.*?>", "")' />
+    <meta property='og:url' content='@($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}")' />
+    <meta property='og:type' content='article' />
+    <meta property='og:image' content='@Url.Content("~/favicon-96x96.png")' />
+    <meta property='og:site_name' content='PUBGCustomStats' />
+    <meta name='twitter:card' content='summary' />
 }
 
 
@@ -75,6 +86,9 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="weapon-matrix-tab" data-bs-toggle="tab" data-bs-target="#weapon-matrix" type="button" role="tab" aria-controls="weapon-matrix" aria-selected="false">Weapon Matrix</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="vital-signs-tab" data-bs-toggle="tab" data-bs-target="#vital-signs" type="button" role="tab" aria-controls="vital-signs" aria-selected="false">Vital Signs</button>
     </li>
 </ul>
 
@@ -781,7 +795,85 @@
         <p>Sorry, no match events available</p>
         }
     </div>
+    <div class="tab-pane fade" id="vital-signs" role="tabpanel" aria-labelledby="vital-signs-tab" tabindex="0">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Health over time</h5>
+                <canvas id="vitalsChart" width="800" height="300"></canvas>
+            </div>
+        </div>
+    </div>
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        (function(){
+            // prepare datasets for chart
+            var datasets = [
+                @if (Model.MatchTimeline != null && Model.MatchTimeline.Any() && Model.MatchPlayerStats != null && Model.MatchPlayerStats.Any())
+                {
+                    var firstEvent = Model.MatchTimeline.First().EventTimestamp;
+                    var idx = 0;
+                    foreach (var player in Model.MatchPlayerStats.Where(p => p.PlayerGuid.HasValue))
+                    {
+                        var points = Model.MatchTimeline
+                            .Where(mt => mt.PlayerGuid == player.PlayerGuid && mt.Health.HasValue && !mt.PlayerIsNPC.GetValueOrDefault())
+                            .OrderBy(mt => mt.EventTimestamp)
+                            .Select(mt => new { x = (mt.EventTimestamp - firstEvent).TotalSeconds, y = mt.Health.GetValueOrDefault() })
+                            .ToList();
+
+                        if (points.Count == 0) { idx++; continue; }
+
+                        var colorR = (idx * 73) % 256;
+                        var colorG = (idx * 151) % 256;
+                        var colorB = (idx * 47) % 256;
+                        <text>
+                        {
+                            label: '@(!String.IsNullOrEmpty(player.Player?.PlayerName) ? player.Player?.PlayerName : player.PlayerName)'.replace(/'/g, "\\'"),
+                            data: [
+                                @foreach (var pt in points)
+                                {
+                                    <text>{ x: @pt.x.ToString(System.Globalization.CultureInfo.InvariantCulture), y: @pt.y.ToString(System.Globalization.CultureInfo.InvariantCulture) },</text>
+                                }
+                            ],
+                            borderColor: 'rgba(@colorR,@colorG,@colorB,1)',
+                            backgroundColor: 'rgba(@colorR,@colorG,@colorB,0.2)',
+                            tension: 0.2,
+                            fill: false
+                        },
+                        </text>
+                        idx++;
+                    }
+                }
+            ];
+
+            // create chart if there is at least one dataset
+            if (datasets.length > 0) {
+                var ctx = document.getElementById('vitalsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: { datasets: datasets },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: { display: true, text: 'Seconds from start' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Health' },
+                                suggestedMin: 0
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        },
+                        interaction: { mode: 'nearest', intersect: false }
+                    }
+                });
+            }
+        })();
+    </script>
+}
     <div class="tab-pane fade" id="match-scores" role="tabpanel" aria-labelledby="match-scores-tab" tabindex="0">
         @if (Model.Match != null)
         {
