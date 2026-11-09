@@ -78,6 +78,7 @@ namespace PUBGCustomStats.Web.Pages
                 "Damage_Explosion_GasPump" => "Gas Pump Explosion",
                 "Damage_Gun_Penetrate_BRDM" or "Damage_Gun" => FormatDamageReason(damageReason),
                 "Damage_Instant_Fall" => "Fall",
+                "Damage_Kick" => SimplifyDamageReason(damageReason) + " Kick",
                 "Damage_Lava" => "Lava",
                 "Damage_Melee" => "Melee to " + SimplifyDamageReason(damageReason),
                 "Damage_MeleeThrow" => "Melee Throw to " + SimplifyDamageReason(damageReason),
@@ -143,6 +144,8 @@ namespace PUBGCustomStats.Web.Pages
                     return "Panzer";
                 case "Damage_Explosion_RedZone":
                     return "Red Zone";
+                case "Damage_Kick":
+                    return "Kick";
                 case "Damage_Lava":
                     return "Lava";
                 case "Damage_Monster":
