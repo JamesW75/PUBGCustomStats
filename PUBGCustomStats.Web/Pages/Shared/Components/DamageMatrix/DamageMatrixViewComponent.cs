@@ -14,6 +14,9 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
         private static readonly Guid TrainGuid = new("00000000-0000-0000-0000-000000000005");
         private static readonly Guid BearGuid = new("00000000-0000-0000-0000-000000000006");
         private static readonly Guid LavaGuid = new("00000000-0000-0000-0000-000000000007");
+        private static readonly Guid ShipGuid = new("00000000-0000-0000-0000-000000000008");
+        private static readonly Guid BlackZoneGuid = new("00000000-0000-0000-0000-000000000009");
+        private static readonly Guid DrowningGuid = new("00000000-0000-0000-0000-000000000010");
         private readonly PUBGCustomStatsContext _context;
 
         public DamageMatrixViewComponent(PUBGCustomStatsContext context)
@@ -103,6 +106,21 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                 players.Add(new Player { PlayerGuid = LavaGuid, PlayerName = "Lava" });
             }
 
+            if (!players.Any(p => p.PlayerGuid == ShipGuid))
+            {
+                players.Add(new Player { PlayerGuid = ShipGuid, PlayerName = "Ship" });
+            }
+
+            if (!players.Any(p => p.PlayerGuid == BlackZoneGuid))
+            {
+                players.Add(new Player { PlayerGuid = BlackZoneGuid, PlayerName = "Black Zone" });
+            }
+
+            if (!players.Any(p => p.PlayerGuid == DrowningGuid))
+            {
+                players.Add(new Player { PlayerGuid = DrowningGuid, PlayerName = "Drowning" });
+            }
+
             var timelinesQuery = _context.MatchTimeline
                 .Include(mt => mt.Player)
                 .Include(mt => mt.SecondaryPlayer)
@@ -149,7 +167,11 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                     && !string.Equals(v, "Red Zone", StringComparison.OrdinalIgnoreCase)
                     && !string.Equals(v, "Care Package Drop", StringComparison.OrdinalIgnoreCase)
                     && !string.Equals(v, "Train", StringComparison.OrdinalIgnoreCase)
-                    && !string.Equals(v, "Lava", StringComparison.OrdinalIgnoreCase))
+                    && !string.Equals(v, "Lava", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(v, "Ship", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(v, "Black Zone", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(v, "BlackZone", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(v, "Drowning", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(v => string.Equals(v, "Bear", StringComparison.OrdinalIgnoreCase) ? 1
                     : string.Equals(v, "BOT", StringComparison.OrdinalIgnoreCase) ? 2
                     : 0)
@@ -269,6 +291,10 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                 case "Train": return TrainGuid;
                 case "Bear": return BearGuid;
                 case "Lava": return LavaGuid;
+                case "Ship":
+                case "Ferry Damage": return ShipGuid;
+                case "Black Zone": return BlackZoneGuid;
+                case "Drowning": return DrowningGuid;
             }
 
             var damageDescription = MatchHelpers.GetWeaponDescription(timeline.DamageCategory, timeline.DamageReason);
@@ -278,6 +304,10 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                 case "Train": return TrainGuid;
                 case "Bear": return BearGuid;
                 case "Lava": return LavaGuid;
+                case "Ship":
+                case "Ferry Damage": return ShipGuid;
+                case "Black Zone": return BlackZoneGuid;
+                case "Drowning": return DrowningGuid;
             }
 
             if (timeline.DamageCategory == "Damage_Lava")
@@ -324,7 +354,8 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.DamageMatrix
                     "Damage_Drown" => "Drowning",
                     "Damage_Explosion_JerryCan" => "JerryCan",
                     "Damage_Explosion_RedZone" => "Red Zone",
-                    "Damage_Explosion_BlackZone" => "BlackZone",
+                    "Damage_BlackZone" => "Black Zone",
+                    "Damage_Explosion_BlackZone" => "Black Zone",
                     "Damage_HelicopterHit" => "Helicopter",
                     _ => timeline.DamageCategory ?? "Unknown"
                 };

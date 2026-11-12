@@ -280,7 +280,7 @@
                     var isBotRow = string.Equals(playerName, "BOT", StringComparison.OrdinalIgnoreCase);
                     var isBlueZoneRow = string.Equals(playerName, "Blue Zone", StringComparison.OrdinalIgnoreCase);
                     var isRedZoneRow = string.Equals(playerName, "Red Zone", StringComparison.OrdinalIgnoreCase);
-                    var isSpecialZeroRow = new[] { "Care Package Drop", "Train", "Bear", "Lava" }
+                    var isSpecialZeroRow = new[] { "Care Package Drop", "Train", "Bear", "Lava", "Ship", "Black Zone", "Drowning" }
                         .Any(name => string.Equals(playerName, name, StringComparison.OrdinalIgnoreCase))
                         && Model.Counts.TryGetValue(player.PlayerGuid, out var specialZeroRow)
                         && specialZeroRow.Values.All(value => value == 0);
