@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PUBGCustomStats.Desktop.MainPage">
+
+    <Grid ColumnDefinitions="250,*">
+        <!-- Left pane: Seasons tree/list -->
+        <Border BackgroundColor="#F0F0F0" Padding="8" Grid.Column="0">
+            <VerticalStackLayout Spacing="8">
+                <!-- Controls to add items -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Start">
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Season" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddSeasonClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Session" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddSessionClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Border BackgroundColor="{StaticResource Primary}" Stroke="Transparent" WidthRequest="56" HeightRequest="48" Padding="0" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Add&#10;Match" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource White}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" LineBreakMode="WordWrap" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddMatchClicked" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+                <CollectionView x:Name="SeasonsView" SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="6" Margin="0,4" Stroke="#DDD">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="#DDEEFF" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <VerticalStackLayout>
+                                <HorizontalStackLayout Spacing="6">
+                                    <Button Text="+" Style="{StaticResource SmallButton}" Clicked="OnSeasonExpandClicked" VerticalOptions="Center">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                <Setter Property="IsVisible" Value="False" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="-" Style="{StaticResource SmallButton}" Clicked="OnSeasonCollapseClicked" VerticalOptions="Center" IsVisible="False">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                <Setter Property="IsVisible" Value="True" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Label Text="{Binding Season.SeasonName}" FontAttributes="Bold">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSeasonTapped" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                </HorizontalStackLayout>
+                                <CollectionView ItemsSource="{Binding Sessions}" Margin="8,6,0,0" IsVisible="{Binding IsExpanded}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="4" Margin="0,2" Stroke="#EEE">
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="BackgroundColor" Value="#E9F6FF" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                                <VerticalStackLayout>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Button Text="+" Style="{StaticResource SmallButton}" Clicked="OnSessionExpandClicked" VerticalOptions="Center">
+                                                            <Button.Triggers>
+                                                                <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                                    <Setter Property="IsVisible" Value="False" />
+                                                                </DataTrigger>
+                                                            </Button.Triggers>
+                                                        </Button>
+                                                        <Button Text="-" Style="{StaticResource SmallButton}" Clicked="OnSessionCollapseClicked" VerticalOptions="Center" IsVisible="False">
+                                                            <Button.Triggers>
+                                                                <DataTrigger TargetType="Button" Binding="{Binding IsExpanded}" Value="True">
+                                                                    <Setter Property="IsVisible" Value="True" />
+                                                                </DataTrigger>
+                                                            </Button.Triggers>
+                                                        </Button>
+                                                        <VerticalStackLayout Spacing="0">
+                                                            <VerticalStackLayout.GestureRecognizers>
+                                                                <TapGestureRecognizer Tapped="OnSessionTapped" />
+                                                            </VerticalStackLayout.GestureRecognizers>
+                                                            <Label Text="{Binding Display}" FontAttributes="Italic" />
+                                                            <Label Text="{Binding Session.SessionName}" LineBreakMode="TailTruncation" />
+                                                        </VerticalStackLayout>
+                                                    </HorizontalStackLayout>
+                                                    <CollectionView ItemsSource="{Binding Matches}" Margin="24,4,0,0" IsVisible="{Binding IsExpanded}">
+                                                        <CollectionView.ItemTemplate>
+                                                            <DataTemplate>
+                                                            <Border Padding="2" Margin="0,1" Stroke="#F5F5F5">
+                                                                <Border.Triggers>
+                                                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                                        <Setter Property="BackgroundColor" Value="#CCE5FF" />
+                                                                    </DataTrigger>
+                                                                </Border.Triggers>
+                                                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                                                    <!-- 2-pixel swatch at left of match name (no padding so it forms a long line) -->
+                                                                    <BoxView WidthRequest="2" BackgroundColor="{StaticResource Primary}" VerticalOptions="Fill" Margin="-2,-2,0,-2" />
+                                                                    <Label Text="{Binding Display}" VerticalOptions="Center">
+                                                                        <Label.Triggers>
+                                                                            <DataTrigger TargetType="Label" Binding="{Binding Match.DoNotCount}" Value="True">
+                                                                                <Setter Property="FontAttributes" Value="Italic" />
+                                                                            </DataTrigger>
+                                                                        </Label.Triggers>
+                                                                        <Label.GestureRecognizers>
+                                                                            <TapGestureRecognizer Tapped="OnMatchTapped" />
+                                                                        </Label.GestureRecognizers>
+                                                                    </Label>
+                                                                </HorizontalStackLayout>
+                                                            </Border>
+                                                            </DataTemplate>
+                                                        </CollectionView.ItemTemplate>
+                                                    </CollectionView>
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Right pane: editor on top, browser on bottom -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <!-- Editor area -->
+            <Border Padding="12" BackgroundColor="#FFFFFF" Grid.Row="0">
+                <!-- Two-column grid for editor details (Label / Value) -->
+                <Grid x:Name="EditorDetailsGrid" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Label x:Name="EditorHeadingLabel" Text="Editor" FontAttributes="Bold" Grid.ColumnSpan="2" />
+
+                    <Label Text="Name:" Grid.Row="1" VerticalOptions="Center" />
+                    <Entry x:Name="EditorNameEntry" Grid.Row="1" Grid.Column="1" />
+
+                    <Label Text="Date:" Grid.Row="2" VerticalOptions="Center" />
+                    <!-- Editable entry used for seasons/sessions -->
+                    <Entry x:Name="EditorDateEntry" Grid.Row="2" Grid.Column="1" Placeholder="yyyy-MM-dd HH:mm" />
+                    <!-- Read-only label used for matches (local time) -->
+                    <Label x:Name="EditorDateLabel" Grid.Row="2" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
+
+                    <!-- Map row: label in column 0, value in column 1. Both start hidden and are toggled in code-behind. -->
+                    <Label Text="Map:" Grid.Row="3" VerticalOptions="Center" x:Name="EditorMapNameLabel" IsVisible="False" />
+                    <Label x:Name="EditorMapLabel" Grid.Row="3" Grid.Column="1" VerticalOptions="Center" IsVisible="False" />
+
+                    <Label x:Name="EditorDoNotCountLabel" Text="Do Not Count:" Grid.Row="4" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorDoNotCountSwitch" Grid.Row="4" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Label x:Name="EditorShowKnockMatrixLabel" Text="Show Knock Matrix:" Grid.Row="5" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowKnockMatrixSwitch" Grid.Row="5" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Label x:Name="EditorShowWeaponMatrixLabel" Text="Show Weapon Matrix:" Grid.Row="6" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowWeaponMatrixSwitch" Grid.Row="6" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Label x:Name="EditorShowVitalSignsLabel" Text="Show Vital Signs:" Grid.Row="7" VerticalOptions="Center" IsVisible="False" />
+                    <Switch x:Name="EditorShowVitalSignsSwitch" Grid.Row="7" Grid.Column="1" HorizontalOptions="Start" IsVisible="False" />
+
+                    <Button Text="Save" Grid.Row="8" Grid.ColumnSpan="2" Clicked="OnEditorSaveClicked" HorizontalOptions="Start" />
+                </Grid>
+            </Border>
+
+            <!-- Browser area -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*">
+                <!-- Preview row spanning full width -->
+                <Border Grid.Row="0" BackgroundColor="#E0E0E0" Padding="8" Grid.ColumnSpan="6">
+                    <Label Text="Web Site Preview" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold" TextColor="Black" />
+                </Border>
+
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" Padding="8" ColumnSpacing="8" HorizontalOptions="Fill">
+                    <Button Grid.Column="0" Clicked="OnBrowserBackClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Grid.Column="1" Clicked="OnBrowserForwardClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Grid.Column="2" Clicked="OnBrowserHomeClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Button Grid.Column="3" Clicked="OnBrowserReloadClicked" WidthRequest="36" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" />
+                    <Entry Grid.Column="4" x:Name="BrowserUrlEntry" Placeholder="http://localhost:5209/" HorizontalOptions="Fill" />
+                    <Button Grid.Column="5" Clicked="OnBrowserGoClicked" HeightRequest="36" Padding="0" FontFamily="Segoe MDL2 Assets" FontSize="18" Text="" HorizontalOptions="End" />
+                </Grid>
+
+                <Label Grid.Row="2" x:Name="BrowserStatusLabel" TextColor="Red" IsVisible="False" FontSize="Small" Padding="8,0" />
+                <WebView Grid.Row="3" x:Name="BrowserView" Source="http://localhost:5209/" Navigating="OnBrowserNavigating" Navigated="OnBrowserNavigated" HorizontalOptions="Fill" VerticalOptions="Fill" />
+            </Grid>
+        </Grid>
+    </Grid>
+
+</ContentPage>

@@ -25,6 +25,12 @@ using PUBGCustomStats.Logic;
  * --deletematch <matchId>               Delete a match from the current session
  * --excludematch <matchId>              Mark a match as excluded (DoNotCount = true)
  * --includematch <matchId>              Mark a match as included (DoNotCount = false)
+ * --showknockmatrix <matchId>           Show the knock matrix on the match page
+ * --hideknockmatrix <matchId>           Hide the knock matrix on the match page
+ * --showweaponmatrix <matchId>          Show the weapon matrix on the match page
+ * --hideweaponmatrix <matchId>          Hide the weapon matrix on the match page
+ * --showvitalsigns <matchId>            Show vital signs on the match page
+ * --hidevitalsigns <matchId>            Hide vital signs on the match page
  * --getmatches <gamerTag>               Get recent matches for a player
  * --setrandom <playerId>                Mark the specified player as random in the database
  * --reparseallmatches                  Reprocess telemetry for every saved match in the database
@@ -248,6 +254,37 @@ if (args.Length > 0)
                         Console.WriteLine($"Deleted {clansToDelete.Count} clans.");
                     }
                 }
+                break;
+
+            case "--showknockmatrix":
+            case "--hideknockmatrix":
+            case "--showweaponmatrix":
+            case "--hideweaponmatrix":
+            case "--showvitalsigns":
+            case "--hidevitalsigns":
+                if (args.Length < 2 || !Guid.TryParse(args[1], out var displayMatchGuid))
+                {
+                    Console.WriteLine("Error: A valid match GUID is required.");
+                    return;
+                }
+
+                var displayMatch = new Match(dbContextOptions, integrationService);
+                var displayMatchEntity = displayMatch.DbContext.Matches.FirstOrDefault(m => m.MatchGuid == displayMatchGuid);
+                if (displayMatchEntity == null)
+                {
+                    Console.WriteLine($"Match not found: {displayMatchGuid}");
+                    return;
+                }
+
+                var show = args[0].StartsWith("--show", StringComparison.OrdinalIgnoreCase);
+                if (args[0].Contains("knock", StringComparison.OrdinalIgnoreCase))
+                    displayMatchEntity.ShowKnockMatrix = show;
+                else if (args[0].Contains("weapon", StringComparison.OrdinalIgnoreCase))
+                    displayMatchEntity.ShowWeaponMatrix = show;
+                else
+                    displayMatchEntity.ShowVitalSigns = show;
+                displayMatch.DbContext.SaveChanges();
+                Console.WriteLine($"Match {displayMatchGuid} display setting updated.");
                 break;
 
             case "--createsession":
@@ -669,6 +706,12 @@ static void DisplayHelp()
     Console.WriteLine("  --deletematch <matchId>               Delete a match from the current session");
     Console.WriteLine("  --excludematch <matchId>              Mark a match as excluded (DoNotCount = true)");
     Console.WriteLine("  --includematch <matchId>              Mark a match as included (DoNotCount = false)");
+    Console.WriteLine("  --showknockmatrix <matchId>           Show the knock matrix on the match page");
+    Console.WriteLine("  --hideknockmatrix <matchId>           Hide the knock matrix on the match page");
+    Console.WriteLine("  --showweaponmatrix <matchId>          Show the weapon matrix on the match page");
+    Console.WriteLine("  --hideweaponmatrix <matchId>          Hide the weapon matrix on the match page");
+    Console.WriteLine("  --showvitalsigns <matchId>            Show vital signs on the match page");
+    Console.WriteLine("  --hidevitalsigns <matchId>            Hide vital signs on the match page");
     Console.WriteLine("  --movematch <matchId> <sessionGuid>   Move a match to a different session");
     Console.WriteLine("  --getmatches <gamerTag>               Get recent matches for a player");    
     Console.WriteLine("  --setrandom <playerId>                Mark the specified player as random in the database");

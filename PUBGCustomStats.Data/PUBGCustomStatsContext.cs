@@ -106,19 +106,45 @@ namespace PUBGCustomStats.Data
             using var command = connection.CreateCommand();
             command.CommandText = "PRAGMA table_info('MatchTimeline');";
 
-            using var reader = command.ExecuteReader();
             var hasDamageColumn = false;
             var hasHealthColumn = false;
-            while (reader.Read())
+            var hasShowKnockMatrixColumn = false;
+            var hasShowWeaponMatrixColumn = false;
+            var hasShowVitalSignsColumn = false;
+            using (var reader = command.ExecuteReader())
             {
-                var columnName = reader.GetString(1);
-                if (string.Equals(columnName, "Damage", StringComparison.OrdinalIgnoreCase))
+                while (reader.Read())
                 {
-                    hasDamageColumn = true;
+                    var columnName = reader.GetString(1);
+                    if (string.Equals(columnName, "Damage", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasDamageColumn = true;
+                    }
+                    else if (string.Equals(columnName, "Health", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasHealthColumn = true;
+                    }
                 }
-                else if (string.Equals(columnName, "Health", StringComparison.OrdinalIgnoreCase))
+            }
+
+            command.CommandText = "PRAGMA table_info('Match');";
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
                 {
-                    hasHealthColumn = true;
+                    var columnName = reader.GetString(1);
+                    if (string.Equals(columnName, "ShowKnockMatrix", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasShowKnockMatrixColumn = true;
+                    }
+                    else if (string.Equals(columnName, "ShowWeaponMatrix", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasShowWeaponMatrixColumn = true;
+                    }
+                    else if (string.Equals(columnName, "ShowVitalSigns", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasShowVitalSignsColumn = true;
+                    }
                 }
             }
 
@@ -126,6 +152,27 @@ namespace PUBGCustomStats.Data
             {
                 using var alterCommand = connection.CreateCommand();
                 alterCommand.CommandText = "ALTER TABLE MatchTimeline ADD COLUMN Damage REAL;";
+                alterCommand.ExecuteNonQuery();
+            }
+
+            if (!hasShowKnockMatrixColumn)
+            {
+                using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText = "ALTER TABLE Match ADD COLUMN ShowKnockMatrix INTEGER;";
+                alterCommand.ExecuteNonQuery();
+            }
+
+            if (!hasShowWeaponMatrixColumn)
+            {
+                using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText = "ALTER TABLE Match ADD COLUMN ShowWeaponMatrix INTEGER;";
+                alterCommand.ExecuteNonQuery();
+            }
+
+            if (!hasShowVitalSignsColumn)
+            {
+                using var alterCommand = connection.CreateCommand();
+                alterCommand.CommandText = "ALTER TABLE Match ADD COLUMN ShowVitalSigns INTEGER;";
                 alterCommand.ExecuteNonQuery();
             }
 

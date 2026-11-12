@@ -154,6 +154,21 @@ namespace PUBGCustomStats.Logic
             }
         }
 
+        public bool SetDisplaySettings(Guid matchGuid, bool showKnockMatrix, bool showWeaponMatrix, bool showVitalSigns)
+        {
+            var match = DbContext.Matches.FirstOrDefault(m => m.MatchGuid == matchGuid);
+            if (match == null)
+            {
+                return false;
+            }
+
+            match.ShowKnockMatrix = showKnockMatrix;
+            match.ShowWeaponMatrix = showWeaponMatrix;
+            match.ShowVitalSigns = showVitalSigns;
+            DbContext.SaveChanges();
+            return true;
+        }
+
         /// <summary>
         /// Set the DoNotCount flag for a match according to the include parameter.
         /// If include == true -> DoNotCount = false (match is included)

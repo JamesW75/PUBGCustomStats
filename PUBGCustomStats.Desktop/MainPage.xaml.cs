@@ -1,0 +1,607 @@
+﻿using Microsoft.EntityFrameworkCore;
+using PUBGCustomStats.Data;
+using PUBGCustomStats.Logic;
+using System;
+using System.Text.Json;
+using PUBGCustomStats.Desktop.ViewModels;
+using System.Linq;
+
+namespace PUBGCustomStats.Desktop
+{
+    public partial class MainPage : ContentPage
+    {
+        int count = 0;
+        // helper to get named controls from XAML
+        private T? GetControl<T>(string name) where T : class
+        {
+            try
+            {
+                return this.FindByName<T>(name);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void OnBrowserBackClicked(object? sender, EventArgs e)
+        {
+            var browser = GetControl<WebView>("BrowserView");
+            if (browser != null && browser.CanGoBack)
+                browser.GoBack();
+        }
+
+        private void OnBrowserForwardClicked(object? sender, EventArgs e)
+        {
+            var browser = GetControl<WebView>("BrowserView");
+            if (browser != null && browser.CanGoForward)
+                browser.GoForward();
+        }
+
+        private void OnBrowserHomeClicked(object? sender, EventArgs e)
+        {
+            var browser = GetControl<WebView>("BrowserView");
+            browser?.Source = "http://localhost:5209/";
+        }
+
+        private void OnBrowserReloadClicked(object? sender, EventArgs e)
+        {
+            var browser = GetControl<WebView>("BrowserView");
+            if (browser != null)
+            {
+                var src = browser.Source;
+                browser.Source = null;
+                browser.Source = src;
+            }
+        }
+        private void OnBrowserGoClicked(object? sender, EventArgs e)
+        {
+            var browser = GetControl<WebView>("BrowserView");
+            var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+            if (browser == null || urlEntry == null)
+                return;
+
+            var url = urlEntry.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(url))
+                url = "http://localhost:5209/";
+
+            // Ensure scheme
+            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                url = "http://" + url;
+            }
+
+            browser.Source = url;
+        }
+
+        // Add button handlers (stubs)
+        private async void OnAddSeasonClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Season", "Add Season clicked", "OK");
+        }
+
+        private async void OnAddSessionClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Session", "Add Session clicked", "OK");
+        }
+
+        private async void OnAddMatchClicked(object? sender, EventArgs e)
+        {
+            await DisplayAlert("Add Match", "Add Match clicked", "OK");
+        }
+        private string? _connectionString;
+        private System.Collections.ObjectModel.ObservableCollection<PUBGCustomStats.Desktop.ViewModels.SeasonItem>? _seasonItems;
+        private PUBGCustomStats.Desktop.ViewModels.SeasonItem? _selectedSeason;
+        private PUBGCustomStats.Desktop.ViewModels.SessionItem? _selectedSession;
+        private PUBGCustomStats.Desktop.ViewModels.MatchItem? _selectedMatch;
+
+        public MainPage()
+        {
+            InitializeComponent();
+            // ensure browser entry shows initial URL and load it
+            var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+            var browser = GetControl<WebView>("BrowserView");
+            if (urlEntry != null && string.IsNullOrWhiteSpace(urlEntry.Text))
+                urlEntry.Text = "http://localhost:5209/";
+            browser?.Source = urlEntry?.Text ?? "http://localhost:5209/";
+
+            LoadSeasons();
+        }
+
+        private void OnBrowserNavigating(object? sender, Microsoft.Maui.Controls.WebNavigatingEventArgs e)
+        {
+            var status = GetControl<Label>("BrowserStatusLabel");
+            if (status != null)
+            {
+                status.Text = "Loading...";
+                status.IsVisible = true;
+            }
+        }
+
+        private void OnBrowserNavigated(object? sender, Microsoft.Maui.Controls.WebNavigatedEventArgs e)
+        {
+            var status = GetControl<Label>("BrowserStatusLabel");
+            if (status == null)
+                return;
+
+            if (e.Result == WebNavigationResult.Success)
+            {
+                status.IsVisible = false;
+                // Update the URL entry to reflect the loaded URL
+                var browser = GetControl<WebView>("BrowserView");
+                var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+
+                if (urlEntry != null)
+                {
+                    urlEntry.Text = e.Url;
+                }
+
+            }
+            else
+            {
+                status.Text = $"Failed to load: {e.Result}";
+                status.IsVisible = true;
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            // Ensure the URL entry shows the current browser URL when the page appears
+            var browser = GetControl<WebView>("BrowserView");
+            var urlEntry = GetControl<Entry>("BrowserUrlEntry");
+            if (browser != null && urlEntry != null)
+            {
+                if (browser.Source is Microsoft.Maui.Controls.UrlWebViewSource urlSource)
+                    urlEntry.Text = urlSource.Url;
+                else
+                    urlEntry.Text = browser.Source?.ToString();
+            }
+        }
+
+        private void LoadSeasons()
+        {
+            try
+            {
+                var appSettingsPath = System.IO.Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+                if (!System.IO.File.Exists(appSettingsPath))
+                {
+                    DisplayAlert("Error", $"App settings not found at {appSettingsPath}", "OK");
+                    return;
+                }
+                var json = System.IO.File.ReadAllText(appSettingsPath);
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+                if (!root.TryGetProperty("ConnectionStrings", out var conn))
+                {
+                    DisplayAlert("Error", "Connection string not found in app settings", "OK");
+                    return;
+                }
+                if (!conn.TryGetProperty("PUBGCustomStatsContext", out var cs))
+                {
+                    DisplayAlert("Error", "PUBGCustomStatsContext connection string not found", "OK");
+                    return;
+                }
+
+                var connectionString = cs.GetString() ?? string.Empty;
+
+                // Special case for macos
+#if MACCATALYST || MACOS
+                string appSupport = Foundation.NSFileManager.DefaultManager.GetUrls(
+                Foundation.NSSearchPathDirectory.ApplicationSupportDirectory,
+                Foundation.NSSearchPathDomain.User)[0].Path;
+
+                // Remove Containers/com.companyname.pubgcustomstats.desktop/Data/Library from the path
+                //appSupport = appSupport.Replace("Containers/com.companyname.pubgcustomstats.desktop/Data/Library/", "");
+                connectionString = connectionString.Replace("{AppDataPath}", appSupport);
+#else
+    connectionString = connectionString.Replace("{AppDataPath}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+#endif
+
+                var optionsBuilder = new DbContextOptionsBuilder<PUBGCustomStatsContext>();
+                optionsBuilder.UseSqlite(connectionString);
+
+                var options = optionsBuilder.Options;
+
+                var seasonLogic = new Season(options);
+                var sessionLogic = new Session(options);
+                // Match requires an IntegrationService in the constructor; listing matches uses DB only so pass empty API key
+                var matchLogic = new PUBGCustomStats.Logic.Match(options, new PUBGCustomStats.Integration.IntegrationService(""));
+
+                var seasons = seasonLogic.ListSeasons();
+                
+                var seasonItems = new System.Collections.ObjectModel.ObservableCollection<PUBGCustomStats.Desktop.ViewModels.SeasonItem>();
+                foreach (var s in seasons)
+                {
+                    var seasonItem = new PUBGCustomStats.Desktop.ViewModels.SeasonItem { Season = s };
+
+                    var rawSessions = sessionLogic.ListSessions(s.SeasonGuid)
+                        .OrderByDescending(x => x.StartDateTime ?? DateTime.MinValue)
+                        .ToList();
+
+                    foreach (var sess in rawSessions)
+                    {
+                        var sessionItem = new PUBGCustomStats.Desktop.ViewModels.SessionItem { Session = sess };
+
+                        var matches = matchLogic.ListMatches(sess.SessionGuid);
+                        foreach (var m in matches)
+                        {
+                            var display = string.IsNullOrWhiteSpace(m.MatchName) ? "untitled" : m.MatchName;
+                            sessionItem.Matches.Add(new PUBGCustomStats.Desktop.ViewModels.MatchItem { Match = m, Display = display });
+                        }
+
+                        sessionItem.Display = (sess.StartDateTime.HasValue ? sess.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : "");
+
+                        seasonItem.Sessions.Add(sessionItem);
+                    }
+
+                    seasonItems.Add(seasonItem);
+                }
+
+                // store connection and season items for later
+                _connectionString = connectionString;
+                _seasonItems = seasonItems;
+                // expand first season and its first session by default
+                if (_seasonItems != null && _seasonItems.Count > 0)
+                {
+                    _seasonItems[0].IsExpanded = true;
+                    if (_seasonItems[0].Sessions != null && _seasonItems[0].Sessions.Count > 0)
+                    {
+                        _seasonItems[0].Sessions[0].IsExpanded = true;
+                    }
+                }
+
+                SeasonsView.ItemsSource = _seasonItems;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load seasons: {ex.Message}");
+                DisplayAlert("Error", $"Failed to load seasons: {ex}", "OK");
+            }
+        }
+
+        private void OnSeasonTapped(object sender, EventArgs e)
+        {
+            if (sender is Label lbl && lbl.BindingContext is PUBGCustomStats.Desktop.ViewModels.SeasonItem item)
+            {
+                // Show editor for the season (do not toggle expand/collapse here).
+                _selectedSeason = item;
+                _selectedSession = null;
+                _selectedMatch = null;
+
+                var heading = GetControl<Label>("EditorHeadingLabel");
+                var nameEntry = GetControl<Entry>("EditorNameEntry");
+                var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
+                var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                HideMatchDisplaySettings();
+                var browser = GetControl<WebView>("BrowserView");
+
+                heading?.Text = "Season Editor";
+                nameEntry?.Text = item.Season.SeasonName;
+                // For seasons: show editable date entry (empty) and hide read-only date label
+                dateEntry?.Text = string.Empty;
+                if (dateEntry != null) dateEntry.IsVisible = true;
+                if (dateLabel != null) dateLabel.IsVisible = false;
+                // Show switch to set season-level DoNotCount
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null)
+                {
+                    doNotCountLabel.Text = "Do Not Count:";
+                    doNotCountLabel.IsVisible = true;
+                }
+                if (doNotCount != null)
+                {
+                    doNotCount.IsVisible = true;
+                    doNotCount.IsToggled = item.Season.DoNotCount;
+                }
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = false;
+                }
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = string.Empty;
+                    mapLabel.IsVisible = false;
+                }
+                browser?.Source = "http://localhost:5209/";
+
+                // update selection state so UI can reflect it via bindings
+                ClearSelection();
+                item.IsSelected = true;
+            }
+        }
+
+        // Clear selection flags on all view model items
+        private void ClearSelection()
+        {
+            if (_seasonItems == null)
+                return;
+
+            foreach (var s in _seasonItems)
+            {
+                s.IsSelected = false;
+                if (s.Sessions == null)
+                    continue;
+                foreach (var sess in s.Sessions)
+                {
+                    sess.IsSelected = false;
+                    if (sess.Matches == null)
+                        continue;
+                    foreach (var m in sess.Matches)
+                        m.IsSelected = false;
+                }
+            }
+        }
+
+        private void OnSessionTapped(object sender, EventArgs e)
+        {
+            // sender may be the Label or the containing layout (VerticalStackLayout) depending on where the TapGestureRecognizer is placed.
+            object? bindingContext = null;
+            if (sender is Microsoft.Maui.Controls.Element el)
+                bindingContext = el.BindingContext;
+            else if (sender is Microsoft.Maui.Controls.BindableObject bo)
+                bindingContext = bo.BindingContext;
+
+            if (bindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
+            {
+                // Show editor for the session (do not toggle expand/collapse here).
+                _selectedSeason = null;
+                _selectedSession = item;
+                _selectedMatch = null;
+
+                var heading = GetControl<Label>("EditorHeadingLabel");
+                var nameEntry = GetControl<Entry>("EditorNameEntry");
+                var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
+                var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                HideMatchDisplaySettings();
+                var browser = GetControl<WebView>("BrowserView");
+
+                heading?.Text = "Session Editor";
+                nameEntry?.Text = item.Session.SessionName;
+                // For sessions: show editable date entry and hide read-only date label
+                dateEntry?.Text = item.Session.StartDateTime.HasValue ? item.Session.StartDateTime.Value.ToString("yyyy-MM-dd HH:mm") : string.Empty;
+                if (dateEntry != null) dateEntry.IsVisible = true;
+                if (dateLabel != null) dateLabel.IsVisible = false;
+                // hide DoNotCount controls for sessions
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null) doNotCountLabel.IsVisible = false;
+                if (doNotCount != null) doNotCount.IsVisible = false;
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = false;
+                }
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = string.Empty;
+                    mapLabel.IsVisible = false;
+                }
+                if (browser != null)
+                {
+                    var guid = item.Session.SessionGuid.ToString();
+                    browser.Source = $"http://localhost:5209/session?sessionGuid={Uri.EscapeDataString(guid)}";
+                }
+
+                // update selection state so UI can reflect it via bindings
+                ClearSelection();
+                item.IsSelected = true;
+            }
+        }
+
+        // Expand/collapse handlers moved to explicit buttons so Name label only opens editor
+        private void OnSeasonExpandClicked(object? sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SeasonItem item)
+            {
+                item.IsExpanded = true;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
+            }
+        }
+
+        private void OnSeasonCollapseClicked(object? sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SeasonItem item)
+            {
+                item.IsExpanded = false;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
+            }
+        }
+
+        private void OnSessionExpandClicked(object? sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
+            {
+                item.IsExpanded = true;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
+            }
+        }
+
+        private void OnSessionCollapseClicked(object? sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.BindingContext is PUBGCustomStats.Desktop.ViewModels.SessionItem item)
+            {
+                item.IsExpanded = false;
+                // IsExpanded is data-bound and will update the UI via INotifyPropertyChanged
+            }
+        }
+
+        private void OnMatchTapped(object sender, EventArgs e)
+        {
+            if (sender is Label lbl && lbl.BindingContext is PUBGCustomStats.Desktop.ViewModels.MatchItem item)
+            {
+                _selectedSeason = null;
+                _selectedSession = null;
+                _selectedMatch = item;
+
+                // update selection state in the view models instead of forcing a full CollectionView reload
+                ClearSelection();
+                item.IsSelected = true;
+                // mark parent session and season selected/expanded so the tree shows context
+                if (_seasonItems != null)
+                {
+                    foreach (var s in _seasonItems)
+                    {
+                        var parentSession = s.Sessions.FirstOrDefault(ss => ss.Matches.Contains(item));
+                        if (parentSession != null)
+                        {
+                            parentSession.IsSelected = true;
+                            parentSession.IsExpanded = true;
+                            s.IsSelected = true;
+                            s.IsExpanded = true;
+                            break;
+                        }
+                    }
+                }
+
+                var heading = GetControl<Label>("EditorHeadingLabel");
+                var nameEntry = GetControl<Entry>("EditorNameEntry");
+                var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var dateLabel = GetControl<Label>("EditorDateLabel");
+                var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+                var showKnockMatrix = GetControl<Switch>("EditorShowKnockMatrixSwitch");
+                var showWeaponMatrix = GetControl<Switch>("EditorShowWeaponMatrixSwitch");
+                var showVitalSigns = GetControl<Switch>("EditorShowVitalSignsSwitch");
+                var browser = GetControl<WebView>("BrowserView");
+
+                heading?.Text = "Match Editor";
+                nameEntry?.Text = item.Match.MatchName;
+                // For matches: display read-only local time and hide editable entry
+                if (dateLabel != null)
+                {
+                    dateLabel.Text = item.Match.StartTime.HasValue ? item.Match.StartTime.Value.ToLocalTime().ToString("g") : string.Empty;
+                    dateLabel.IsVisible = true;
+                }
+                if (dateEntry != null)
+                {
+                    dateEntry.IsVisible = false;
+                }
+                doNotCount?.IsVisible = true;
+                doNotCount?.IsToggled = item.Match.DoNotCount.GetValueOrDefault(false);
+                ShowMatchDisplaySettings(item.Match);
+                showKnockMatrix?.IsToggled = item.Match.ShowKnockMatrix.GetValueOrDefault(true);
+                showWeaponMatrix?.IsToggled = item.Match.ShowWeaponMatrix.GetValueOrDefault(true);
+                showVitalSigns?.IsToggled = item.Match.ShowVitalSigns.GetValueOrDefault(true);
+                // Ensure the DoNotCount label is visible for matches
+                var doNotCountLabel = GetControl<Label>("EditorDoNotCountLabel");
+                if (doNotCountLabel != null)
+                {
+                    doNotCountLabel.Text = "Do Not Count:";
+                    doNotCountLabel.IsVisible = true;
+                }
+                browser?.Source = "http://localhost:5209/";
+                var mapNameLabel = GetControl<Label>("EditorMapNameLabel");
+                var mapLabel = GetControl<Label>("EditorMapLabel");
+                if (mapLabel != null)
+                {
+                    mapLabel.Text = item.Match.Map ?? string.Empty;
+                    mapLabel.IsVisible = true;
+                }
+                if (mapNameLabel != null)
+                {
+                    mapNameLabel.IsVisible = true;
+                }
+                // Navigate browser to the match page for the selected match
+                if (browser != null)
+                {
+                    var guid = item.Match.MatchGuid.ToString();
+                    browser.Source = $"http://localhost:5209/match?matchGuid={Uri.EscapeDataString(guid)}";
+                }
+            }
+        }
+
+        private void OnEditorSaveClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_connectionString))
+                    return;
+
+                var optionsBuilder = new DbContextOptionsBuilder<PUBGCustomStatsContext>();
+                optionsBuilder.UseSqlite(_connectionString);
+                var options = optionsBuilder.Options;
+
+                var seasonLogic = new Season(options);
+                var sessionLogic = new Session(options);
+                var matchLogic = new PUBGCustomStats.Logic.Match(options, new PUBGCustomStats.Integration.IntegrationService(""));
+
+                var nameEntry = GetControl<Entry>("EditorNameEntry");
+                var dateEntry = GetControl<Entry>("EditorDateEntry");
+                var doNotCount = GetControl<Switch>("EditorDoNotCountSwitch");
+
+                if (_selectedSeason != null)
+                {
+                    var newName = nameEntry?.Text ?? string.Empty;
+                    seasonLogic.EditSeason(_selectedSeason.Season.SeasonGuid, newName);
+                    // If the season DoNotCount switch is visible, persist the season-level DoNotCount flag
+                    var doNotCountSwitch = GetControl<Switch>("EditorDoNotCountSwitch");
+                    var toggled = doNotCountSwitch?.IsToggled ?? false;
+                    if (doNotCountSwitch != null && doNotCountSwitch.IsVisible)
+                    {
+                        var seasonEntity = seasonLogic.DbContext.Seasons.FirstOrDefault(s => s.SeasonGuid == _selectedSeason.Season.SeasonGuid);
+                        if (seasonEntity != null)
+                        {
+                            seasonEntity.DoNotCount = toggled;
+                            seasonLogic.DbContext.SaveChanges();
+                        }
+                    }
+                }
+                else if (_selectedSession != null)
+                {
+                    var newName = nameEntry?.Text ?? string.Empty;
+                    DateTime newDate = _selectedSession.Session.StartDateTime.GetValueOrDefault();
+                    if (!string.IsNullOrWhiteSpace(dateEntry?.Text))
+                    {
+                        DateTime.TryParse(dateEntry.Text, out newDate);
+                    }
+                    sessionLogic.EditSession(_selectedSession.Session.SessionGuid, newName, newDate);
+                }
+                else if (_selectedMatch != null)
+                {
+                    var newName = nameEntry?.Text ?? string.Empty;
+                    matchLogic.EditMatch(_selectedMatch.Match.MatchGuid, newName);
+                    // set DoNotCount based on switch
+                    var toggled = doNotCount?.IsToggled ?? false;
+                    matchLogic.IncludeExcludeMatch(_selectedMatch.Match.MatchGuid, !toggled);
+                    matchLogic.SetDisplaySettings(
+                        _selectedMatch.Match.MatchGuid,
+                        GetControl<Switch>("EditorShowKnockMatrixSwitch")?.IsToggled ?? true,
+                        GetControl<Switch>("EditorShowWeaponMatrixSwitch")?.IsToggled ?? true,
+                        GetControl<Switch>("EditorShowVitalSignsSwitch")?.IsToggled ?? true);
+                }
+
+                // refresh
+                LoadSeasons();
+                // LoadSeasons sets the ItemsSource; use model notifications rather than forcing a reload
+                ClearSelection();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to save edits: {ex.Message}");
+            }
+        }
+
+        private void HideMatchDisplaySettings()
+        {
+            foreach (var name in new[] { "EditorShowKnockMatrixLabel", "EditorShowKnockMatrixSwitch", "EditorShowWeaponMatrixLabel", "EditorShowWeaponMatrixSwitch", "EditorShowVitalSignsLabel", "EditorShowVitalSignsSwitch" })
+            {
+                if (GetControl<VisualElement>(name) is { } control)
+                    control.IsVisible = false;
+            }
+        }
+
+        private void ShowMatchDisplaySettings(PUBGCustomStats.Data.Models.Match match)
+        {
+            foreach (var name in new[] { "EditorShowKnockMatrixLabel", "EditorShowKnockMatrixSwitch", "EditorShowWeaponMatrixLabel", "EditorShowWeaponMatrixSwitch", "EditorShowVitalSignsLabel", "EditorShowVitalSignsSwitch" })
+            {
+                if (GetControl<VisualElement>(name) is { } control)
+                    control.IsVisible = true;
+            }
+        }
+    }
+}
