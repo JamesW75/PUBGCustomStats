@@ -131,8 +131,12 @@ namespace PUBGCustomStats.Web.Pages
             {
                 case "Damage_BlueZone":
                     return "Blue Zone";
+                case "Damage_DBNO":
+                    return "Bleeding Out";
                 case "Damage_DropStructHit":
                     return "Structure Drop";
+                case "Damage_Drown":
+                    return "Drowning";
                 case "Damage_CarePackageDropHit":
                     return "Care Package Drop";
                 case "Damage_Explosion_GasPump":
@@ -142,12 +146,17 @@ namespace PUBGCustomStats.Web.Pages
                 case "Damage_Explosion_PanzerFaustWarheadVehicleArmorPenetration":
                 case "Damage_Explosion_PanzerFaustWarhead":
                     return "Panzer";
+                case "Damage_BlackZone":
+                case "Damage_Explosion_BlackZone":
+                    return "Black Zone";
                 case "Damage_Explosion_RedZone":
                     return "Red Zone";
                 case "Damage_Kick":
                     return "Kick";
                 case "Damage_Lava":
                     return "Lava";
+                case "Damage_Molotov":
+                    return "Molotov";
                 case "Damage_Monster":
                     return "Bear";
                 case "Damage_Punch":
@@ -161,6 +170,10 @@ namespace PUBGCustomStats.Web.Pages
                     return "Sticky Bomb";
                 case "Damage_Instant_Fall":
                     return "Fall";
+                case "Damage_ShipHit":
+                    return "Ship";
+                case "Damage_VehicleHit":
+                    return "Vehicle";
                 case "Damage_VehicleCrashHit":
                     return "Crash";
                 case "Damage_Gun":

@@ -278,15 +278,18 @@ namespace PUBGCustomStats.Web.Pages.Shared.Components.KillMatrix
 
         private static Guid? GetSpecialAttackerGuid(MatchTimeline timeline)
         {
-            var weaponDescription = MatchHelpers.GetWeaponDescription(timeline.Weapon);
-            switch (weaponDescription)
+            if (!string.IsNullOrEmpty(timeline.Weapon))
             {
-                case "Care Package Drop": return CarePackageDropGuid;
-                case "Train": return TrainGuid;
-                case "Bear": return BearGuid;
-                case "Lava": return LavaGuid;
+                var weaponDescription = MatchHelpers.GetWeaponDescription(timeline.Weapon);
+                switch (weaponDescription)
+                {
+                    case "Care Package Drop": return CarePackageDropGuid;
+                    case "Train": return TrainGuid;
+                    case "Bear": return BearGuid;
+                    case "Lava": return LavaGuid;
+                }
             }
-
+            
             var damageDescription = MatchHelpers.GetWeaponDescription(timeline.DamageCategory, timeline.DamageReason);
             switch (damageDescription)
             {
